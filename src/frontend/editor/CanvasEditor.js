@@ -142,6 +142,15 @@ export class CanvasEditor {
     this.canvas.renderAll();
   }
 
+  toggleGuideBox() {
+    if (this.guidelineBox) {
+      this.guidelineBox.set('visible', !this.guidelineBox.visible);
+      this.canvas.renderAll();
+      return this.guidelineBox.visible;
+    }
+    return false;
+  }
+
   initCenterSnapLines() {
     this.snapLineX = new fabric.Line(
       [this.printBox.centerX, this.printBox.top, this.printBox.centerX, this.printBox.top + this.printBox.height],

@@ -277,6 +277,38 @@
   font-weight: 700;
 }
 
+/* TOP LEFT GUIDE LINE TOGGLE BADGE */
+.top-left-guide-toggle-badge {
+  position: absolute;
+  top: 16px;
+  left: 125px;
+  background: #ffffff;
+  border: 1px solid var(--customizer-border);
+  border-radius: 30px;
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #0f172a;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  z-index: 25;
+  transition: all 0.2s ease;
+}
+
+.top-left-guide-toggle-badge:hover {
+  background: #f8fafc;
+  transform: translateY(-1px);
+}
+
+.top-left-guide-toggle-badge.off {
+  background: #f1f5f9;
+  color: #94a3b8;
+  border-color: #cbd5e1;
+}
+
 /* OPTION 1: BOTTOM CENTER FLOATING NAVIGATION DOCK */
 .bottom-icon-nav {
   position: absolute;

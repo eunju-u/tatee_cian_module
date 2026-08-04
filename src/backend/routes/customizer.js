@@ -225,16 +225,24 @@ router.post('/ai/generate-3d-tripo', async (req, res) => {
  */
 router.post('/ai/generate-3d-meshy', async (req, res) => {
   try {
-    const { apiKey, frontImage, backImage } = req.body;
-    if (!frontImage) {
-      return res.status(400).json({ error: 'frontImage가 필요합니다.' });
+    const { apiKey, frontImage, backImage, leftSleeveImage, rightSleeveImage, surfaces } = req.body;
+    
+    const surfMap = surfaces || {
+      front: frontImage,
+      back: backImage,
+      left_sleeve: leftSleeveImage,
+      right_sleeve: rightSleeveImage
+    };
+
+    if (!surfMap.front) {
+      return res.status(400).json({ error: 'frontImage 또는 앞면 사진이 필요합니다.' });
     }
 
     const outputGlbFilename = `Meshy3D_Garment_${Date.now()}.glb`;
     const outputGlbPath = path.resolve(process.cwd(), 'src/backend/public/uploads', outputGlbFilename);
 
     await Meshy3DService.generate3DFrom2DImage(
-      { front: frontImage, back: backImage },
+      surfMap,
       outputGlbPath,
       apiKey
     );
@@ -244,7 +252,7 @@ router.post('/ai/generate-3d-meshy', async (req, res) => {
     res.json({
       success: true,
       glbUrl,
-      message: '✨ Meshy 3D AI가 앞/뒷면 사진에서 최상급 실물 3D .GLB 옷 모델을 성공적으로 생성했습니다!'
+      message: '✨ Meshy 3D AI가 다중 사진(앞/뒤/소매)에서 최상급 실물 3D .GLB 옷 모델을 성공적으로 생성했습니다!'
     });
 
   } catch (error) {

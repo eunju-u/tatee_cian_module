@@ -84,8 +84,8 @@ function getAppSkeletonHtml(productConfig) {
           </div>
         </div>
 
-        <!-- OPTION 1: BOTTOM CENTER FLOATING NAVIGATION DOCK -->
-        <div class="bottom-icon-nav">
+        <!-- RIGHT FLOATING NAVIGATION DOCK -->
+        <div class="right-icon-nav">
           <button class="nav-icon-item" id="nav-upload-img">
             <div class="nav-icon-box">🖼️</div>
             <span>이미지 업로드</span>

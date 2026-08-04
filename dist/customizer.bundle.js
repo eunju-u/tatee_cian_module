@@ -4278,10 +4278,6 @@ void main() {
         </div>
 
         <div class="toolbar-btn-group">
-          <button class="toolbar-btn active" id="btn-toggle-guide-line" title="인쇄 가이드 영역 라인 ON/OFF"><span class="tb-icon">📏</span>가이드 ON</button>
-        </div>
-
-        <div class="toolbar-btn-group">
           <button class="toolbar-btn" id="tb-delete" title="삭제"><span class="tb-icon">🗑️</span>삭제</button>
           <button class="toolbar-btn" id="tb-bring-forward" title="앞으로"><span class="tb-icon">🔝</span>앞으로</button>
           <button class="toolbar-btn" id="tb-send-backward" title="뒤로"><span class="tb-icon">🔝</span>뒤로</button>
@@ -4304,6 +4300,10 @@ void main() {
           <button class="toolbar-btn" id="tb-align-top" title="위"><span class="tb-icon">⤒</span>위</button>
           <button class="toolbar-btn" id="tb-align-center-v" title="가운데"><span class="tb-icon">⤓⤒</span>가운데</button>
           <button class="toolbar-btn" id="tb-align-bottom" title="아래"><span class="tb-icon">⤓</span>아래</button>
+        </div>
+
+        <div class="toolbar-btn-group">
+          <button class="toolbar-btn active" id="btn-toggle-guide-line" title="인쇄 가이드 영역 라인 ON/OFF"><span class="tb-icon">📏</span>가이드 ON</button>
         </div>
       </div>
 

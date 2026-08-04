@@ -4,6 +4,7 @@ import fs from 'fs';
 import { StorageService } from '../services/storageService.js';
 import { generateWorkOrderPdf } from '../services/pdfGenerator.js';
 import { TripoRunner } from '../ai/tripoRunner.js';
+import { Meshy3DService } from '../ai/meshy3dService.js';
 import { productsDb } from './admin.js';
 
 const router = express.Router();
@@ -216,6 +217,39 @@ router.post('/ai/generate-3d-tripo', async (req, res) => {
   } catch (error) {
     console.error('Error in TripoSR 3D generation:', error);
     res.status(500).json({ error: 'TripoSR 3D generation failed', details: error.message });
+  }
+});
+
+/**
+ * POST /api/ai/generate-3d-meshy
+ */
+router.post('/ai/generate-3d-meshy', async (req, res) => {
+  try {
+    const { apiKey, frontImage, backImage } = req.body;
+    if (!frontImage) {
+      return res.status(400).json({ error: 'frontImage가 필요합니다.' });
+    }
+
+    const outputGlbFilename = `Meshy3D_Garment_${Date.now()}.glb`;
+    const outputGlbPath = path.resolve(process.cwd(), 'src/backend/public/uploads', outputGlbFilename);
+
+    await Meshy3DService.generate3DFrom2DImage(
+      { front: frontImage, back: backImage },
+      outputGlbPath,
+      apiKey
+    );
+
+    const glbUrl = `http://localhost:4000/uploads/${outputGlbFilename}`;
+
+    res.json({
+      success: true,
+      glbUrl,
+      message: '✨ Meshy 3D AI가 앞/뒷면 사진에서 최상급 실물 3D .GLB 옷 모델을 성공적으로 생성했습니다!'
+    });
+
+  } catch (error) {
+    console.error('Error in Meshy 3D generation:', error);
+    res.status(500).json({ error: 'Meshy 3D 생성 실패', details: error.message });
   }
 });
 

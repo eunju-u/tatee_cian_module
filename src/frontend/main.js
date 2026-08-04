@@ -86,6 +86,10 @@ function getAppSkeletonHtml(productConfig) {
 
         <!-- RIGHT FLOATING NAVIGATION DOCK -->
         <div class="right-icon-nav">
+          <button class="nav-icon-item active" id="nav-product-info">
+            <div class="nav-icon-box">👕</div>
+            <span>상품 변경</span>
+          </button>
           <button class="nav-icon-item" id="nav-upload-img">
             <div class="nav-icon-box">🖼️</div>
             <span>이미지 업로드</span>
@@ -102,6 +106,60 @@ function getAppSkeletonHtml(productConfig) {
             <div class="nav-icon-box">🎲</div>
             <span>3D 보기</span>
           </button>
+        </div>
+
+        <!-- DEFAULT RIGHT PRODUCT INFO & OPTIONS PANEL -->
+        <div class="right-panel-drawer active" id="right-product-panel">
+          <div class="panel-header">
+            <div>
+              <div style="font-size:11px; color:#64748b; font-weight:700;">시스루/시그니처 브랜드</div>
+              <div class="panel-title" id="panel-product-title" style="font-size:16px; font-weight:800; color:#0f172a; margin-top:2px;">
+                ${productConfig.title || '17수 라운드 티셔츠 (남녀공용)'}
+              </div>
+            </div>
+            <button class="btn-close-panel" id="btn-close-product-panel">&times;</button>
+          </div>
+
+          <div style="font-size:20px; font-weight:800; color:#2563eb; margin-bottom:16px;">
+            1개당 29,900원 <span style="font-size:12px; color:#eab308; font-weight:600; margin-left:4px;">★ 4.9 (리뷰 3,188)</span>
+          </div>
+
+          <!-- COLOR SWATCH SELECTOR -->
+          <div class="panel-section">
+            <div style="font-size:13px; font-weight:700; color:#0f172a; margin-bottom:10px;">
+              색상 선택 - <span id="label-active-color-name" style="color:#2563eb;">화이트</span>
+            </div>
+            <div class="garment-color-grid">
+              <div class="garment-color-swatch active" data-color="#ffffff" data-name="화이트" style="background:#ffffff; border:1px solid #cbd5e1;"></div>
+              <div class="garment-color-swatch" data-color="#1e293b" data-name="다크 네이비" style="background:#1e293b;"></div>
+              <div class="garment-color-swatch" data-color="#000000" data-name="블랙" style="background:#000000;"></div>
+              <div class="garment-color-swatch" data-color="#ef4444" data-name="레드" style="background:#ef4444;"></div>
+              <div class="garment-color-swatch" data-color="#16a34a" data-name="그린" style="background:#16a34a;"></div>
+              <div class="garment-color-swatch" data-color="#2563eb" data-name="블루" style="background:#2563eb;"></div>
+              <div class="garment-color-swatch" data-color="#eab308" data-name="옐로우" style="background:#eab308;"></div>
+              <div class="garment-color-swatch" data-color="#94a3b8" data-name="멜란지 그레이" style="background:#94a3b8;"></div>
+            </div>
+          </div>
+
+          <!-- SIZE SELECTOR BUTTONS -->
+          <div class="panel-section" style="margin-top:16px;">
+            <div style="font-size:13px; font-weight:700; color:#0f172a; margin-bottom:10px;">
+              사이즈 선택 (가이드 영역 자동 가변)
+            </div>
+            <div class="garment-size-grid">
+              <button class="garment-size-btn" data-size="S">S</button>
+              <button class="garment-size-btn" data-size="M">M</button>
+              <button class="garment-size-btn active" data-size="L">L</button>
+              <button class="garment-size-btn" data-size="XL">XL</button>
+              <button class="garment-size-btn" data-size="2XL">2XL</button>
+            </div>
+          </div>
+
+          <div style="margin-top:auto; padding-top:16px;">
+            <button type="button" class="btn-cafe24-buy" id="btn-right-buy-now" style="width:100%; background:#0f172a; color:#fff; border:none; padding:14px; border-radius:12px; font-weight:800; font-size:15px; cursor:pointer;">
+              🛒 시안 적용하여 바로 구매하기
+            </button>
+          </div>
         </div>
 
         <!-- RIGHT FLOATING FONT & TEXT PANEL -->
@@ -402,19 +460,87 @@ export class TShirtCustomizerApp {
     safeAddListener('tb-align-center-v', 'click', () => editor.alignCenterV());
     safeAddListener('tb-align-bottom', 'click', () => editor.alignBottom());
 
-    // 5. Option 1: Bind Bottom Floating Navigation Dock Controls
-    const textPanel = document.getElementById('right-text-panel');
-    safeAddListener('nav-text', 'click', () => {
-      if (textPanel) {
-        textPanel.classList.toggle('active');
-        if (textPanel.classList.contains('active')) {
-          editor.addText('텍스트');
-        }
+    // 5. Right Panels & Navigation Dock Switcher
+    const navItems = document.querySelectorAll('.nav-icon-item');
+
+    function switchRightPanel(targetPanelId, activeNavId) {
+      document.querySelectorAll('.right-panel-drawer').forEach(p => p.classList.remove('active'));
+      navItems.forEach(n => n.classList.remove('active'));
+
+      if (targetPanelId) {
+        const targetPanel = document.getElementById(targetPanelId);
+        if (targetPanel) targetPanel.classList.add('active');
       }
+      if (activeNavId) {
+        const activeNav = document.getElementById(activeNavId);
+        if (activeNav) activeNav.classList.add('active');
+      }
+    }
+
+    safeAddListener('nav-product-info', 'click', () => switchRightPanel('right-product-panel', 'nav-product-info'));
+    safeAddListener('btn-close-product-panel', 'click', () => switchRightPanel(null, null));
+
+    safeAddListener('nav-text', 'click', () => {
+      switchRightPanel('right-text-panel', 'nav-text');
+      editor.addText('텍스트');
+    });
+    safeAddListener('btn-close-text-panel', 'click', () => switchRightPanel('right-product-panel', 'nav-product-info'));
+
+    const designModal = document.getElementById('design-modal-overlay');
+    safeAddListener('nav-design', 'click', () => {
+      if (designModal) designModal.classList.add('active');
+      switchRightPanel('right-product-panel', 'nav-design');
     });
 
-    safeAddListener('btn-close-text-panel', 'click', () => {
-      if (textPanel) textPanel.classList.remove('active');
+    // Color Swatch Click Handler (Changes Canvas Garment Color)
+    document.querySelectorAll('.garment-color-swatch').forEach(swatch => {
+      swatch.addEventListener('click', () => {
+        document.querySelectorAll('.garment-color-swatch').forEach(s => s.classList.remove('active'));
+        swatch.classList.add('active');
+
+        const colorName = swatch.dataset.name || '선택색상';
+        const colorHex = swatch.dataset.color;
+        const colorLabelEl = document.getElementById('label-active-color-name');
+        if (colorLabelEl) colorLabelEl.textContent = colorName;
+
+        const wrapperEl = document.getElementById('canvas-mockup-wrapper');
+        if (wrapperEl) {
+          if (colorHex === '#ffffff') {
+            wrapperEl.style.filter = 'none';
+          } else {
+            wrapperEl.style.filter = `drop-shadow(0 0 0 ${colorHex})`;
+          }
+        }
+      });
+    });
+
+    // Size Selector Buttons Click Handler
+    document.querySelectorAll('.garment-size-btn').forEach(sizeBtn => {
+      sizeBtn.addEventListener('click', () => {
+        document.querySelectorAll('.garment-size-btn').forEach(b => b.classList.remove('active'));
+        sizeBtn.classList.add('active');
+
+        const selectedSize = sizeBtn.dataset.size;
+        const sizeSpecs = productConfig.sizes ? productConfig.sizes[selectedSize] : null;
+        if (sizeSpecs) {
+          editor.updatePrintBounds({
+            sizeName: selectedSize,
+            shirtWidthCm: parseFloat(sizeSpecs.shirtWidthCm),
+            shirtHeightCm: parseFloat(sizeSpecs.shirtHeightCm),
+            printAreaWidthCm: parseFloat(sizeSpecs.printWidthCm),
+            printAreaHeightCm: parseFloat(sizeSpecs.printHeightCm)
+          });
+        }
+
+        const cafe24SizeSelect = document.getElementById('cafe24-size-select');
+        if (cafe24SizeSelect) cafe24SizeSelect.value = selectedSize;
+      });
+    });
+
+    // Right Panel Buy Now Button Handler
+    safeAddListener('btn-right-buy-now', 'click', () => {
+      const buyBtn = document.getElementById('actionBuy');
+      if (buyBtn) buyBtn.click();
     });
 
     const fileInput = document.getElementById('hidden-file-input');
@@ -433,7 +559,6 @@ export class TShirtCustomizerApp {
       });
     }
 
-    const designModal = document.getElementById('design-modal-overlay');
     const modalArtworksGrid = document.getElementById('modal-artworks-grid');
     safeAddListener('nav-design', 'click', () => {
       if (designModal) designModal.classList.add('active');

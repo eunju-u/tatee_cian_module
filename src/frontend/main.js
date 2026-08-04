@@ -66,6 +66,10 @@ function getAppSkeletonHtml(productConfig) {
             ⚠️ 인쇄 허용 범위를 벗어났습니다! (가이드 안쪽 영역만 인쇄됩니다)
           </div>
 
+          <div class="top-left-guide-toggle-badge" id="btn-toggle-guide-line" title="인쇄 가이드 영역 라인 ON/OFF">
+            <span id="badge-guide-status">📏 가이드 라인 [ON]</span>
+          </div>
+
           <div class="scale-dimension-badge" id="scale-dimension-badge">
             📐 가로 0.0 cm × 세로 0.0 cm
           </div>
@@ -496,6 +500,24 @@ export class TShirtCustomizerApp {
         swatch.classList.add('active');
         editor.updateActiveObject({ fill: swatch.dataset.color });
       });
+    });
+
+    // Guide Line Toggle ON/OFF
+    safeAddListener('btn-toggle-guide-line', 'click', () => {
+      const isVisible = editor.toggleGuideBox();
+      const badgeEl = document.getElementById('badge-guide-status');
+      const btnEl = document.getElementById('btn-toggle-guide-line');
+
+      if (badgeEl) {
+        badgeEl.textContent = isVisible ? '📏 가이드 라인 [ON]' : '📏 가이드 라인 [OFF]';
+      }
+      if (btnEl) {
+        if (isVisible) {
+          btnEl.classList.remove('off');
+        } else {
+          btnEl.classList.add('off');
+        }
+      }
     });
 
     // 7. Surface Switcher Modal & 3D Fitting Studio

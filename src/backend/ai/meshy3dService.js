@@ -31,10 +31,9 @@ export class Meshy3DService {
 
       if (typeof imageInput === 'object' && imageInput.front) {
         requestBody.image_url = imageInput.front;
-        // Multi-view support if back image is present
-        if (imageInput.back) {
-          requestBody.back_image_url = imageInput.back;
-        }
+        if (imageInput.back) requestBody.back_image_url = imageInput.back;
+        if (imageInput.left_sleeve) requestBody.left_image_url = imageInput.left_sleeve;
+        if (imageInput.right_sleeve) requestBody.right_image_url = imageInput.right_sleeve;
       } else {
         requestBody.image_url = imageInput;
       }

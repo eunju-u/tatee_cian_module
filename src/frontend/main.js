@@ -21,6 +21,10 @@ function getAppSkeletonHtml(productConfig) {
         </div>
 
         <div class="toolbar-btn-group">
+          <button class="toolbar-btn active" id="btn-toggle-guide-line" title="인쇄 가이드 영역 라인 ON/OFF"><span class="tb-icon">📏</span>가이드 ON</button>
+        </div>
+
+        <div class="toolbar-btn-group">
           <button class="toolbar-btn" id="tb-delete" title="삭제"><span class="tb-icon">🗑️</span>삭제</button>
           <button class="toolbar-btn" id="tb-bring-forward" title="앞으로"><span class="tb-icon">🔝</span>앞으로</button>
           <button class="toolbar-btn" id="tb-send-backward" title="뒤로"><span class="tb-icon">🔝</span>뒤로</button>
@@ -64,10 +68,6 @@ function getAppSkeletonHtml(productConfig) {
         <div class="center-canvas-area">
           <div class="boundary-warning-banner" id="boundary-warning">
             ⚠️ 인쇄 허용 범위를 벗어났습니다! (가이드 안쪽 영역만 인쇄됩니다)
-          </div>
-
-          <div class="top-left-guide-toggle-badge" id="btn-toggle-guide-line" title="인쇄 가이드 영역 라인 ON/OFF">
-            <span id="badge-guide-status">📏 가이드 라인 [ON]</span>
           </div>
 
           <div class="scale-dimension-badge" id="scale-dimension-badge">
@@ -503,20 +503,12 @@ export class TShirtCustomizerApp {
     });
 
     // Guide Line Toggle ON/OFF
-    safeAddListener('btn-toggle-guide-line', 'click', () => {
+    safeAddListener('btn-toggle-guide-line', 'click', (e) => {
       const isVisible = editor.toggleGuideBox();
-      const badgeEl = document.getElementById('badge-guide-status');
-      const btnEl = document.getElementById('btn-toggle-guide-line');
-
-      if (badgeEl) {
-        badgeEl.textContent = isVisible ? '📏 가이드 라인 [ON]' : '📏 가이드 라인 [OFF]';
-      }
-      if (btnEl) {
-        if (isVisible) {
-          btnEl.classList.remove('off');
-        } else {
-          btnEl.classList.add('off');
-        }
+      const btn = e.currentTarget;
+      if (btn) {
+        btn.classList.toggle('active', isVisible);
+        btn.innerHTML = `<span class="tb-icon">📏</span>가이드 ${isVisible ? 'ON' : 'OFF'}`;
       }
     });
 

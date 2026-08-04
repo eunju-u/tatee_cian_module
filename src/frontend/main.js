@@ -515,7 +515,7 @@ export class TShirtCustomizerApp {
       if (modal3d) modal3d.classList.add('active');
 
       setTimeout(() => {
-        viewer3d.init(productConfig.glbUrl);
+        viewer3d.init(productConfig.glbUrl, productConfig.garmentType || productConfig.category || 'windbreaker');
 
         // Save current active surface artwork state
         if (surfaceManager.surfaces[surfaceManager.activeSurfaceId]) {

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>[카페24 시뮬레이션] 오버핏 시그니처 반팔 티셔츠</title>
+  
+  <!-- GOOGLE KOREAN WEBFONTS (Nanum Gothic, Nanum Pen, Baemin DoHyeon/Jua/Yeonsung) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&family=Jua&family=Nanum+Gothic:wght@400;700&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;700&family=Yeonsung&display=swap" rel="stylesheet">
+
+  <!-- Customizer Module Stylesheet -->
+  <link rel="stylesheet" href="/dist/customizer.css">
+
+  <style>
+    body {
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f1f5f9;
+      color: #1e293b;
+      margin: 0;
+      padding: 0;
+    }
+
+    .cafe24-header {
+      background: #ffffff;
+      padding: 16px 40px;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cafe24-logo {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .cafe24-badge {
+      background: #eff6ff;
+      color: #2563eb;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .product-detail-container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .product-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 30px;
+      margin-top: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .product-info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .product-purchase-box {
+      background: #ffffff;
+      padding: 24px;
+      border-radius: 16px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+      height: fit-content;
+    }
+
+    .product-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .product-price {
+      font-size: 26px;
+      font-weight: 800;
+      color: #2563eb;
+      margin-bottom: 20px;
+    }
+
+    .cafe24-option-group {
+      margin-bottom: 16px;
+    }
+
+    .cafe24-option-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #64748b;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .cafe24-select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .btn-cafe24-buy {
+      width: 100%;
+      background: #0f172a;
+      color: #ffffff;
+      border: none;
+      padding: 16px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background 0.2s;
+    }
+
+    .btn-cafe24-buy:hover {
+      background: #1e293b;
+    }
+
+    /* Admin Order Debug Box */
+    .admin-debug-box {
+      margin-top: 40px;
+      background: #1e293b;
+      color: #f8fafc;
+      padding: 24px;
+      border-radius: 16px;
+    }
+
+    .admin-debug-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #60a5fa;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Cafe24 Header Simulation -->
+  <div class="cafe24-header">
+    <div class="cafe24-logo">MY SHOP 🛍️</div>
+    <div class="cafe24-badge">카페24 상세페이지 연동 시뮬레이션</div>
+  </div>
+
+  <div class="product-detail-container" data-product-no="TSHIRT_2026_01">
+    
+    <!-- 1. CUSTOMIZER MODULE EMBEDDED AT THE TOP -->
+    <div id="tshirt-customizer-app" data-product-no="TSHIRT_2026_01"></div>
+
+    <!-- 2. PRODUCT INFO & CAFE24 PURCHASE FORM -->
+    <div class="product-info-grid">
+      <div>
+        <h3>상품 설명 및 안내</h3>
+        <p style="color: #64748b; line-height: 1.6;">
+          최고급 20수 코마사 원단을 사용한 오버핏 커스텀 반팔 티셔츠입니다.<br>
+          상단의 <b>TATEE Custom Studio</b>에서 자유롭게 문구, 폰트, 패치를 배치하고 3D 미리보기로 입체감을 확인한 후 구매를 진행해 보세요.
+        </p>
+      </div>
+
+      <div class="product-purchase-box">
+        <div class="product-title">오버핏 시그니처 커스텀 반팔 티셔츠</div>
+        <div class="product-price">29,900원</div>
+
+        <!-- SIZE SELECTOR WITH DYNAMIC PRINT BOUND RECALCULATION -->
+        <div class="cafe24-option-group">
+          <label class="cafe24-option-label">사이즈 선택 (사이즈별 인쇄 허용 가이드 자동 정중앙 조정)</label>
+          <select class="cafe24-select" id="cafe24-size-select">
+            <option value="S">S (46cm × 66cm)</option>
+            <option value="M">M (48cm × 68cm)</option>
+            <option value="L" selected>L (50cm × 70cm) - 기본</option>
+            <option value="XL">XL (53cm × 73cm)</option>
+            <option value="2XL">2XL (56cm × 76cm)</option>
+          </select>
+        </div>
+
+        <div class="cafe24-option-group">
+          <label class="cafe24-option-label">색상 선택</label>
+          <select class="cafe24-select">
+            <option>다크 네이비 (Dark Navy)</option>
+            <option>화이트 (White)</option>
+            <option>블랙 (Black)</option>
+          </select>
+        </div>
+
+        <!-- HIDDEN CAFE24 TEXT OPTION FOR PREVIEW URL -->
+        <div class="cafe24-option-group">
+          <label class="cafe24-option-label">자동 세팅되는 시안 URL (Hidden):</label>
+          <input type="text" id="custom_preview_url" name="option_box_1_text" class="cafe24-select" value="(구매 버튼 클릭 시 자동 입력됨)" readonly style="background:#f8fafc; font-size:11px; color:#2563eb;">
+        </div>
+
+        <!-- CAFE24 BUY NOW BUTTON -->
+        <button type="button" class="btn-cafe24-buy" id="actionBuy">
+          🛒 커스텀 시안 적용하여 바로 구매하기
+        </button>
+      </div>
+    </div>
+
+    <!-- ADMIN WORK ORDER CHECKER -->
+    <div class="admin-debug-box">
+      <div class="admin-debug-title">⚙️ [관리자 확인용] 생성된 주문 및 공장 작업지시서 PDF 실시간 현황</div>
+      <button onclick="fetchWorkOrders()" style="background:#2563eb; color:#fff; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:600;">
+        🔄 최근 생성된 작업지시서 PDF 조회하기
+      </button>
+      <div id="admin-orders-list" style="margin-top:16px; font-size:13px; font-family:monospace;">
+        (구매 버튼을 누르면 이곳에 공장 전달용 PDF 및 시안 URL이 표시됩니다)
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Customizer Bundle JS -->
+  <script src="/dist/customizer.bundle.js"></script>
+
+  <script>
+    // Fail-safe Instant Initialization Helper
+    function runCustomizerInit() {
+      if (window.TShirtCustomizerApp) {
+        window.TShirtCustomizerApp.init({
+          targetId: 'tshirt-customizer-app',
+          apiUrl: '/api/upload-preview',
+          buyButtonSelector: '#actionBuy',
+          hiddenOptionSelector: '#custom_preview_url',
+          sizeSelectSelector: '#cafe24-size-select'
+        });
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', runCustomizerInit);
+    } else {
+      runCustomizerInit();
+    }
+
+    // Admin debug fetch
+    async function fetchWorkOrders() {
+      const container = document.getElementById('admin-orders-list');
+      try {
+        const res = await fetch('/api/work-orders');
+        const data = await res.json();
+        
+        if (data.orders.length === 0) {
+          container.innerHTML = '⚠️ 아직 생성된 작업지시서가 없습니다. 상단에서 시안을 만들고 [구매하기]를 눌러보세요.';
+          return;
+        }
+
+        container.innerHTML = data.orders.map(o => `
+          <div style="background:rgba(255,255,255,0.08); padding:12px; border-radius:8px; margin-bottom:8px;">
+            📌 <b>주문번호:</b> ${o.orderId} | <b>생성시간:</b> ${o.createdAt}<br>
+            🖼️ <b>시안 URL:</b> <a href="${o.previewUrl}" target="_blank" style="color:#60a5fa;">${o.previewUrl}</a><br>
+            📄 <b>공장 작업지시서 PDF:</b> <a href="${o.workOrderPdfUrl}" target="_blank" style="color:#f43f5e; font-weight:bold;">${o.workOrderPdfUrl}</a>
+          </div>
+        `).join('');
+      } catch (err) {
+        container.innerHTML = '❌ 백엔드 서버 연결 실패';
+      }
+    }
+  </script>
+</body>
+</html>

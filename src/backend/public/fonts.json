@@ -1,0 +1,62 @@
+[
+  {
+    "name": "Pretendard (기본 깔끔한 서체)",
+    "family": "Pretendard",
+    "url": ""
+  },
+  {
+    "name": "나눔고딕 (Nanum Gothic)",
+    "family": "Nanum Gothic",
+    "url": "https://fonts.gstatic.com/s/nanumgothic/v23/PNs31Fs82v15-1fd65L8F7qL3sKk.woff2"
+  },
+  {
+    "name": "나눔펜 손글씨 (Nanum Pen Script)",
+    "family": "Nanum Pen Script",
+    "url": "https://fonts.gstatic.com/s/nanumpenscript/v20/8212W3866TfRTo8137M8_fTfJ8U2mAE.woff2"
+  },
+  {
+    "name": "배달의민족 도현체 (BM DoHyeon)",
+    "family": "Do Hyeon",
+    "url": "https://fonts.gstatic.com/s/dohyeon/v19/o-0IIpQ1bXpK0vC1-C0e8A.woff2"
+  },
+  {
+    "name": "배달의민족 주아체 (BM Jua)",
+    "family": "Jua",
+    "url": "https://fonts.gstatic.com/s/jua/v16/U21O96z744yA19_8.woff2"
+  },
+  {
+    "name": "배달의민족 연성체 (BM Yeonsung)",
+    "family": "Yeonsung",
+    "url": "https://fonts.gstatic.com/s/yeonsung/v19/1Pto38nUq3k9uI7j8M0f8A.woff2"
+  },
+  {
+    "name": "SB 어그로체 Light",
+    "family": "SBAggroL",
+    "url": "https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/SBAggroL.woff"
+  },
+  {
+    "name": "OK단단체 Bold (눈누 신규)",
+    "family": "OkDanDan-Bold",
+    "url": "https://cdn.jsdelivr.net/gh/projectnoonnu/2508-2@1.0/OkDanDan-Bold.woff2"
+  },
+  {
+    "name": "Gmarket Sans (지마켓 산스)",
+    "family": "Gmarket Sans",
+    "url": "https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff"
+  },
+  {
+    "name": "Black Han Sans (굵은 제목체)",
+    "family": "Black Han Sans",
+    "url": "https://fonts.gstatic.com/s/blackhansans/v17/ea8A42B3z23p8i071M89BsB4_YptA_0.woff2"
+  },
+  {
+    "name": "Arial (English)",
+    "family": "Arial",
+    "url": ""
+  },
+  {
+    "name": "Impact (Bold)",
+    "family": "Impact",
+    "url": ""
+  }
+]

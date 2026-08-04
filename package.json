@@ -1,0 +1,26 @@
+{
+  "name": "tatee-cian-module",
+  "version": "1.0.0",
+  "description": "2D/3D T-Shirt Customizer Module & Backend API with Cafe24 Integration",
+  "type": "module",
+  "main": "src/backend/server.js",
+  "scripts": {
+    "start:backend": "node src/backend/server.js",
+    "dev:frontend": "vite --config vite.config.js",
+    "build:frontend": "vite build --config vite.config.js",
+    "build": "npm run build:frontend",
+    "start": "npm run start:backend"
+  },
+  "dependencies": {
+    "@google/model-viewer": "^3.5.0",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "fabric": "^5.3.0",
+    "pdfkit": "^0.15.0",
+    "three": "^0.165.0"
+  },
+  "devDependencies": {
+    "vite": "^5.2.11"
+  }
+}

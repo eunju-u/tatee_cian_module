@@ -1,0 +1,52 @@
+{
+  "TSHIRT_2026_01": {
+    "productNo": "TSHIRT_2026_01",
+    "title": "오버핏 시그니처 커스텀 반팔 티셔츠",
+    "shirtWidthCm": 50,
+    "shirtHeightCm": 70,
+    "printWidthCm": 20,
+    "printHeightCm": 40,
+    "printTopCm": 5,
+    "printLeftCm": 10,
+    "glbUrl": "http://localhost:4000/uploads/TripoSR_Garment_1785803024806.glb",
+    "sizes": {
+      "S": {
+        "shirtWidthCm": "46",
+        "shirtHeightCm": "66",
+        "printWidthCm": "26",
+        "printHeightCm": "26"
+      },
+      "M": {
+        "shirtWidthCm": "48",
+        "shirtHeightCm": "68",
+        "printWidthCm": "28",
+        "printHeightCm": "28"
+      },
+      "L": {
+        "shirtWidthCm": "50",
+        "shirtHeightCm": "70",
+        "printWidthCm": "20",
+        "printHeightCm": "40"
+      },
+      "XL": {
+        "shirtWidthCm": "53",
+        "shirtHeightCm": "73",
+        "printWidthCm": "33",
+        "printHeightCm": "33"
+      },
+      "2XL": {
+        "shirtWidthCm": "56",
+        "shirtHeightCm": "76",
+        "printWidthCm": "36",
+        "printHeightCm": "36"
+      }
+    },
+    "surfaces": {
+      "front": "http://localhost:4000/uploads/front_1785807278871_410.png",
+      "back": "http://localhost:4000/uploads/back_1785807283154_707.png",
+      "neck": "http://localhost:4000/uploads/neck_1785807288210_715.png",
+      "left_sleeve": "http://localhost:4000/uploads/lsleeve_1785807293329_658.png",
+      "right_sleeve": "http://localhost:4000/uploads/rsleeve_1785807298537_339.png"
+    }
+  }
+}

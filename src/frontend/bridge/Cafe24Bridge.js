@@ -1,5 +1,6 @@
 /**
- * Cafe24Bridge - Handles seamless integration with Cafe24 store front and Vector SVG Export
+ * Cafe24Bridge - Handles seamless integration with Cafe24 store front
+ * Decouples Cafe24 product metadata (title, price, colors) from local print CM specs.
  */
 export class Cafe24Bridge {
   constructor(config = {}) {
@@ -14,6 +15,28 @@ export class Cafe24Bridge {
     this.initHook();
   }
 
+  /**
+   * Helper to extract Product Info (ID, Title, Price, Colors) provided by external Cafe24 developer page
+   */
+  static getExternalProductInfo(containerEl) {
+    const windowInfo = window.CAFE24_PRODUCT_INFO || {};
+    
+    // Read from data-attributes on customizer div if provided
+    const dataset = containerEl ? containerEl.dataset : {};
+
+    const productId = dataset.productNo || windowInfo.id || windowInfo.productNo || 'TSHIRT_2026_01';
+    const title = dataset.productTitle || windowInfo.title || windowInfo.name || document.querySelector('#product_detail_name, .product_name')?.innerText?.trim() || '';
+    const price = dataset.productPrice || windowInfo.price || document.querySelector('#span_product_price_text, .price')?.innerText?.trim() || '';
+    const colors = dataset.productColors ? dataset.productColors.split(',') : (windowInfo.colors || []);
+
+    return {
+      productId,
+      title,
+      price,
+      colors
+    };
+  }
+
   initHook() {
     document.addEventListener('click', async (e) => {
       const target = e.target.closest(this.buyButtonSelector);
@@ -22,18 +45,16 @@ export class Cafe24Bridge {
       e.preventDefault();
       e.stopPropagation();
 
-      console.log('🛒 Cafe24 Buy button clicked! Intercepting for customizer preview & vector SVG generation...');
+      console.log('🛒 Cafe24 Buy button clicked! Intercepting for customizer preview generation...');
 
       const originalText = target.innerText || target.value;
       this.setButtonLoading(target, true);
 
       try {
-        // 1. Gather all surface canvas data, PNG preview, and Vector SVG
         const surfacesData = this.getSurfacesData ? this.getSurfacesData() : {};
         const primaryPreviewDataUrl = this.getCanvasDataUrl ? this.getCanvasDataUrl() : '';
         const vectorSvgMarkup = this.getVectorSvg ? this.getVectorSvg() : '';
 
-        // 2. Post to backend API (Cloudflare R2 / Local Storage + PDF Generator + Vector SVG)
         const response = await fetch(this.apiUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -53,18 +74,14 @@ export class Cafe24Bridge {
 
         const data = await response.json();
         const previewUrl = data.previewUrl;
-        console.log('✅ Customizer preview & vector SVG uploaded successfully:', previewUrl);
+        console.log('✅ Customizer preview uploaded successfully:', previewUrl);
 
-        // 3. Inject CDN URL into Cafe24 hidden option field
         const hiddenInput = document.querySelector(this.hiddenOptionSelector);
         if (hiddenInput) {
           hiddenInput.value = previewUrl;
           console.log(`✅ Set hidden Cafe24 option field (${this.hiddenOptionSelector}) value to:`, previewUrl);
-        } else {
-          console.warn(`⚠️ Warning: Cafe24 hidden option field (${this.hiddenOptionSelector}) not found on page!`);
         }
 
-        // 4. Resume original Cafe24 buy/cart action
         target.dataset.customizerBypass = 'true';
         this.setButtonLoading(target, false, originalText);
 

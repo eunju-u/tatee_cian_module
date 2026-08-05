@@ -110,55 +110,75 @@ function getAppSkeletonHtml(productConfig) {
 
         <!-- DEFAULT RIGHT PRODUCT INFO & OPTIONS PANEL -->
         <div class="right-panel-drawer active" id="right-product-panel">
-          <div class="panel-header">
-            <div>
-              <div style="font-size:11px; color:#64748b; font-weight:700;">시스루/시그니처 브랜드</div>
-              <div class="panel-title" id="panel-product-title" style="font-size:16px; font-weight:800; color:#0f172a; margin-top:2px;">
-                ${productConfig.title || '17수 라운드 티셔츠 (남녀공용)'}
-              </div>
-            </div>
-            <button class="btn-close-panel" id="btn-close-product-panel">&times;</button>
+          <!-- BRAND NAME -->
+          <div style="font-size:13px; font-weight:700; color:#475569; margin-bottom:6px;">
+            프린트스타
           </div>
 
-          <div style="font-size:20px; font-weight:800; color:#2563eb; margin-bottom:16px;">
-            1개당 29,900원 <span style="font-size:12px; color:#eab308; font-weight:600; margin-left:4px;">★ 4.9 (리뷰 3,188)</span>
+          <!-- PRODUCT TITLE -->
+          <div class="panel-title" id="panel-product-title" style="font-size:18px; font-weight:800; color:#0f172a; line-height:1.3; margin-bottom:12px;">
+            ${productConfig.title || '17수 라운드 티셔츠(남녀공용)'}
           </div>
 
-          <!-- COLOR SWATCH SELECTOR -->
-          <div class="panel-section">
-            <div style="font-size:13px; font-weight:700; color:#0f172a; margin-bottom:10px;">
-              색상 선택 - <span id="label-active-color-name" style="color:#2563eb;">화이트</span>
+          <!-- PRICE ONLY -->
+          <div style="margin-bottom:24px;">
+            <div style="font-size:17px; font-weight:800; color:#0f172a;">1개당 <span style="font-size:20px;">7,900원</span></div>
+          </div>
+
+          <!-- COLOR SELECTOR -->
+          <div class="panel-section" style="margin-bottom:24px;">
+            <div style="font-size:13px; font-weight:700; color:#0f172a; margin-bottom:12px;">
+              색상 - <span id="label-active-color-name" style="font-weight:700; color:#0f172a;">화이트</span>
             </div>
             <div class="garment-color-grid">
-              <div class="garment-color-swatch active" data-color="#ffffff" data-name="화이트" style="background:#ffffff; border:1px solid #cbd5e1;"></div>
-              <div class="garment-color-swatch" data-color="#1e293b" data-name="다크 네이비" style="background:#1e293b;"></div>
-              <div class="garment-color-swatch" data-color="#000000" data-name="블랙" style="background:#000000;"></div>
-              <div class="garment-color-swatch" data-color="#ef4444" data-name="레드" style="background:#ef4444;"></div>
+              <div class="garment-color-swatch active" data-color="#ffffff" data-name="화이트" style="background:#ffffff; border:1px solid #e2e8f0;"></div>
+              <div class="garment-color-swatch" data-color="#a0aec0" data-name="라이트 블루" style="background:#a0aec0;"></div>
+              <div class="garment-color-swatch" data-color="#0f2942" data-name="다크 네이비" style="background:#0f2942;"></div>
+              <div class="garment-color-swatch" data-color="#5a6b5c" data-name="세이지 그린" style="background:#5a6b5c;"></div>
+              <div class="garment-color-swatch" data-color="#d9a76a" data-name="카멜 베이지" style="background:#d9a76a;"></div>
+              <div class="garment-color-swatch" data-color="#b2d8c3" data-name="민트" style="background:#b2d8c3;"></div>
+              <div class="garment-color-swatch" data-color="#332c33" data-name="차콜" style="background:#332c33;"></div>
+              <div class="garment-color-swatch" data-color="#f2f2f2" data-name="라이트 멜란지" style="background:#f2f2f2; border:1px solid #e2e8f0;"></div>
+              <div class="garment-color-swatch" data-color="#1d4ed8" data-name="로얄 블루" style="background:#1d4ed8;"></div>
+              <div class="garment-color-swatch" data-color="#fdf6e3" data-name="크림" style="background:#fdf6e3;"></div>
+              <div class="garment-color-swatch" data-color="#dc2626" data-name="레드" style="background:#dc2626;"></div>
+              <div class="garment-color-swatch" data-color="#6b1d2f" data-name="버건디" style="background:#6b1d2f;"></div>
+              <div class="garment-color-swatch" data-color="#c084fc" data-name="라벤더" style="background:#c084fc;"></div>
+              <div class="garment-color-swatch" data-color="#2d3748" data-name="다크 차콜" style="background:#2d3748;"></div>
+              <div class="garment-color-swatch" data-color="#a0c4ff" data-name="스카이 블루" style="background:#a0c4ff;"></div>
+              <div class="garment-color-swatch" data-color="#556b2f" data-name="카키" style="background:#556b2f;"></div>
               <div class="garment-color-swatch" data-color="#16a34a" data-name="그린" style="background:#16a34a;"></div>
-              <div class="garment-color-swatch" data-color="#2563eb" data-name="블루" style="background:#2563eb;"></div>
-              <div class="garment-color-swatch" data-color="#eab308" data-name="옐로우" style="background:#eab308;"></div>
-              <div class="garment-color-swatch" data-color="#94a3b8" data-name="멜란지 그레이" style="background:#94a3b8;"></div>
+              <div class="garment-color-swatch" data-color="#e60067" data-name="핫핑크" style="background:#e60067;"></div>
+              <div class="garment-color-swatch" data-color="#000000" data-name="블랙" style="background:#000000;"></div>
+              <div class="garment-more-swatch">
+                <div class="rainbow-circle"></div>
+                <div class="more-text">더보기</div>
+              </div>
             </div>
           </div>
 
-          <!-- SIZE SELECTOR BUTTONS -->
-          <div class="panel-section" style="margin-top:16px;">
-            <div style="font-size:13px; font-weight:700; color:#0f172a; margin-bottom:10px;">
-              사이즈 선택 (가이드 영역 자동 가변)
+          <!-- SIZE SELECTOR -->
+          <div class="panel-section" style="margin-bottom:24px;">
+            <div style="font-size:13px; font-weight:700; color:#0f172a; margin-bottom:12px; display:flex; align-items:center; gap:6px;">
+              사이즈 <span style="font-size:11px; background:#e2e8f0; color:#64748b; border-radius:50%; width:16px; height:16px; display:inline-flex; align-items:center; justify-content:center; cursor:pointer;" title="사이즈 안내">?</span>
             </div>
             <div class="garment-size-grid">
               <button class="garment-size-btn" data-size="S">S</button>
               <button class="garment-size-btn" data-size="M">M</button>
               <button class="garment-size-btn active" data-size="L">L</button>
               <button class="garment-size-btn" data-size="XL">XL</button>
-              <button class="garment-size-btn" data-size="2XL">2XL</button>
+              <button class="garment-size-btn" data-size="2XL">2XL<br><span style="font-size:10px; font-weight:500;">+1,000</span></button>
             </div>
           </div>
 
-          <div style="margin-top:auto; padding-top:16px;">
-            <button type="button" class="btn-cafe24-buy" id="btn-right-buy-now" style="width:100%; background:#0f172a; color:#fff; border:none; padding:14px; border-radius:12px; font-weight:800; font-size:15px; cursor:pointer;">
-              🛒 시안 적용하여 바로 구매하기
-            </button>
+          <!-- QUANTITY SELECTOR STEPPER -->
+          <div class="panel-section" style="margin-bottom:24px; display:flex; flex-direction:column;">
+            <div style="font-size:13px; font-weight:700; color:#0f172a; margin-bottom:10px;">수량</div>
+            <div style="display:inline-flex; align-items:center; border:1px solid #cbd5e1; border-radius:8px; overflow:hidden; width:fit-content;">
+              <button type="button" id="btn-qty-minus" style="background:#f8fafc; border:none; padding:8px 16px; font-size:16px; font-weight:700; cursor:pointer; color:#475569;">-</button>
+              <span id="label-qty-val" style="padding:0 16px; font-size:14px; font-weight:700; color:#0f172a;">1</span>
+              <button type="button" id="btn-qty-plus" style="background:#f8fafc; border:none; padding:8px 16px; font-size:16px; font-weight:700; cursor:pointer; color:#475569;">+</button>
+            </div>
           </div>
         </div>
 

@@ -10,16 +10,17 @@ const PORT = process.env.PORT || 4000;
 
 // Middleware
 app.use(cors());
-app.use(bodyParser.json({ limit: '20mb' }));
-app.use(bodyParser.urlencoded({ limit: '20mb', extended: true }));
+app.use(bodyParser.json({ limit: '100mb' }));
+app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }));
 
 // Serve uploaded preview images, generated PDFs, and frontend bundle
 app.use('/uploads', express.static(path.resolve(process.cwd(), 'src/backend/public/uploads')));
 app.use('/pdfs', express.static(path.resolve(process.cwd(), 'src/backend/public/pdfs')));
 app.use('/dist', express.static(path.resolve(process.cwd(), 'dist')));
 
-// Serve Demo HTML page and Admin Dashboard
+// Serve Demo HTML page, Reference, and Admin Dashboard
 app.use('/demo', express.static(path.resolve(process.cwd(), 'demo')));
+app.use('/reference', express.static('/Users/eunju/Desktop/design_handoff_apparel_editor/reference'));
 app.use('/admin', express.static(path.resolve(process.cwd(), 'admin')));
 
 // API Routes

@@ -180,6 +180,88 @@ router.post('/upload-preview', async (req, res) => {
 });
 
 /**
+ * POST /api/customizer/save
+ * Spec Section 3.2: Saves canvas design JSON & rendering preview, returning previewUrl and designId
+ */
+router.post('/customizer/save', async (req, res) => {
+  try {
+    const { productNo, selectedSize, selectedColor, surfacesData, canvasDataUrl, primaryPreview } = req.body;
+    const previewDataUrl = canvasDataUrl || primaryPreview || (surfacesData && surfacesData.front ? surfacesData.front.artworkDataUrl : null);
+
+    if (!previewDataUrl) {
+      return res.status(400).json({ error: 'previewDataUrl or artworkDataUrl is required' });
+    }
+
+    const designId = `DES_${Date.now().toString().slice(-8)}`;
+    const savedMeta = await StorageService.saveImageBase64(previewDataUrl, `preview_${designId}`);
+
+    res.json({
+      success: true,
+      previewUrl: savedMeta.url,
+      designId
+    });
+  } catch (error) {
+    console.error('Error in /api/customizer/save:', error);
+    res.status(500).json({ error: 'Failed to save design' });
+  }
+});
+
+/**
+ * POST /api/customizer/pdf
+ * Spec Section 3.2: Generates factory work-order PDF with actual cm coordinates
+ */
+router.post('/customizer/pdf', async (req, res) => {
+  try {
+    const { orderId, productNo, selectedSize, printWidthCm, printHeightCm, primaryImagePath, surfacesData, customerInfo } = req.body;
+    const workOrderNo = orderId || `WO-${Math.floor(100000 + Math.random() * 900000)}`;
+
+    const prodConfig = productsDb[productNo || 'TSHIRT_2026_01'] || productsDb['TSHIRT_2026_01'];
+    let dynPrintW = printWidthCm || (prodConfig ? prodConfig.printWidthCm : 30);
+    let dynPrintH = printHeightCm || (prodConfig ? prodConfig.printHeightCm : 30);
+
+    const chosenSize = selectedSize || 'L';
+    if (prodConfig && prodConfig.sizes && prodConfig.sizes[chosenSize]) {
+      dynPrintW = parseFloat(prodConfig.sizes[chosenSize].printWidthCm) || dynPrintW;
+      dynPrintH = parseFloat(prodConfig.sizes[chosenSize].printHeightCm) || dynPrintH;
+    }
+
+    const pdfResult = await generateWorkOrderPdf({
+      orderId: workOrderNo,
+      productId: productNo || 'TSHIRT_2026_01',
+      selectedSize: chosenSize,
+      printWidthCm: dynPrintW,
+      printHeightCm: dynPrintH,
+      primaryImagePath: primaryImagePath || null,
+      surfacesData: surfacesData || [],
+      customerInfo: customerInfo || { name: '고객님', phone: '010-0000-0000' }
+    });
+
+    res.json({
+      success: true,
+      pdfUrl: pdfResult.pdfUrl,
+      workOrderNo
+    });
+  } catch (error) {
+    console.error('Error in /api/customizer/pdf:', error);
+    res.status(500).json({ error: 'Failed to generate PDF' });
+  }
+});
+
+/**
+ * GET /api/customizer/orders
+ * Spec Section 3.2: List received orders and PDF work orders
+ */
+router.get('/customizer/orders', async (req, res) => {
+  try {
+    const orders = await StorageService.listWorkOrders();
+    res.json({ orders });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch customizer orders' });
+  }
+});
+
+
+/**
  * GET /api/work-orders
  */
 router.get('/work-orders', async (req, res) => {

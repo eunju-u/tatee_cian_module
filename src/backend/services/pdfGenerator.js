@@ -183,35 +183,118 @@ export class PdfGenerator {
 
           const surfaceLabel = surf.label || surfaceLabels[surf.surfaceId] || surf.surfaceId || '인쇄 면';
 
-          doc.fillColor('#1d4ed8').fontSize(15).text(`📌 [${surfaceLabel}] 인쇄용 순수 시안 원본 & 정밀 명세서`);
-          doc.moveDown(0.8);
-
-          // SECTION A: PURE ISOLATED ARTWORK (Image 2)
-          doc.fillColor('#0f172a').fontSize(11).text(`🎨 1. [${surfaceLabel}] 인쇄용 순수 시안 원본 (독립 이미지)`);
-          doc.moveDown(0.4);
+          doc.fillColor('#1d4ed8').fontSize(15).text(`📌 [${surfaceLabel}] 인쇄용 시안 & 레이어 번호 매핑 명세서`);
+          doc.moveDown(0.6);
 
           const artworkFilePath = surf.artworkFilePath || orderData.isolatedArtworkPath;
-          const artBoxWidth = 200;
-          const artBoxHeight = 220;
-          const artX = (doc.page.width - artBoxWidth) / 2;
-          const artY = doc.y;
+          const elementsMeta = surf.elementsMeta || [];
+
+          const boxWidth = 240;
+          const boxHeight = 210;
+          const leftX = 40;
+          const rightX = 315;
+          const boxY = doc.y + 15;
+
+          // =========================================================================
+          // IMAGE 1 (LEFT): PRINT AREA GUIDELINE ARTWORK
+          // =========================================================================
+          doc.save();
+          doc.fillColor('#0f172a').fontSize(10.5).text(`🎨 1. 인쇄 영역 가이드 적용 시안`, leftX, doc.y);
+          doc.restore();
+
+          doc.save();
+          doc.roundedRect(leftX, boxY, boxWidth, boxHeight, 6)
+             .lineWidth(1)
+             .dash(4, { space: 3 })
+             .strokeColor('#2563eb')
+             .fillAndStroke('#f8fafc', '#2563eb');
+          doc.restore();
+
+          doc.save();
+          doc.fillColor('#2563eb')
+             .fontSize(8)
+             .text(`📐 [인쇄 가이드: 가로 ${dynW.toFixed(1)}cm × 세로 ${dynH.toFixed(1)}cm]`, leftX + 8, boxY + 6);
+          doc.restore();
+
+          const imgPaddingX = leftX + 8;
+          const imgPaddingY = boxY + 22;
+          const innerW = boxWidth - 16;
+          const innerH = boxHeight - 28;
 
           if (artworkFilePath && fs.existsSync(artworkFilePath)) {
-            doc.image(artworkFilePath, artX, artY, {
-              fit: [artBoxWidth, artBoxHeight],
+            doc.image(artworkFilePath, imgPaddingX, imgPaddingY, {
+              fit: [innerW, innerH],
               align: 'center',
               valign: 'center'
             });
           }
 
-          // ADVANCE CURSOR PAST IMAGE 2
-          doc.y = artY + artBoxHeight + 25;
+          // =========================================================================
+          // IMAGE 2 (RIGHT): LAYER NUMBER MAPPING ARTWORK (#1, #2, #3...)
+          // =========================================================================
+          doc.save();
+          doc.fillColor('#0f172a').fontSize(10.5).text(`🏷️ 2. 레이어 번호 매핑 시안 (#1, #2...)`, rightX, doc.y - 12);
+          doc.restore();
 
-          // SECTION B: DETAILED LAYER CM SPECIFICATIONS
-          doc.fillColor('#0f172a').fontSize(11).text(`📐 2. [${surfaceLabel}] 레이어별 정밀 위치 좌표 및 인쇄 크기 명세서`);
+          doc.save();
+          doc.roundedRect(rightX, boxY, boxWidth, boxHeight, 6)
+             .lineWidth(1)
+             .strokeColor('#ff7828')
+             .fillAndStroke('#fff7ed', '#ff7828');
+          doc.restore();
+
+          doc.save();
+          doc.fillColor('#ea580c')
+             .fontSize(8)
+             .text(`📍 [각 요소별 레이어 번호 매핑 위치]`, rightX + 8, boxY + 6);
+          doc.restore();
+
+          const rightImgX = rightX + 8;
+          const rightImgY = boxY + 22;
+
+          if (artworkFilePath && fs.existsSync(artworkFilePath)) {
+            doc.image(artworkFilePath, rightImgX, rightImgY, {
+              fit: [innerW, innerH],
+              align: 'center',
+              valign: 'center'
+            });
+          }
+
+          // Draw Number Badges (#1, #2...) over the artwork elements
+          if (elementsMeta.length > 0) {
+            elementsMeta.forEach((el, idx) => {
+              const elNum = idx + 1;
+              const offsetLeft = el.posCm ? parseFloat(el.posCm.offsetLeft) : 0;
+              const offsetTop = el.posCm ? parseFloat(el.posCm.offsetTop) : 0;
+              const origWidth = el.posCm ? parseFloat(el.posCm.width) : 0;
+              const origHeight = el.posCm ? parseFloat(el.posCm.height) : 0;
+
+              // Calculate element center point relative to print area [0, dynW] x [0, dynH]
+              const centerCmX = Math.max(0, Math.min(dynW, offsetLeft + origWidth / 2));
+              const centerCmY = Math.max(0, Math.min(dynH, offsetTop + origHeight / 2));
+
+              const badgeX = rightImgX + (centerCmX / dynW) * innerW;
+              const badgeY = rightImgY + (centerCmY / dynH) * innerH;
+
+              doc.save();
+              doc.circle(badgeX, badgeY, 9)
+                 .fillAndStroke('#ff7828', '#ffffff');
+              doc.fillColor('#ffffff')
+                 .fontSize(8.5)
+                 .text(`#${elNum}`, badgeX - 8, badgeY - 5, { width: 16, align: 'center' });
+              doc.restore();
+            });
+          }
+
+          // ADVANCE CURSOR BELOW BOTH IMAGES
+          doc.y = boxY + boxHeight + 20;
+
+          // =========================================================================
+          // SECTION 3: DETAILED LAYER CM SPECIFICATIONS WITH MAPPED NUMBERS
+          // =========================================================================
+          doc.fillColor('#0f172a').fontSize(11).text(`📐 3. [${surfaceLabel}] 레이어별 정밀 위치 좌표 및 상세 설명 명세서`);
           doc.moveDown(0.5);
 
-          const elementsMeta = surf.elementsMeta || [];
           if (elementsMeta.length > 0) {
             let elIdx = 0;
             elementsMeta.forEach((el) => {
@@ -224,6 +307,8 @@ export class PdfGenerator {
               if (isText) {
                 doc.fillColor('#2563eb').text(`  - 문구 내용: "${el.text || ''}"`);
                 doc.fillColor('#334155').text(`  - 서체 / 색상: ${el.fontFamily || 'Pretendard'} / ${el.fillColor || '#000000'}`);
+              } else {
+                doc.fillColor('#334155').text(`  - 이미지 요소: 단독 아트워크 / 스티커 디자인`);
               }
 
               const offsetLeft = el.posCm ? parseFloat(el.posCm.offsetLeft) : 0;
@@ -240,14 +325,13 @@ export class PdfGenerator {
               const effectiveWidth = Math.max(0, clipRight - clipLeft);
               const effectiveHeight = Math.max(0, clipBottom - clipTop);
 
-              // Check if object ACTUALLY exceeds guide boundary (allowing 0.1cm tolerance)
               const isClipped = (offsetLeft < -0.1) || (offsetTop < -0.1) || 
                                 (offsetLeft + origWidth > dynW + 0.1) || 
                                 (offsetTop + origHeight > dynH + 0.1);
 
               doc.fillColor('#0f172a');
               doc.text(`  - 위치 좌표 (X, Y): 목 카라 중앙 기준 오른쪽 ${offsetLeft.toFixed(1)} cm, 아래 ${offsetTop.toFixed(1)} cm`);
-              doc.text(`  - 레이어 전체 원본 크기: 가로 ${origWidth.toFixed(1)} cm × 세로 ${origHeight.toFixed(1)} cm`);
+              doc.text(`  - 원본 크기: 가로 ${origWidth.toFixed(1)} cm × 세로 ${origHeight.toFixed(1)} cm`);
 
               if (isClipped) {
                 doc.fillColor('#dc2626').text(`  - ✂️ 가이드 영역 바깥 잘림 반영 [유효 인쇄 크기]: 가로 ${effectiveWidth.toFixed(1)} cm × 세로 ${effectiveHeight.toFixed(1)} cm`);

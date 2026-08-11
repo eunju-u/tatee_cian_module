@@ -4502,7 +4502,6 @@ void main() {
                   <div style="display:flex; align-items:center; gap:6px;">
                     <!-- "직접 선택" COLOR PICKER BUTTON -->
                     <label title="더 많은 색상 직접 선택" style="position:relative; cursor:pointer; display:inline-flex; align-items:center; gap:4px; font-size:11.5px; font-weight:600; color:#334155; background:#ffffff; border:1px solid #cbd5e1; padding:4px 8px; border-radius:6px; transition:all 0.15s;">
-                      <span style="width:12px; height:12px; border-radius:50%; background:conic-gradient(red, yellow, lime, cyan, blue, magenta, red); display:inline-block;"></span>
                       직접 선택
                       <input type="color" id="input-popover-custom-color" value="#17171a" style="opacity:0; position:absolute; width:100%; height:100%; top:0; left:0; cursor:pointer;">
                     </label>

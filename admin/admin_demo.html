@@ -206,7 +206,6 @@
     <div class="admin-tabs">
       <button class="admin-tab-btn active" data-tab="tab-products">📦 상품 & 인쇄 규격 등록</button>
       <button class="admin-tab-btn" data-tab="tab-fonts">🔤 폰트 관리 (눈누 웹폰트)</button>
-
       <button class="admin-tab-btn" data-tab="tab-artworks">🎨 디자인 스티커 관리</button>
       <button class="admin-tab-btn" data-tab="tab-orders">📄 주문 & 공장 PDF 지시서</button>
     </div>
@@ -234,169 +233,271 @@
             <label class="form-label">의류 종류 (Garment Category)</label>
             <select id="select-garment-type" class="form-input" style="background:#fff;">
               <option value="windbreaker">🧥 바람막이 자켓 / 긴소매 아우터</option>
-              <option value="tshirt">👕 반팔 티셔츠</option>
+              <option value="tshirt" selected>👕 반팔 티셔츠</option>
               <option value="hoodie">🧥 후드티 / 맨투맨</option>
             </select>
           </div>
         </div>
 
-        <!-- 3D GARMENT MODEL GENERATION VIA MESHY AI & FILE UPLOAD -->
-        <div class="form-group" style="background:#f1f5f9; padding:16px; border-radius:12px; border:1px solid #cbd5e1;">
-          <label class="form-label">🎲 3D 의류 모델 생성 (Meshy AI 2D-to-3D 또는 .GLB 파일 업로드)</label>
+        <!-- 3D MODEL GLB URL INPUT -->
+        <div class="form-group" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:16px; margin-top:10px;">
+          <label class="form-label" style="display:flex; justify-content:space-between; align-items:center;">
+            <span>🤖 3D 입체 의류 모델 파일 (.GLB) 설정</span>
+            <span id="label-glb-status" style="font-size:12px; color:#2563eb; font-weight:normal;">기본 3D 모델 제공 중</span>
+          </label>
+          <div style="display:flex; gap:10px; align-items:center;">
+            <input type="text" id="url-glb" class="form-input" placeholder="https://.../garment.glb (비워둘 시 기본 T셔츠 3D 제공)" style="flex:1;">
+            <input type="file" id="file-glb" accept=".glb" style="display:none;">
+            <button type="button" onclick="document.getElementById('file-glb').click()" style="padding:10px 14px; background:#fff; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer;">📂 .GLB 파일 직접 업로드</button>
+          </div>
+        </div>
+
+        <hr style="margin:24px 0; border:none; border-top:1px solid #e2e8f0;">
+
+        <h3>🖼️ 면별 2D 누끼 이미지 등록 (앞면, 뒷면, 목뒤, 소매)</h3>
+        <p style="color:#64748b; font-size:13px;">직접 찍은 옷 앞/뒤/소매 사진 파일(.png, .jpg)을 선택하면 바로 이미지 서버로 자동 업로드되어 반영됩니다.</p>
+        
+        <div class="surface-upload-grid">
           
-          <div style="background:#fff; padding:14px; border-radius:10px; border:1px solid #cbd5e1; margin-bottom:12px;">
-            <div style="font-weight:700; font-size:14px; color:#059669; margin-bottom:6px;">🚀 Meshy 3D AI (앞/뒤 다중 사진 연동)</div>
-            <div style="display:flex; gap:10px; align-items:center;">
-              <input type="password" id="input-meshy-key" placeholder="Meshy API Key (Meshy.ai에서 무료 발급)" class="form-input" style="font-size:12px; max-width:320px;">
-              <button type="button" id="btn-generate-meshy" style="background:#059669; color:#fff; border:none; padding:10px 18px; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer;">
-                ✨ Meshy AI로 2D 사진 ➔ 실물 3D 모델 자동 생성
-              </button>
+          <!-- FRONT SURFACE -->
+          <div class="surface-upload-card">
+            <div class="surface-card-title">1. 앞면 (Front) *필수</div>
+            <div class="thumb-preview-box">
+              <img id="thumb-front" src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80" alt="앞면">
             </div>
-            <div style="font-size:12px; color:#64748b; margin-top:6px;">* 등록된 옷의 앞면/뒷면 사진을 Meshy AI가 360도 통합 분석하여 지퍼, 주머니, 원단 주름이 표현된 실물 3D .GLB 모델을 완성합니다.</div>
+            <input type="file" id="file-front" accept="image/*" class="form-input" style="font-size:11px;">
+            <input type="hidden" id="url-front" value="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80">
           </div>
 
-          <div style="display:flex; gap:12px; align-items:center;">
-            <label style="font-size:12px; font-weight:600; color:#475569;">또는 기존 .GLB 3D 파일 수동 선택:</label>
-            <input type="file" id="file-glb" accept=".glb" class="form-input" style="background:#fff; font-size:12px; max-width:280px;">
-            <input type="hidden" id="url-glb" value="">
-            <span id="label-glb-status" style="font-size:12px; color:#2563eb; font-weight:700;"></span>
+          <!-- BACK SURFACE -->
+          <div class="surface-upload-card">
+            <div class="surface-card-title">2. 뒷면 (Back)</div>
+            <div class="thumb-preview-box">
+              <img id="thumb-back" src="https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=600&q=80" alt="뒷면">
+            </div>
+            <input type="file" id="file-back" accept="image/*" class="form-input" style="font-size:11px;">
+            <input type="hidden" id="url-back" value="https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=600&q=80">
           </div>
+
+          <!-- NECK SURFACE -->
+          <div class="surface-upload-card">
+            <div class="surface-card-title">3. 목뒤 (Back Neck)</div>
+            <div class="thumb-preview-box">
+              <img id="thumb-neck" src="" alt="목뒤 (선택)">
+            </div>
+            <input type="file" id="file-neck" accept="image/*" class="form-input" style="font-size:11px;">
+            <input type="hidden" id="url-neck" value="">
+          </div>
+
+          <!-- LEFT SLEEVE SURFACE -->
+          <div class="surface-upload-card">
+            <div class="surface-card-title">4. 왼소매 (Left Sleeve)</div>
+            <div class="thumb-preview-box">
+              <img id="thumb-left-sleeve" src="" alt="왼소매 (선택)">
+            </div>
+            <input type="file" id="file-left-sleeve" accept="image/*" class="form-input" style="font-size:11px;">
+            <input type="hidden" id="url-left-sleeve" value="">
+          </div>
+
+          <!-- RIGHT SLEEVE SURFACE -->
+          <div class="surface-upload-card">
+            <div class="surface-card-title">5. 오른소매 (Right Sleeve)</div>
+            <div class="thumb-preview-box">
+              <img id="thumb-right-sleeve" src="" alt="오른소매 (선택)">
+            </div>
+            <input type="file" id="file-right-sleeve" accept="image/*" class="form-input" style="font-size:11px;">
+            <input type="hidden" id="url-right-sleeve" value="">
+          </div>
+
+          <!-- LEFT SIDE SURFACE -->
+          <div class="surface-upload-card">
+            <div class="surface-card-title">6. 좌측 (Left Side)</div>
+            <div class="thumb-preview-box">
+              <img id="thumb-left-side" src="" alt="좌측 (선택)">
+            </div>
+            <input type="file" id="file-left-side" accept="image/*" class="form-input" style="font-size:11px;">
+            <input type="hidden" id="url-left-side" value="">
+          </div>
+
+          <!-- RIGHT SIDE SURFACE -->
+          <div class="surface-upload-card">
+            <div class="surface-card-title">7. 우측 (Right Side)</div>
+            <div class="thumb-preview-box">
+              <img id="thumb-right-side" src="" alt="우측 (선택)">
+            </div>
+            <input type="file" id="file-right-side" accept="image/*" class="form-input" style="font-size:11px;">
+            <input type="hidden" id="url-right-side" value="">
+          </div>
+
+          <!-- HEM SURFACE -->
+          <div class="surface-upload-card">
+            <div class="surface-card-title">8. 밑단 (Hem)</div>
+            <div class="thumb-preview-box">
+              <img id="thumb-hem" src="" alt="밑단 (선택)">
+            </div>
+            <input type="file" id="file-hem" accept="image/*" class="form-input" style="font-size:11px;">
+            <input type="hidden" id="url-hem" value="">
+          </div>
+
+          <!-- POCKET SURFACE -->
+          <div class="surface-upload-card">
+            <div class="surface-card-title">9. 포켓 (Pocket)</div>
+            <div class="thumb-preview-box">
+              <img id="thumb-pocket" src="" alt="포켓 (선택)">
+            </div>
+            <input type="file" id="file-pocket" accept="image/*" class="form-input" style="font-size:11px;">
+            <input type="hidden" id="url-pocket" value="">
+          </div>
+
+          <!-- HOOD SURFACE -->
+          <div class="surface-upload-card">
+            <div class="surface-card-title">10. 후드 (Hood)</div>
+            <div class="thumb-preview-box">
+              <img id="thumb-hood" src="" alt="후드 (선택)">
+            </div>
+            <input type="file" id="file-hood" accept="image/*" class="form-input" style="font-size:11px;">
+            <input type="hidden" id="url-hood" value="">
+          </div>
+
         </div>
 
-        <!-- MULTI SURFACE BACKGROUND MOCKUPS -->
-        <div class="form-group">
-          <label class="form-label">📌 각 옷 면별 배경 누끼 목업 이미지 파일 직접 선택 업로드 (앞면/뒷면/목뒤/왼팔/오른팔)</label>
-          <div class="surface-upload-grid">
-            
-            <div class="surface-upload-card">
-              <div class="surface-card-title">앞면 (Front)</div>
-              <div class="thumb-preview-box">
-                <img id="thumb-front" src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80" alt="앞면">
-              </div>
-              <input type="file" id="file-front" accept="image/*" class="form-input" style="font-size:11px;">
-              <input type="hidden" id="url-front" value="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80">
-            </div>
+        <hr style="margin:30px 0; border:none; border-top:1px solid #e2e8f0;">
 
-            <div class="surface-upload-card">
-              <div class="surface-card-title">뒷면 (Back)</div>
-              <div class="thumb-preview-box">
-                <img id="thumb-back" src="https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=600&q=80" alt="뒷면">
-              </div>
-              <input type="file" id="file-back" accept="image/*" class="form-input" style="font-size:11px;">
-              <input type="hidden" id="url-back" value="https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=600&q=80">
-            </div>
+        <h3>📏 사이즈별 가슴 단면(CM) & 인쇄 가이드 박스(CM) 설정</h3>
+        <p style="color:#64748b; font-size:13px;">사이즈에 따라 옷 크기와 인쇄 가능 영역의 실제 단면 비율을 세밀하게 조절하세요.</p>
 
-            <div class="surface-upload-card">
-              <div class="surface-card-title">목뒤 (Neck)</div>
-              <div class="thumb-preview-box">
-                <img id="thumb-neck" src="" alt="목뒤 (선택)">
-              </div>
-              <input type="file" id="file-neck" accept="image/*" class="form-input" style="font-size:11px;">
-              <input type="hidden" id="url-neck" value="">
-            </div>
-
-            <div class="surface-upload-card">
-              <div class="surface-card-title">왼팔 (Left Sleeve)</div>
-              <div class="thumb-preview-box">
-                <img id="thumb-left-sleeve" src="" alt="왼팔 (선택)">
-              </div>
-              <input type="file" id="file-left-sleeve" accept="image/*" class="form-input" style="font-size:11px;">
-              <input type="hidden" id="url-left-sleeve" value="">
-            </div>
-
-            <div class="surface-upload-card">
-              <div class="surface-card-title">오른팔 (Right Sleeve)</div>
-              <div class="thumb-preview-box">
-                <img id="thumb-right-sleeve" src="" alt="오른팔 (선택)">
-              </div>
-              <input type="file" id="file-right-sleeve" accept="image/*" class="form-input" style="font-size:11px;">
-              <input type="hidden" id="url-right-sleeve" value="">
-            </div>
-
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">📐 사이즈별 물리적 규격 설정 (CM 단위)</label>
+        <div class="size-grid">
           
-          <div class="size-grid">
-            
-            <div class="size-card">
-              <div class="size-card-title">S 사이즈</div>
-              <div style="font-size:11px; color:#64748b; margin-bottom:6px;">옷 전체 크기 (CM)</div>
-              <input type="number" id="s-w" class="form-input" value="46" placeholder="가로" style="margin-bottom:4px;">
-              <input type="number" id="s-h" class="form-input" value="66" placeholder="세로" style="margin-bottom:12px;">
-              
-              <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:6px;">인쇄 가이드 영역 (CM)</div>
-              <input type="number" id="s-pw" class="form-input" value="26" placeholder="가로">
-              <input type="number" id="s-ph" class="form-input" value="26" placeholder="세로">
+          <!-- S -->
+          <div class="size-card">
+            <div class="size-card-title">S 사이즈</div>
+            <div class="form-group">
+              <label style="font-size:11px; font-weight:700;">가슴 단면(cm)</label>
+              <input type="number" id="s-w" class="form-input" value="46">
             </div>
-
-            <div class="size-card">
-              <div class="size-card-title">M 사이즈</div>
-              <div style="font-size:11px; color:#64748b; margin-bottom:6px;">옷 전체 크기 (CM)</div>
-              <input type="number" id="m-w" class="form-input" value="48" placeholder="가로" style="margin-bottom:4px;">
-              <input type="number" id="m-h" class="form-input" value="68" placeholder="세로" style="margin-bottom:12px;">
-              
-              <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:6px;">인쇄 가이드 영역 (CM)</div>
-              <input type="number" id="m-pw" class="form-input" value="28" placeholder="가로">
-              <input type="number" id="m-ph" class="form-input" value="28" placeholder="세로">
+            <div class="form-group">
+              <label style="font-size:11px; font-weight:700;">총장(cm)</label>
+              <input type="number" id="s-h" class="form-input" value="66">
             </div>
-
-            <div class="size-card" style="border:2px solid #2563eb; background:#eff6ff;">
-              <div class="size-card-title">L 사이즈 (기본)</div>
-              <div style="font-size:11px; color:#64748b; margin-bottom:6px;">옷 전체 크기 (CM)</div>
-              <input type="number" id="l-w" class="form-input" value="50" placeholder="가로" style="margin-bottom:4px;">
-              <input type="number" id="l-h" class="form-input" value="70" placeholder="세로" style="margin-bottom:12px;">
-              
-              <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:6px;">인쇄 가이드 영역 (CM)</div>
-              <input type="number" id="l-pw" class="form-input" value="30" placeholder="가로">
-              <input type="number" id="l-ph" class="form-input" value="30" placeholder="세로">
+            <div class="form-group">
+              <label style="font-size:11px; font-weight:700; color:#2563eb;">인쇄 가로(cm)</label>
+              <input type="number" id="s-pw" class="form-input" value="26">
             </div>
-
-            <div class="size-card">
-              <div class="size-card-title">XL 사이즈</div>
-              <div style="font-size:11px; color:#64748b; margin-bottom:6px;">옷 전체 크기 (CM)</div>
-              <input type="number" id="xl-w" class="form-input" value="53" placeholder="가로" style="margin-bottom:4px;">
-              <input type="number" id="xl-h" class="form-input" value="73" placeholder="세로" style="margin-bottom:12px;">
-              
-              <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:6px;">인쇄 가이드 영역 (CM)</div>
-              <input type="number" id="xl-pw" class="form-input" value="33" placeholder="가로">
-              <input type="number" id="xl-ph" class="form-input" value="33" placeholder="세로">
+            <div class="form-group">
+              <label style="font-size:11px; font-weight:700; color:#2563eb;">인쇄 세로(cm)</label>
+              <input type="number" id="s-ph" class="form-input" value="26">
             </div>
-
-            <div class="size-card">
-              <div class="size-card-title">2XL 사이즈</div>
-              <div style="font-size:11px; color:#64748b; margin-bottom:6px;">옷 전체 크기 (CM)</div>
-              <input type="number" id="xxl-w" class="form-input" value="56" placeholder="가로" style="margin-bottom:4px;">
-              <input type="number" id="xxl-h" class="form-input" value="76" placeholder="세로" style="margin-bottom:12px;">
-              
-              <div style="font-size:11px; color:#2563eb; font-weight:700; margin-bottom:6px;">인쇄 가이드 영역 (CM)</div>
-              <input type="number" id="xxl-pw" class="form-input" value="36" placeholder="가로">
-              <input type="number" id="xxl-ph" class="form-input" value="36" placeholder="세로">
-            </div>
-
           </div>
+
+          <!-- M -->
+          <div class="size-card">
+            <div class="size-card-title">M 사이즈</div>
+            <div class="form-group">
+              <label style="font-size:11px; font-weight:700;">가슴 단면(cm)</label>
+              <input type="number" id="m-w" class="form-input" value="48">
+            </div>
+            <div class="form-group">
+              <label style="font-size:11px; font-weight:700;">총장(cm)</label>
+              <input type="number" id="m-h" class="form-input" value="68">
+            </div>
+            <div class="form-group">
+              <label style="font-size:11px; font-weight:700; color:#2563eb;">인쇄 가로(cm)</label>
+              <input type="number" id="m-pw" class="form-input" value="28">
+            </div>
+            <div class="form-group">
+              <label style="font-size:11px; font-weight:700; color:#2563eb;">인쇄 세로(cm)</label>
+              <input type="number" id="m-ph" class="form-input" value="28">
+            </div>
+          </div>
+
+          <!-- L (기준) -->
+          <div class="size-card" style="border:2px solid #2563eb; background:#eff6ff;">
+            <div class="size-card-title">L 사이즈 (기본)</div>
+            <div class="form-group">
+              <label style="font-size:11px; font-weight:700;">가슴 단면(cm)</label>
+              <input type="number" id="l-w" class="form-input" value="50">
+            </div>
+            <div class="form-group">
+              <label style="font-size:11px; font-weight:700;">총장(cm)</label>
+              <input type="number" id="l-h" class="form-input" value="70">
+            </div>
+            <div class="form-group">
+              <label style="font-size:11px; font-weight:700; color:#2563eb;">인쇄 가로(cm)</label>
+              <input type="number" id="l-pw" class="form-input" value="30">
+            </div>
+            <div class="form-group">
+              <label style="font-size:11px; font-weight:700; color:#2563eb;">인쇄 세로(cm)</label>
+              <input type="number" id="l-ph" class="form-input" value="30">
+            </div>
+          </div>
+
+          <!-- XL -->
+          <div class="size-card">
+            <div class="size-card-title">XL 사이즈</div>
+            <div class="form-group">
+              <label style="font-size:11px; font-weight:700;">가슴 단면(cm)</label>
+              <input type="number" id="xl-w" class="form-input" value="53">
+            </div>
+            <div class="form-group">
+              <label style="font-size:11px; font-weight:700;">총장(cm)</label>
+              <input type="number" id="xl-h" class="form-input" value="73">
+            </div>
+            <div class="form-group">
+              <label style="font-size:11px; font-weight:700; color:#2563eb;">인쇄 가로(cm)</label>
+              <input type="number" id="xl-pw" class="form-input" value="33">
+            </div>
+            <div class="form-group">
+              <label style="font-size:11px; font-weight:700; color:#2563eb;">인쇄 세로(cm)</label>
+              <input type="number" id="xl-ph" class="form-input" value="33">
+            </div>
+          </div>
+
+          <!-- 2XL -->
+          <div class="size-card">
+            <div class="size-card-title">2XL 사이즈</div>
+            <div class="form-group">
+              <label style="font-size:11px; font-weight:700;">가슴 단면(cm)</label>
+              <input type="number" id="xxl-w" class="form-input" value="56">
+            </div>
+            <div class="form-group">
+              <label style="font-size:11px; font-weight:700;">총장(cm)</label>
+              <input type="number" id="xxl-h" class="form-input" value="76">
+            </div>
+            <div class="form-group">
+              <label style="font-size:11px; font-weight:700; color:#2563eb;">인쇄 가로(cm)</label>
+              <input type="number" id="xxl-pw" class="form-input" value="36">
+            </div>
+            <div class="form-group">
+              <label style="font-size:11px; font-weight:700; color:#2563eb;">인쇄 세로(cm)</label>
+              <input type="number" id="xxl-ph" class="form-input" value="36">
+            </div>
+          </div>
+
         </div>
 
-        <button type="submit" class="btn-submit">💾 카페24 상품 데이터베이스에 설정 저장하기</button>
+        <button type="submit" class="btn-submit">💾 카페24 DB 및 products.json에 설정 저장하기</button>
+
       </form>
 
       <hr style="margin:40px 0; border:none; border-top:1px solid #e2e8f0;">
 
-      <h3>📋 등록된 카페24 상품 데이터베이스 목록</h3>
+      <h3>📋 현재 DB에 등록된 카페24 상품 목록</h3>
       <table class="admin-table">
         <thead>
           <tr>
             <th>상품 번호</th>
             <th>상품명</th>
-            <th>3D 의류 모델 (.GLB)</th>
-            <th>L 사이즈 옷 크기</th>
-            <th>L 사이즈 인쇄 가이드 크기</th>
-            <th>등록된 인쇄면</th>
+            <th>3D 의류 모델 상태</th>
+            <th>기준 의류 크기(L)</th>
+            <th>기준 인쇄 가능 가이드 영역</th>
+            <th>등록된 면 정보</th>
           </tr>
         </thead>
-        <tbody id="registered-products-list"></tbody>
+        <tbody id="registered-products-list">
+          <tr>
+            <td colspan="6" style="text-align:center; color:#64748b;">로딩 중...</td>
+          </tr>
+        </tbody>
       </table>
     </div>
 
@@ -459,6 +560,23 @@
   </div>
 
   <script>
+    // 1. Tab switching event handler (Positioned at top for guaranteed execution)
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+          btn.classList.add('active');
+          const targetTabId = btn.dataset.tab;
+          const targetTab = document.getElementById(targetTabId);
+          if (targetTab) {
+            targetTab.classList.add('active');
+          }
+        });
+      });
+    });
+
     async function uploadImageFile(file, prefix) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -495,7 +613,7 @@
         if (file) {
           try {
             const uploadedUrl = await uploadImageFile(file, prefix);
-            hiddenInput.value = uploadedUrl;
+            if (hiddenInput) hiddenInput.value = uploadedUrl;
             if (thumbImg) thumbImg.src = uploadedUrl;
             alert('✅ 이미지 파일이 성공적으로 업로드되었습니다!');
           } catch (err) {
@@ -510,193 +628,35 @@
     setupFilePicker('file-neck', 'url-neck', 'thumb-neck', 'neck');
     setupFilePicker('file-left-sleeve', 'url-left-sleeve', 'thumb-left-sleeve', 'lsleeve');
     setupFilePicker('file-right-sleeve', 'url-right-sleeve', 'thumb-right-sleeve', 'rsleeve');
+    setupFilePicker('file-left-side', 'url-left-side', 'thumb-left-side', 'lside');
+    setupFilePicker('file-right-side', 'url-right-side', 'thumb-right-side', 'rside');
+    setupFilePicker('file-hem', 'url-hem', 'thumb-hem', 'hem');
+    setupFilePicker('file-pocket', 'url-pocket', 'thumb-pocket', 'pocket');
+    setupFilePicker('file-hood', 'url-hood', 'thumb-hood', 'hood');
 
-    document.getElementById('file-glb').addEventListener('change', async (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        try {
-          const uploadedUrl = await uploadImageFile(file, '3dmodel');
-          document.getElementById('url-glb').value = uploadedUrl;
-          document.getElementById('label-glb-status').textContent = `✅ 등록됨 (${file.name})`;
-          alert('✅ 3D 의류 모델 파일(.glb)이 성공적으로 업로드되었습니다!');
-        } catch (err) {
-          alert('❌ 3D 모델 파일 업로드 중 오류가 발생했습니다.');
+    const fileGlbEl = document.getElementById('file-glb');
+    if (fileGlbEl) {
+      fileGlbEl.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          try {
+            const uploadedUrl = await uploadImageFile(file, '3dmodel');
+            if (document.getElementById('url-glb')) document.getElementById('url-glb').value = uploadedUrl;
+            if (document.getElementById('label-glb-status')) document.getElementById('label-glb-status').textContent = `✅ 등록됨 (${file.name})`;
+            alert('✅ 3D 의류 모델 파일(.glb)이 성공적으로 업로드되었습니다!');
+          } catch (err) {
+            alert('❌ 3D 모델 파일 업로드 중 오류가 발생했습니다.');
+          }
         }
-      }
-    });
-
-    // TripoSR AI 2D to 3D Conversion Button
-    document.getElementById('btn-generate-tripo').addEventListener('click', async () => {
-      const frontImgUrl = document.getElementById('url-front').value;
-      if (!frontImgUrl) {
-        alert('⚠️ 앞면 옷 이미지 URL이 필요합니다.');
-        return;
-      }
-
-      const btn = document.getElementById('btn-generate-tripo');
-      btn.innerText = '⏳ TripoSR AI로 3D 모델 변환 중...';
-      btn.disabled = true;
-
-      try {
-        const res = await fetch('/api/ai/generate-3d-tripo', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            imageBase64: frontImgUrl,
-            filenamePrefix: 'tripo_garment'
-          })
-        });
-
-        const data = await res.json();
-        if (data.success && data.glbUrl) {
-          document.getElementById('url-glb').value = data.glbUrl;
-          document.getElementById('label-glb-status').textContent = `✨ TripoSR AI 생성 완료!`;
-
-          // AUTO-SAVE GLB URL & GARMENT TYPE TO PRODUCTS DB IMMEDIATELY!
-          const currentProdNo = document.getElementById('input-product-no').value || 'TSHIRT_2026_01';
-          const garmentTypeVal = document.getElementById('select-garment-type') ? document.getElementById('select-garment-type').value : 'windbreaker';
-
-          const savePayload = {
-            productNo: currentProdNo,
-            title: document.getElementById('input-title').value,
-            glbUrl: data.glbUrl,
-            garmentType: garmentTypeVal,
-            shirtWidthCm: document.getElementById('l-w').value,
-            shirtHeightCm: document.getElementById('l-h').value,
-            printWidthCm: document.getElementById('l-pw').value,
-            printHeightCm: document.getElementById('l-ph').value,
-            sizes: {
-              S: { shirtWidthCm: document.getElementById('s-w').value, shirtHeightCm: document.getElementById('s-h').value, printWidthCm: document.getElementById('s-pw').value, printHeightCm: document.getElementById('s-ph').value },
-              M: { shirtWidthCm: document.getElementById('m-w').value, shirtHeightCm: document.getElementById('m-h').value, printWidthCm: document.getElementById('m-pw').value, printHeightCm: document.getElementById('m-ph').value },
-              L: { shirtWidthCm: document.getElementById('l-w').value, shirtHeightCm: document.getElementById('l-h').value, printWidthCm: document.getElementById('l-pw').value, printHeightCm: document.getElementById('l-ph').value },
-              XL: { shirtWidthCm: document.getElementById('xl-w').value, shirtHeightCm: document.getElementById('xl-h').value, printWidthCm: document.getElementById('xl-pw').value, printHeightCm: document.getElementById('xl-ph').value },
-              '2XL': { shirtWidthCm: document.getElementById('xxl-w').value, shirtHeightCm: document.getElementById('xxl-h').value, printWidthCm: document.getElementById('xxl-pw').value, printHeightCm: document.getElementById('xxl-ph').value }
-            },
-            surfaces: {
-              front: document.getElementById('url-front').value,
-              back: document.getElementById('url-back').value,
-              neck: document.getElementById('url-neck').value,
-              left_sleeve: document.getElementById('url-left-sleeve').value,
-              right_sleeve: document.getElementById('url-right-sleeve').value
-            }
-          };
-
-          await fetch('/api/admin/products', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(savePayload)
-          });
-
-          alert('✨ TripoSR AI 3D 모델이 자동 생성되어 products.json에 실시간 즉시 저장 연동되었습니다!');
-        } else {
-          alert('❌ 3D 생성 실패: ' + (data.error || '알 수 없는 오류'));
-        }
-      } catch (err) {
-        alert('❌ TripoSR AI 실행 오류: ' + err.message);
-      } finally {
-        btn.innerText = '🤖 TripoSR (로컬 무료)로 3D 모델 생성';
-        btn.disabled = false;
-      }
-    });
-
-    // Meshy 3D Multi-View AI Generation Button
-    document.getElementById('btn-generate-meshy').addEventListener('click', async () => {
-      const apiKey = document.getElementById('input-meshy-key').value.trim();
-      const frontImgUrl = document.getElementById('url-front').value;
-      const backImgUrl = document.getElementById('url-back').value;
-
-      if (!frontImgUrl) {
-        alert('⚠️ 앞면 옷 이미지 URL이 필요합니다.');
-        return;
-      }
-
-      if (!apiKey) {
-        alert('⚠️ Meshy API Key를 입력해 주세요. (Meshy.ai에서 무료 가입 후 발급받을 수 있습니다)');
-        return;
-      }
-
-      const btn = document.getElementById('btn-generate-meshy');
-      btn.innerText = '⏳ Meshy 3D AI로 앞/뒤 사진 통합 분석 중...';
-      btn.disabled = true;
-
-      try {
-        const res = await fetch('/api/ai/generate-3d-meshy', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            apiKey,
-            frontImage: frontImgUrl,
-            backImage: backImgUrl
-          })
-        });
-
-        const data = await res.json();
-        if (data.success && data.glbUrl) {
-          document.getElementById('url-glb').value = data.glbUrl;
-          document.getElementById('label-glb-status').textContent = `✨ Meshy 3D 생성 완료!`;
-
-          // AUTO-SAVE GLB URL & GARMENT TYPE TO PRODUCTS DB IMMEDIATELY!
-          const currentProdNo = document.getElementById('input-product-no').value || 'TSHIRT_2026_01';
-          const garmentTypeVal = document.getElementById('select-garment-type') ? document.getElementById('select-garment-type').value : 'windbreaker';
-
-          const savePayload = {
-            productNo: currentProdNo,
-            title: document.getElementById('input-title').value,
-            glbUrl: data.glbUrl,
-            garmentType: garmentTypeVal,
-            shirtWidthCm: document.getElementById('l-w').value,
-            shirtHeightCm: document.getElementById('l-h').value,
-            printWidthCm: document.getElementById('l-pw').value,
-            printHeightCm: document.getElementById('l-ph').value,
-            sizes: {
-              S: { shirtWidthCm: document.getElementById('s-w').value, shirtHeightCm: document.getElementById('s-h').value, printWidthCm: document.getElementById('s-pw').value, printHeightCm: document.getElementById('s-ph').value },
-              M: { shirtWidthCm: document.getElementById('m-w').value, shirtHeightCm: document.getElementById('m-h').value, printWidthCm: document.getElementById('m-pw').value, printHeightCm: document.getElementById('m-ph').value },
-              L: { shirtWidthCm: document.getElementById('l-w').value, shirtHeightCm: document.getElementById('l-h').value, printWidthCm: document.getElementById('l-pw').value, printHeightCm: document.getElementById('l-ph').value },
-              XL: { shirtWidthCm: document.getElementById('xl-w').value, shirtHeightCm: document.getElementById('xl-h').value, printWidthCm: document.getElementById('xl-pw').value, printHeightCm: document.getElementById('xl-ph').value },
-              '2XL': { shirtWidthCm: document.getElementById('xxl-w').value, shirtHeightCm: document.getElementById('xxl-h').value, printWidthCm: document.getElementById('xxl-pw').value, printHeightCm: document.getElementById('xxl-ph').value }
-            },
-            surfaces: {
-              front: document.getElementById('url-front').value,
-              back: document.getElementById('url-back').value,
-              neck: document.getElementById('url-neck').value,
-              left_sleeve: document.getElementById('url-left-sleeve').value,
-              right_sleeve: document.getElementById('url-right-sleeve').value
-            }
-          };
-
-          await fetch('/api/admin/products', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(savePayload)
-          });
-
-          alert('🎉 Meshy 3D AI가 앞/뒤 사진을 통합하여 최상급 3D .GLB 모델 생성을 완료하고 실시간 동기화했습니다!');
-        } else {
-          alert('❌ Meshy 3D 생성 실패: ' + (data.error || '알 수 없는 오류'));
-        }
-      } catch (err) {
-        alert('❌ Meshy 3D AI 실행 오류: ' + err.message);
-      } finally {
-        btn.innerText = '🚀 Meshy AI로 앞/뒤 사진 ➔ 최상급 3D 생성';
-        btn.disabled = false;
-      }
-    });
-
-    document.querySelectorAll('.admin-tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-
-        btn.classList.add('active');
-        document.getElementById(btn.dataset.tab).classList.add('active');
       });
-    });
+    }
 
     async function loadFonts() {
       try {
         const res = await fetch('/api/admin/fonts');
         const data = await res.json();
         const container = document.getElementById('fonts-list-container');
+        if (!container) return;
 
         container.innerHTML = data.fonts.map(f => `
           <li><b>${f.name}</b> (family: <code style="color:#2563eb;">${f.family}</code>) ${f.url ? `<span style="color:#64748b; font-size:11px;">[웹폰트 로드됨]</span>` : `<span style="color:#16a34a; font-size:11px;">[기본 시스템 폰트]</span>`}</li>
@@ -706,32 +666,36 @@
       }
     }
 
-    document.getElementById('form-register-font').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const name = document.getElementById('input-font-name').value;
-      const family = document.getElementById('input-font-family').value;
-      const url = document.getElementById('input-font-url').value;
+    const fontFormEl = document.getElementById('form-register-font');
+    if (fontFormEl) {
+      fontFormEl.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('input-font-name').value;
+        const family = document.getElementById('input-font-family').value;
+        const url = document.getElementById('input-font-url').value;
 
-      const res = await fetch('/api/admin/fonts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, family, url })
+        const res = await fetch('/api/admin/fonts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, family, url })
+        });
+
+        if (res.ok) {
+          alert('✅ 폰트가 에디터 선택 목록에 성공적으로 추가 등록되었습니다!');
+          document.getElementById('input-font-name').value = '';
+          document.getElementById('input-font-family').value = '';
+          document.getElementById('input-font-url').value = '';
+          loadFonts();
+        }
       });
-
-      if (res.ok) {
-        alert('✅ 폰트가 에디터 선택 목록에 성공적으로 추가 등록되었습니다!');
-        document.getElementById('input-font-name').value = '';
-        document.getElementById('input-font-family').value = '';
-        document.getElementById('input-font-url').value = '';
-        loadFonts();
-      }
-    });
+    }
 
     async function loadProducts() {
       try {
         const res = await fetch('/api/admin/products');
         const data = await res.json();
         const tbody = document.getElementById('registered-products-list');
+        if (!tbody) return;
 
         tbody.innerHTML = data.products.map(p => `
           <tr>
@@ -747,19 +711,22 @@
         if (data.products && data.products.length > 0) {
           const p = data.products[0];
 
-          // Populate basic product info fields on load
           if (document.getElementById('input-product-no')) document.getElementById('input-product-no').value = p.productNo || 'TSHIRT_2026_01';
           if (document.getElementById('input-title')) document.getElementById('input-title').value = p.title || '';
           if (document.getElementById('url-glb')) document.getElementById('url-glb').value = p.glbUrl || '';
 
-          // Populate surface image URLs & thumbnail image previews on load!
           if (p.surfaces) {
             const surfaceMap = {
               front: { hidden: 'url-front', thumb: 'thumb-front' },
               back: { hidden: 'url-back', thumb: 'thumb-back' },
               neck: { hidden: 'url-neck', thumb: 'thumb-neck' },
               left_sleeve: { hidden: 'url-left-sleeve', thumb: 'thumb-left-sleeve' },
-              right_sleeve: { hidden: 'url-right-sleeve', thumb: 'thumb-right-sleeve' }
+              right_sleeve: { hidden: 'url-right-sleeve', thumb: 'thumb-right-sleeve' },
+              left_side: { hidden: 'url-left-side', thumb: 'thumb-left-side' },
+              right_side: { hidden: 'url-right-side', thumb: 'thumb-right-side' },
+              hem_detail: { hidden: 'url-hem', thumb: 'thumb-hem' },
+              pocket_detail: { hidden: 'url-pocket', thumb: 'thumb-pocket' },
+              hood_detail: { hidden: 'url-hood', thumb: 'thumb-hood' }
             };
 
             for (const [surfKey, fieldIds] of Object.entries(surfaceMap)) {
@@ -771,7 +738,6 @@
             }
           }
 
-          // Populate size & guide dimensions on load!
           if (p.sizes) {
             const szMap = { S: 's', M: 'm', L: 'l', XL: 'xl', '2XL': 'xxl' };
             for (const [szKey, keyPrefix] of Object.entries(szMap)) {
@@ -790,80 +756,92 @@
       }
     }
 
-    document.getElementById('form-register-product').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const payload = {
-        productNo: document.getElementById('input-product-no').value,
-        title: document.getElementById('input-title').value,
-        glbUrl: document.getElementById('url-glb').value,
-        shirtWidthCm: document.getElementById('l-w').value,
-        shirtHeightCm: document.getElementById('l-h').value,
-        printWidthCm: document.getElementById('l-pw').value,
-        printHeightCm: document.getElementById('l-ph').value,
-        sizes: {
-          S: { shirtWidthCm: document.getElementById('s-w').value, shirtHeightCm: document.getElementById('s-h').value, printWidthCm: document.getElementById('s-pw').value, printHeightCm: document.getElementById('s-ph').value },
-          M: { shirtWidthCm: document.getElementById('m-w').value, shirtHeightCm: document.getElementById('m-h').value, printWidthCm: document.getElementById('m-pw').value, printHeightCm: document.getElementById('m-ph').value },
-          L: { shirtWidthCm: document.getElementById('l-w').value, shirtHeightCm: document.getElementById('l-h').value, printWidthCm: document.getElementById('l-pw').value, printHeightCm: document.getElementById('l-ph').value },
-          XL: { shirtWidthCm: document.getElementById('xl-w').value, shirtHeightCm: document.getElementById('xl-h').value, printWidthCm: document.getElementById('xl-pw').value, printHeightCm: document.getElementById('xl-ph').value },
-          '2XL': { shirtWidthCm: document.getElementById('xxl-w').value, shirtHeightCm: document.getElementById('xxl-h').value, printWidthCm: document.getElementById('xxl-pw').value, printHeightCm: document.getElementById('xxl-ph').value }
-        },
-        surfaces: {
-          front: document.getElementById('url-front').value,
-          back: document.getElementById('url-back').value,
-          neck: document.getElementById('url-neck').value,
-          left_sleeve: document.getElementById('url-left-sleeve').value,
-          right_sleeve: document.getElementById('url-right-sleeve').value
-        }
-      };
+    const prodFormEl = document.getElementById('form-register-product');
+    if (prodFormEl) {
+      prodFormEl.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const payload = {
+          productNo: document.getElementById('input-product-no').value,
+          title: document.getElementById('input-title').value,
+          glbUrl: document.getElementById('url-glb') ? document.getElementById('url-glb').value : '',
+          shirtWidthCm: document.getElementById('l-w').value,
+          shirtHeightCm: document.getElementById('l-h').value,
+          printWidthCm: document.getElementById('l-pw').value,
+          printHeightCm: document.getElementById('l-ph').value,
+          sizes: {
+            S: { shirtWidthCm: document.getElementById('s-w').value, shirtHeightCm: document.getElementById('s-h').value, printWidthCm: document.getElementById('s-pw').value, printHeightCm: document.getElementById('s-ph').value },
+            M: { shirtWidthCm: document.getElementById('m-w').value, shirtHeightCm: document.getElementById('m-h').value, printWidthCm: document.getElementById('m-pw').value, printHeightCm: document.getElementById('m-ph').value },
+            L: { shirtWidthCm: document.getElementById('l-w').value, shirtHeightCm: document.getElementById('l-h').value, printWidthCm: document.getElementById('l-pw').value, printHeightCm: document.getElementById('l-ph').value },
+            XL: { shirtWidthCm: document.getElementById('xl-w').value, shirtHeightCm: document.getElementById('xl-h').value, printWidthCm: document.getElementById('xl-pw').value, printHeightCm: document.getElementById('xl-ph').value },
+            '2XL': { shirtWidthCm: document.getElementById('xxl-w').value, shirtHeightCm: document.getElementById('xxl-h').value, printWidthCm: document.getElementById('xxl-pw').value, printHeightCm: document.getElementById('xxl-ph').value }
+          },
+          surfaces: {
+            front: document.getElementById('url-front') ? document.getElementById('url-front').value : '',
+            back: document.getElementById('url-back') ? document.getElementById('url-back').value : '',
+            neck: document.getElementById('url-neck') ? document.getElementById('url-neck').value : '',
+            left_sleeve: document.getElementById('url-left-sleeve') ? document.getElementById('url-left-sleeve').value : '',
+            right_sleeve: document.getElementById('url-right-sleeve') ? document.getElementById('url-right-sleeve').value : '',
+            left_side: document.getElementById('url-left-side') ? document.getElementById('url-left-side').value : '',
+            right_side: document.getElementById('url-right-side') ? document.getElementById('url-right-side').value : '',
+            hem_detail: document.getElementById('url-hem') ? document.getElementById('url-hem').value : '',
+            pocket_detail: document.getElementById('url-pocket') ? document.getElementById('url-pocket').value : '',
+            hood_detail: document.getElementById('url-hood') ? document.getElementById('url-hood').value : ''
+          }
+        };
 
-      const res = await fetch('/api/admin/products', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (res.ok) {
-        alert('✅ 카페24 상품 데이터베이스 및 products.json에 성공적으로 영구 저장되었습니다!');
-        loadProducts();
-      }
-    });
-
-    document.getElementById('form-register-art').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const title = document.getElementById('input-art-title').value;
-      const fileInput = document.getElementById('file-art');
-
-      if (!fileInput.files[0]) return;
-
-      try {
-        const uploadedUrl = await uploadImageFile(fileInput.files[0], 'art');
-        const res = await fetch('/api/admin/artworks', {
+        const res = await fetch('/api/admin/products', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title, url: uploadedUrl })
+          body: JSON.stringify(payload)
         });
 
         if (res.ok) {
-          alert('✅ 스티커가 성공적으로 추가 업로드되었습니다!');
-          fileInput.value = '';
-          document.getElementById('input-art-title').value = '';
-          loadArtworks();
+          alert('✅ 카페24 상품 데이터베이스 및 products.json에 성공적으로 영구 저장되었습니다!');
+          loadProducts();
         }
-      } catch (err) {
-        alert('❌ 스티커 파일 업로드 중 오류가 발생했습니다.');
-      }
-    });
+      });
+    }
+
+    const artFormEl = document.getElementById('form-register-art');
+    if (artFormEl) {
+      artFormEl.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title = document.getElementById('input-art-title').value;
+        const fileInput = document.getElementById('file-art');
+
+        if (!fileInput.files[0]) return;
+
+        try {
+          const uploadedUrl = await uploadImageFile(fileInput.files[0], 'art');
+          const res = await fetch('/api/admin/artworks', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, url: uploadedUrl })
+          });
+
+          if (res.ok) {
+            alert('✅ 스티커가 성공적으로 추가 업로드되었습니다!');
+            fileInput.value = '';
+            document.getElementById('input-art-title').value = '';
+            loadArtworks();
+          }
+        } catch (err) {
+          alert('❌ 스티커 파일 업로드 중 오류가 발생했습니다.');
+        }
+      });
+    }
 
     async function loadArtworks() {
       try {
         const res = await fetch('/api/admin/artworks');
         const data = await res.json();
         const container = document.getElementById('artworks-container');
+        if (!container) return;
 
         container.innerHTML = data.artworks.map(art => `
-          <div class="art-card">
-            <img src="${art.url}" alt="${art.title}">
+          <div class="art-card" style="background:#f1f5f9; padding:10px; border-radius:10px; text-align:center;">
+            <img src="${art.url}" alt="${art.title}" style="width:60px; height:60px; object-fit:contain;">
             <div style="font-size:11px; margin-top:6px; color:#64748b;">${art.title}</div>
           </div>
         `).join('');
@@ -874,11 +852,13 @@
 
     async function loadAdminOrders() {
       const container = document.getElementById('admin-orders-list-table');
+      if (!container) return;
+
       try {
         const res = await fetch('/api/work-orders');
         const data = await res.json();
 
-        if (data.orders.length === 0) {
+        if (!data.orders || data.orders.length === 0) {
           container.innerHTML = '<div style="color:#64748b;">아직 생성된 주문이 없습니다.</div>';
           return;
         }
@@ -891,7 +871,7 @@
                 <th>상품 ID / 사이즈</th>
                 <th>생성 일시</th>
                 <th>시안 미리보기</th>
-                <th>공장 PDF 작업지시서</th>
+                <th>공장 전달용 PDF 지시서</th>
                 <th>인쇄용 벡터 (SVG/AI) 원본</th>
               </tr>
             </thead>

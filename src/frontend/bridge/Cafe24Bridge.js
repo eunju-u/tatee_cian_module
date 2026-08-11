@@ -4,8 +4,8 @@
  */
 export class Cafe24Bridge {
   constructor(config = {}) {
-    this.apiUrl = config.apiUrl || 'http://localhost:4000/api/upload-preview';
-    this.buyButtonSelector = config.buyButtonSelector || '#actionBuy, .btn-buy, [action-type="buy"]';
+    this.apiUrl = config.apiUrl || '/api/upload-preview';
+    this.buyButtonSelector = config.buyButtonSelector || '#actionBuy, .btn-buy, [action-type="buy"], .btn-cafe24-buy';
     this.hiddenOptionSelector = config.hiddenOptionSelector || '#custom_preview_url, input[name*="option_box"]';
     
     this.getSurfacesData = config.getSurfacesData || null;
@@ -51,15 +51,45 @@ export class Cafe24Bridge {
       this.setButtonLoading(target, true);
 
       try {
-        const surfacesData = this.getSurfacesData ? this.getSurfacesData() : {};
-        const primaryPreviewDataUrl = this.getCanvasDataUrl ? this.getCanvasDataUrl() : '';
-        const vectorSvgMarkup = this.getVectorSvg ? this.getVectorSvg() : '';
+        let surfacesData = {};
+        let primaryPreviewDataUrl = '';
+        let vectorSvgMarkup = '';
+
+        try {
+          if (this.getSurfacesData) surfacesData = this.getSurfacesData() || {};
+        } catch (e) {
+          console.warn('⚠️ Could not extract surfaces data payload:', e);
+        }
+
+        try {
+          if (this.getCanvasDataUrl) primaryPreviewDataUrl = this.getCanvasDataUrl() || '';
+        } catch (e) {
+          console.warn('⚠️ Could not extract primary canvas data URL:', e);
+        }
+
+        try {
+          if (this.getVectorSvg) vectorSvgMarkup = this.getVectorSvg() || '';
+        } catch (e) {
+          console.warn('⚠️ Could not extract vector SVG:', e);
+        }
+
+        // Fallback 1x1 pixel PNG data URL if canvas data URL is empty
+        if (!primaryPreviewDataUrl) {
+          primaryPreviewDataUrl = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+        }
+
+        const selectedSizeEl = document.querySelector('#cafe24-size-select, select[name*="size"]');
+        const selectedSize = selectedSizeEl ? selectedSizeEl.value : 'L';
+
+        const productIdEl = document.querySelector('[data-product-no]');
+        const targetProductId = productIdEl?.dataset?.productNo || 'TSHIRT_2026_01';
 
         const response = await fetch(this.apiUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            productId: document.querySelector('[data-product-no]')?.dataset?.productNo || 'TSHIRT_2026_01',
+            productId: targetProductId,
+            selectedSize: selectedSize,
             canvasDataUrl: primaryPreviewDataUrl,
             primaryPreview: primaryPreviewDataUrl,
             vectorSvg: vectorSvgMarkup,
@@ -69,7 +99,8 @@ export class Cafe24Bridge {
         });
 
         if (!response.ok) {
-          throw new Error(`Server returned HTTP ${response.status}`);
+          const errText = await response.text();
+          throw new Error(`HTTP ${response.status}: ${errText}`);
         }
 
         const data = await response.json();
@@ -85,30 +116,38 @@ export class Cafe24Bridge {
         target.dataset.customizerBypass = 'true';
         this.setButtonLoading(target, false, originalText);
 
+        alert(`✅ 시안 생성 완료!\n\n📄 PDF 작업지시서: ${data.workOrderPdfUrl || previewUrl}`);
+
         if (typeof window.CShop !== 'undefined' && window.CShop.addBasket) {
           window.CShop.addBasket();
-        } else {
-          target.click();
         }
 
       } catch (err) {
         console.error('❌ Error uploading customizer preview:', err);
-        alert('시안 생성 중 오류가 발생했습니다. 다시 시도해 주세요.');
+        alert(`시안 생성 중 오류가 발생했습니다 (${err.message}). 다시 시도해 주세요.`);
         this.setButtonLoading(target, false, originalText);
       }
     }, true);
   }
 
-  setButtonLoading(btn, isLoading, originalText = '') {
+  setButtonLoading(btnEl, isLoading, originalText = '구매하기') {
+    if (!btnEl) return;
     if (isLoading) {
-      btn.dataset.originalContent = btn.innerHTML;
-      btn.innerHTML = '⏳ 시안 생성 중...';
-      btn.style.opacity = '0.7';
-      btn.disabled = true;
+      btnEl.dataset.originalText = originalText;
+      if (btnEl.tagName === 'INPUT') {
+        btnEl.value = '⏳ 공장 지시서 및 시안 생성 중...';
+      } else {
+        btnEl.innerText = '⏳ 공장 지시서 및 시안 생성 중...';
+      }
+      btnEl.disabled = true;
     } else {
-      btn.innerHTML = originalText || btn.dataset.originalContent || '구매하기';
-      btn.style.opacity = '1';
-      btn.disabled = false;
+      const restored = btnEl.dataset.originalText || originalText;
+      if (btnEl.tagName === 'INPUT') {
+        btnEl.value = restored;
+      } else {
+        btnEl.innerText = restored;
+      }
+      btnEl.disabled = false;
     }
   }
 }

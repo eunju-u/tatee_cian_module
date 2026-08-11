@@ -18,9 +18,11 @@ export class CanvasEditor {
     });
 
     this.onBoundaryExceeded = options.onBoundaryExceeded;
+    this.onWarningBoundary = options.onWarningBoundary || options.onBoundaryExceeded;
     this.onScalingDimensions = options.onScalingDimensions;
     this.onCanvasModified = options.onCanvasModified;
     this.onSelectionChanged = options.onSelectionChanged;
+    this.isGuideVisible = true;
 
     this.initCanvas();
     this.initGuidelineBox();
@@ -29,6 +31,8 @@ export class CanvasEditor {
 
     this.historyManager = new HistoryManager(this);
     this.historyManager.saveState();
+    const el = document.getElementById(canvasElementId);
+    if (el) el.fabricEditor = this;
   }
 
   initCanvas() {
@@ -83,6 +87,8 @@ export class CanvasEditor {
       selection: true,
       controlsAboveOverlay: true
     });
+    const domCanvas = document.getElementById(this.canvasElementId);
+    if (domCanvas) domCanvas.fabric = this.canvas;
   }
 
   initGuidelineBox() {
@@ -244,6 +250,16 @@ export class CanvasEditor {
       this.canvas.renderAll();
     });
 
+    this.canvas.on('object:rotating', (e) => {
+      const target = e.target;
+      if (!target || target.isGuideline) return;
+      this.checkBoundaryExceeded(target);
+      if (this.onSelectionChanged) {
+        const meta = this.dimensionMapper.getObjectPhysicalMeta(target);
+        this.onSelectionChanged(meta, target);
+      }
+    });
+
     this.canvas.on('object:scaling', (e) => {
       const target = e.target;
       if (!target || target.isGuideline) return;
@@ -258,7 +274,13 @@ export class CanvasEditor {
 
     this.canvas.on('object:modified', (e) => {
       this.hideSnapLines();
-      this.checkBoundaryExceeded(e.target);
+      if (e.target && !e.target.isGuideline) {
+        this.checkBoundaryExceeded(e.target);
+        if (this.onSelectionChanged) {
+          const meta = this.dimensionMapper.getObjectPhysicalMeta(e.target);
+          this.onSelectionChanged(meta, e.target);
+        }
+      }
       this.historyManager.saveState();
       if (this.onCanvasModified) this.onCanvasModified();
       if (this.onScalingDimensions) this.onScalingDimensions(null);
@@ -279,26 +301,43 @@ export class CanvasEditor {
     });
   }
 
-  checkBoundaryExceeded(target) {
-    if (!target || target.isGuideline) return;
-
-    const bound = target.getBoundingRect();
+  checkBoundaryExceeded() {
+    const objects = this.canvas.getObjects().filter(obj => !obj.isGuideline);
     const g = this.printBox;
+    if (!g) return;
 
-    const isExceeded = (
-      bound.left < g.left ||
-      bound.top < g.top ||
-      (bound.left + bound.width) > (g.left + g.width) ||
-      (bound.top + bound.height) > (g.top + g.height)
-    );
+    const outObjects = objects.filter(obj => {
+      const bound = obj.getBoundingRect();
+      return (
+        bound.left < g.left ||
+        bound.top < g.top ||
+        (bound.left + bound.width) > (g.left + g.width) ||
+        (bound.top + bound.height) > (g.top + g.height)
+      );
+    });
 
+    const isExceeded = outObjects.length > 0;
+    const count = outObjects.length;
+    const outNames = outObjects.map(o => {
+      let raw = o._rawHorizontalText || o.text;
+      if (raw) {
+        let cleaned = String(raw).replace(/[\r\n\t]+/g, ' ').trim();
+        if (cleaned.length > 15) cleaned = cleaned.substring(0, 15) + '...';
+        return cleaned;
+      }
+      return o.type === 'image' ? '이미지' : '레이어';
+    });
+
+    if (this.onWarningBoundary) {
+      this.onWarningBoundary(isExceeded, count, outNames);
+    }
     if (this.onBoundaryExceeded) {
-      this.onBoundaryExceeded(isExceeded);
+      this.onBoundaryExceeded(isExceeded, count, outNames);
     }
   }
 
   handleSelection(e) {
-    const selected = e.selected ? e.selected[0] : null;
+    const selected = (e && e.selected && e.selected.length > 0) ? e.selected[0] : (e && e.target ? e.target : this.canvas.getActiveObject());
     if (selected && !selected.isGuideline && this.onSelectionChanged) {
       const meta = this.dimensionMapper.getObjectPhysicalMeta(selected);
       this.onSelectionChanged(meta, selected);
@@ -407,71 +446,95 @@ export class CanvasEditor {
   alignLeft() {
     const active = this.canvas.getActiveObject();
     if (active) {
-      active.set('left', this.printBox.left);
+      const bound = active.getBoundingRect(true, true);
+      const deltaX = this.printBox.left - bound.left;
+      active.set('left', active.left + deltaX);
       active.setCoords();
       this.canvas.renderAll();
       this.historyManager.saveState();
+      this.checkBoundaryExceeded();
     }
   }
 
   alignCenterH() {
     const active = this.canvas.getActiveObject();
     if (active) {
-      const centerX = this.printBox.left + (this.printBox.width / 2) - (active.getScaledWidth() / 2);
-      active.set('left', centerX);
+      const bound = active.getBoundingRect(true, true);
+      const targetCenterX = this.printBox.left + (this.printBox.width / 2);
+      const currentCenterX = bound.left + (bound.width / 2);
+      const deltaX = targetCenterX - currentCenterX;
+      active.set('left', active.left + deltaX);
       active.setCoords();
       this.canvas.renderAll();
       this.historyManager.saveState();
+      this.checkBoundaryExceeded();
     }
   }
 
   alignRight() {
     const active = this.canvas.getActiveObject();
     if (active) {
-      const rightX = this.printBox.left + this.printBox.width - active.getScaledWidth();
-      active.set('left', rightX);
+      const bound = active.getBoundingRect(true, true);
+      const targetRight = this.printBox.left + this.printBox.width;
+      const currentRight = bound.left + bound.width;
+      const deltaX = targetRight - currentRight;
+      active.set('left', active.left + deltaX);
       active.setCoords();
       this.canvas.renderAll();
       this.historyManager.saveState();
+      this.checkBoundaryExceeded();
     }
   }
 
   alignTop() {
     const active = this.canvas.getActiveObject();
     if (active) {
-      active.set('top', this.printBox.top);
+      const bound = active.getBoundingRect(true, true);
+      const deltaY = this.printBox.top - bound.top;
+      active.set('top', active.top + deltaY);
       active.setCoords();
       this.canvas.renderAll();
       this.historyManager.saveState();
+      this.checkBoundaryExceeded();
     }
   }
 
   alignCenterV() {
     const active = this.canvas.getActiveObject();
     if (active) {
-      const centerY = this.printBox.top + (this.printBox.height / 2) - (active.getScaledHeight() / 2);
-      active.set('top', centerY);
+      const bound = active.getBoundingRect(true, true);
+      const targetCenterY = this.printBox.top + (this.printBox.height / 2);
+      const currentCenterY = bound.top + (bound.height / 2);
+      const deltaY = targetCenterY - currentCenterY;
+      active.set('top', active.top + deltaY);
       active.setCoords();
       this.canvas.renderAll();
       this.historyManager.saveState();
+      this.checkBoundaryExceeded();
     }
   }
 
   alignBottom() {
     const active = this.canvas.getActiveObject();
     if (active) {
-      const bottomY = this.printBox.top + this.printBox.height - active.getScaledWidth();
-      active.set('top', bottomY);
+      const bound = active.getBoundingRect(true, true);
+      const targetBottom = this.printBox.top + this.printBox.height;
+      const currentBottom = bound.top + bound.height;
+      const deltaY = targetBottom - currentBottom;
+      active.set('top', active.top + deltaY);
       active.setCoords();
       this.canvas.renderAll();
       this.historyManager.saveState();
+      this.checkBoundaryExceeded();
     }
   }
 
   addText(textStr = '텍스트', options = {}) {
     const textObj = new fabric.IText(textStr, {
-      left: this.printBox.left + (this.printBox.width / 2) - 60,
-      top: this.printBox.top + (this.printBox.height / 2) - 20,
+      left: this.printBox.left + (this.printBox.width / 2),
+      top: this.printBox.top + (this.printBox.height / 2),
+      originX: 'center',
+      originY: 'center',
       fontFamily: options.fontFamily || 'Pretendard',
       fill: options.fill || '#eab308',
       fontSize: options.fontSize || 36,
@@ -490,6 +553,7 @@ export class CanvasEditor {
     this.canvas.add(textObj);
     this.canvas.setActiveObject(textObj);
     this.canvas.renderAll();
+    this.handleSelection({ target: textObj, selected: [textObj] });
     return textObj;
   }
 
@@ -499,6 +563,7 @@ export class CanvasEditor {
 
     if (props.text !== undefined && active.type.includes('text')) active.set('text', props.text);
     if (props.fontFamily !== undefined) active.set('fontFamily', props.fontFamily);
+    if (props.fontSize !== undefined) active.set('fontSize', parseFloat(props.fontSize));
     if (props.fill !== undefined) active.set('fill', props.fill);
     if (props.fontWeight !== undefined) active.set('fontWeight', props.fontWeight);
     if (props.fontStyle !== undefined) active.set('fontStyle', props.fontStyle);
@@ -507,8 +572,16 @@ export class CanvasEditor {
     if (props.charSpacing !== undefined) active.set('charSpacing', parseInt(props.charSpacing, 10));
     if (props.lineHeight !== undefined) active.set('lineHeight', parseFloat(props.lineHeight));
     if (props.textAlign !== undefined) active.set('textAlign', props.textAlign);
-    if (props.angle !== undefined) active.set('angle', parseInt(props.angle, 10));
+    if (props.angle !== undefined) {
+      if (active.originX !== 'center' || active.originY !== 'center') {
+        const center = active.getCenterPoint();
+        active.set({ originX: 'center', originY: 'center', left: center.x, top: center.y });
+      }
+      active.set('angle', parseInt(props.angle, 10));
+    }
+    if (props.scaleX !== undefined) active.set('scaleX', parseFloat(props.scaleX));
 
+    active.setCoords();
     this.canvas.renderAll();
 
     if (this.onSelectionChanged) {
@@ -530,10 +603,52 @@ export class CanvasEditor {
       this.canvas.add(img);
       this.canvas.setActiveObject(img);
       this.canvas.renderAll();
+      this.handleSelection({ target: img, selected: [img] });
     }, { crossOrigin: 'anonymous' });
   }
 
+  toggleGuideBox() {
+    this.isGuideVisible = !this.isGuideVisible;
+    const guide = this.canvas.getObjects().find(o => o.isGuideline) || this.guidelineBox;
+    if (guide) guide.set('visible', this.isGuideVisible);
+    if (this.guidelineBox) this.guidelineBox.set('visible', this.isGuideVisible);
+    this.canvas.renderAll();
+    return this.isGuideVisible;
+  }
+
+  fitObjectsInsideGuide() {
+    const objects = this.canvas.getObjects().filter(o => !o.isGuideline);
+    const g = this.printBox;
+    if (!g) return;
+
+    objects.forEach(obj => {
+      const bound = obj.getBoundingRect();
+      let newLeft = obj.left;
+      let newTop = obj.top;
+
+      if (bound.left < g.left) {
+        newLeft += (g.left - bound.left);
+      } else if (bound.left + bound.width > g.left + g.width) {
+        newLeft -= (bound.left + bound.width - (g.left + g.width));
+      }
+
+      if (bound.top < g.top) {
+        newTop += (g.top - bound.top);
+      } else if (bound.top + bound.height > g.top + g.height) {
+        newTop -= (bound.top + bound.height - (g.top + g.height));
+      }
+
+      obj.set({ left: newLeft, top: newTop });
+      obj.setCoords();
+    });
+
+    this.canvas.renderAll();
+    this.checkBoundaryExceeded();
+    this.historyManager.saveState();
+  }
+
   toDataURL(multiplier = 2) {
+    const wasVisible = this.isGuideVisible !== false;
     // Temporarily hide guidelines and discard active selection so exported artwork is clean without guide lines
     if (this.guidelineBox) this.guidelineBox.set('visible', false);
     if (this.snapLineX) this.snapLineX.set('visible', false);
@@ -550,7 +665,7 @@ export class CanvasEditor {
     });
 
     // Restore guidelines and selection
-    if (this.guidelineBox) this.guidelineBox.set('visible', true);
+    if (this.guidelineBox) this.guidelineBox.set('visible', wasVisible);
     if (activeObj) this.canvas.setActiveObject(activeObj);
     this.canvas.renderAll();
 
@@ -558,9 +673,10 @@ export class CanvasEditor {
   }
 
   toSVG() {
-    this.guidelineBox.set('visible', false);
-    this.snapLineX.set('visible', false);
-    this.snapLineY.set('visible', false);
+    const wasVisible = this.isGuideVisible !== false;
+    if (this.guidelineBox) this.guidelineBox.set('visible', false);
+    if (this.snapLineX) this.snapLineX.set('visible', false);
+    if (this.snapLineY) this.snapLineY.set('visible', false);
 
     const printWidthMm = (this.printBox.printWidthCm || 30) * 10;
     const printHeightMm = (this.printBox.printHeightCm || 30) * 10;
@@ -585,7 +701,7 @@ export class CanvasEditor {
   </g>
 </svg>`;
 
-    this.guidelineBox.set('visible', true);
+    if (this.guidelineBox) this.guidelineBox.set('visible', wasVisible);
     return printGuideSvg1to1;
   }
 
@@ -595,11 +711,16 @@ export class CanvasEditor {
 
   loadCanvasJson(json, callback) {
     this.canvas.loadFromJSON(json, () => {
-      if (!this.canvas.getObjects().some(o => o.isGuideline)) {
+      let guide = this.canvas.getObjects().find(o => o.isGuideline);
+      if (!guide) {
         this.canvas.add(this.guidelineBox);
         this.canvas.add(this.snapLineX);
         this.canvas.add(this.snapLineY);
+        guide = this.guidelineBox;
       }
+      const isVisible = this.isGuideVisible !== false;
+      if (guide) guide.set('visible', isVisible);
+      if (this.guidelineBox) this.guidelineBox.set('visible', isVisible);
       this.canvas.renderAll();
       if (callback) callback();
     });

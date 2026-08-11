@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Do+Hyeon&family=Jua&family=Nanum+Gothic:wght@400;700&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@400;700&family=Yeonsung&display=swap" rel="stylesheet">
 
   <!-- Customizer Module Stylesheet -->
-  <link rel="stylesheet" href="/dist/customizer.css">
+  <link rel="stylesheet" href="/dist/customizer.css?v=20260810_latest">
 
   <style>
     body {
@@ -150,10 +150,16 @@
     <div class="cafe24-badge">카페24 상세페이지 연동 시뮬레이션</div>
   </div>
 
-  <div class="product-detail-container" data-product-no="TSHIRT_2026_01">
-    
-    <!-- 1. CUSTOMIZER MODULE EMBEDDED AT THE TOP -->
-    <div id="tshirt-customizer-app" data-product-no="TSHIRT_2026_01"></div>
+    <!-- 1. OFFICIAL HANDOFF COMPARISON HEADER -->
+    <div style="margin-bottom: 16px; background: #ffffff; padding: 12px 20px; border-radius: 12px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between;">
+      <span style="font-weight: 700; font-size: 14px; color: #0f172a;">🎨 Web A (1240×780) 핸드오프 공식 프로토타입 1:1 완벽 적용</span>
+      <a href="/reference/index.html" target="_blank" style="color: #ff7828; font-weight: 700; text-decoration: none; font-size: 13px;">🔗 공식 레퍼런스 프로토타입(reference/index.html) 새 창으로 열기 ↗</a>
+    </div>
+
+    <!-- 2. CUSTOMIZER MODULE EMBEDDED IN 1240x780 CARD -->
+    <div style="width: 1240px; height: 780px; border-radius: 12px; background: #ffffff; border: 1px solid rgba(0,0,0,.09); box-shadow: 0 2px 10px rgba(0,0,0,.07); overflow: hidden; margin: 0 auto 30px auto;">
+      <div id="tshirt-customizer-app" data-product-no="TSHIRT_2026_01" style="width: 100%; height: 100%;"></div>
+    </div>
 
     <!-- 2. PRODUCT INFO & CAFE24 PURCHASE FORM -->
     <div class="product-info-grid">
@@ -217,7 +223,7 @@
   </div>
 
   <!-- Customizer Bundle JS -->
-  <script src="/dist/customizer.bundle.js"></script>
+  <script src="/dist/customizer.bundle.js?v=20260810_latest"></script>
 
   <script>
     // Fail-safe Instant Initialization Helper

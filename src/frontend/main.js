@@ -773,8 +773,16 @@ export class TShirtCustomizerApp {
     });
 
     // Bind Tools Rail
-    safeAddListener('rail-btn-text', 'click', () => {
-      editor.addText('SUMMER 2026', { fontSize: 28, fontFamily: "'Pretendard Variable',Pretendard,sans-serif" });
+    safeAddListener('rail-btn-text', 'click', (e) => {
+      if (e) e.stopPropagation();
+      const textObj = editor.addText('SUMMER 2026', { fontSize: 28, fontFamily: "'Pretendard Variable',Pretendard,sans-serif" });
+      setTimeout(() => {
+        const txtInp = document.getElementById('input-text-content');
+        if (txtInp) {
+          txtInp.focus();
+          txtInp.select();
+        }
+      }, 50);
     });
 
     safeAddListener('rail-btn-image', 'click', () => {
@@ -1159,7 +1167,7 @@ export class TShirtCustomizerApp {
 
       const isInsideRightPanel = e.target.closest('.right-edit-panel');
       const isInsideLeftLayers = e.target.closest('.left-floating-layers');
-      const isInsideLeftRail = e.target.closest('.left-tool-rail');
+      const isInsideLeftRail = e.target.closest('.left-tools-rail') || e.target.closest('.left-tool-rail');
       const isInsideTopBar = e.target.closest('.top-action-bar');
       const isInsideFabricCanvas = e.target.closest('.canvas-container');
       const isPopover = e.target.closest('.surface-popover-card') || e.target.closest('#side-popover') || e.target.closest('#btn-toggle-side-popover');

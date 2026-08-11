@@ -206,7 +206,6 @@
     <div class="admin-tabs">
       <button class="admin-tab-btn active" data-tab="tab-products">📦 상품 & 인쇄 규격 등록</button>
       <button class="admin-tab-btn" data-tab="tab-fonts">🔤 폰트 관리 (눈누 웹폰트)</button>
-      <button class="admin-tab-btn" data-tab="tab-artworks">🎨 디자인 스티커 관리</button>
       <button class="admin-tab-btn" data-tab="tab-orders">📄 주문 & 공장 PDF 지시서</button>
     </div>
 
@@ -530,27 +529,6 @@
       <ul id="fonts-list-container" style="line-height:2;"></ul>
     </div>
 
-    <!-- TAB 3: ARTWORKS & STICKERS -->
-    <div class="tab-content" id="tab-artworks">
-      <h2>🎨 디자인 스티커 패치 등록</h2>
-      <form id="form-register-art" style="max-width:600px;">
-        <div class="form-group">
-          <label class="form-label">스티커 제목</label>
-          <input type="text" id="input-art-title" class="form-input" placeholder="귀여운 캐릭터 패치" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">스티커 이미지 파일 선택 업로드</label>
-          <input type="file" id="file-art" accept="image/*" class="form-input" required>
-        </div>
-        <button type="submit" class="btn-submit">➕ 스티커 추가하기</button>
-      </form>
-
-      <hr style="margin:40px 0; border:none; border-top:1px solid #e2e8f0;">
-
-      <h3>📋 등록된 추천 스티커</h3>
-      <div id="artworks-container" style="display:flex; gap:16px; flex-wrap:wrap;"></div>
-    </div>
-
     <!-- TAB 4: ORDERS & WORK ORDERS -->
     <div class="tab-content" id="tab-orders">
       <h2>📄 실시간 접수된 주문 & 공장 전달용 PDF 작업지시서</h2>
@@ -803,52 +781,7 @@
       });
     }
 
-    const artFormEl = document.getElementById('form-register-art');
-    if (artFormEl) {
-      artFormEl.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const title = document.getElementById('input-art-title').value;
-        const fileInput = document.getElementById('file-art');
 
-        if (!fileInput.files[0]) return;
-
-        try {
-          const uploadedUrl = await uploadImageFile(fileInput.files[0], 'art');
-          const res = await fetch('/api/admin/artworks', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, url: uploadedUrl })
-          });
-
-          if (res.ok) {
-            alert('✅ 스티커가 성공적으로 추가 업로드되었습니다!');
-            fileInput.value = '';
-            document.getElementById('input-art-title').value = '';
-            loadArtworks();
-          }
-        } catch (err) {
-          alert('❌ 스티커 파일 업로드 중 오류가 발생했습니다.');
-        }
-      });
-    }
-
-    async function loadArtworks() {
-      try {
-        const res = await fetch('/api/admin/artworks');
-        const data = await res.json();
-        const container = document.getElementById('artworks-container');
-        if (!container) return;
-
-        container.innerHTML = data.artworks.map(art => `
-          <div class="art-card" style="background:#f1f5f9; padding:10px; border-radius:10px; text-align:center;">
-            <img src="${art.url}" alt="${art.title}" style="width:60px; height:60px; object-fit:contain;">
-            <div style="font-size:11px; margin-top:6px; color:#64748b;">${art.title}</div>
-          </div>
-        `).join('');
-      } catch (err) {
-        console.error('Error loading artworks:', err);
-      }
-    }
 
     async function loadAdminOrders() {
       const container = document.getElementById('admin-orders-list-table');
@@ -899,7 +832,6 @@
     document.addEventListener('DOMContentLoaded', () => {
       loadProducts();
       loadFonts();
-      loadArtworks();
       loadAdminOrders();
     });
   </script>

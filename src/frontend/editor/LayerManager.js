@@ -60,12 +60,27 @@ export class LayerManager {
             imgSrc = obj._element.src;
           } else if (obj.getSrc) {
             imgSrc = obj.getSrc();
+          } else if (obj.toDataURL) {
+            imgSrc = obj.toDataURL({ format: 'png' });
           }
         } catch (e) {}
 
         thumbHtml = `
           <div class="layer-thumb-box img-type">
             ${imgSrc ? `<img src="${imgSrc}" class="layer-thumb-preview-img" alt="미리보기">` : '🖼️'}
+          </div>
+        `;
+      } else if (obj.isShape || ['rect', 'circle', 'triangle', 'path', 'polygon'].includes(obj.type)) {
+        titleText = '도형 레이어';
+        metaText = '도형';
+        let shapeImgSrc = '';
+        try {
+          shapeImgSrc = obj.toDataURL({ format: 'png', multiplier: 2 });
+        } catch (e) {}
+
+        thumbHtml = `
+          <div class="layer-thumb-box shape-type" style="padding:2px;">
+            ${shapeImgSrc ? `<img src="${shapeImgSrc}" class="layer-thumb-preview-img" alt="도형 미리보기">` : '🔷'}
           </div>
         `;
       } else if (obj.type === 'group') {

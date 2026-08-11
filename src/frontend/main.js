@@ -37,7 +37,8 @@ const svg = {
   tr: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M10 12h10M7 18h13"/></svg>',
   tj: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>',
   vRtl: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 4v16M13 4v11M8 4v16"/><path d="M4 20l-1-2 1-2" opacity=".7"/></svg>',
-  vLtr: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 4v16M11 4v11M16 4v16"/><path d="M20 20l1-2-1-2" opacity=".7"/></svg>'
+  vLtr: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 4v16M11 4v11M16 4v16"/><path d="M20 20l1-2-1-2" opacity=".7"/></svg>',
+  shape: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><circle cx="17.5" cy="7" r="4"/><path d="M14 20l4-7 4 7z"/></svg>'
 };
 
 // 40 CURATED TEXT COLORS GRID (5x8 Grid)
@@ -92,6 +93,10 @@ function getAppSkeletonHtml(productConfig) {
           <button type="button" class="tool-rail-btn" id="rail-btn-text">
             <div class="tool-rail-icon">${svg.txt}</div>
             <span class="tool-rail-label">텍스트</span>
+          </button>
+          <button type="button" class="tool-rail-btn" id="rail-btn-shape">
+            <div class="tool-rail-icon">${svg.shape}</div>
+            <span class="tool-rail-label">도형</span>
           </button>
           <button type="button" class="tool-rail-btn" id="rail-btn-design">
             <div class="tool-rail-icon">${svg.design}</div>
@@ -376,6 +381,192 @@ function getAppSkeletonHtml(productConfig) {
               </div>
             </div>
 
+            <!-- SECTION 3: SHAPE CONTROLS -->
+            <div id="section-shape-controls" style="display:none; flex-direction:column; gap:16px; position:relative;">
+              <div style="font-size:14px; font-weight:700; color:#1e293b;">도형 추가 및 편집</div>
+
+              <!-- FLOATING SHAPE COLOR PICKER POPOVER MODAL -->
+              <div id="shape-color-popover-modal" style="display:none; position:absolute; right:0; top:90px; width:100%; box-sizing:border-box; background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; box-shadow:0 10px 28px rgba(0,0,0,0.15); padding:16px; z-index:9999; flex-direction:column; gap:12px;">
+                <!-- TOP HEADER: TITLE + CLOSE (X) BUTTON -->
+                <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+                  <span style="font-size:13px; font-weight:700; color:#1e293b;">도형 색상 선택</span>
+                  <button type="button" id="btn-close-shape-color-popover" style="background:none; border:none; font-size:16px; color:#64748b; cursor:pointer; padding:2px 6px; border-radius:4px; line-height:1;" title="닫기">✕</button>
+                </div>
+
+                <div style="height:1px; background:#f1f5f9; width:100%;"></div>
+
+                <!-- SLEEK REFINED CUSTOM COLOR PICKER VIEW -->
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; background:#f8fafc; border:1px solid #e2e8f0; padding:8px 10px; border-radius:8px; width:100%; box-sizing:border-box;">
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <div id="shape-popover-color-preview" style="width:28px; height:28px; border-radius:6px; border:1px solid #cbd5e1; background:#17171a;"></div>
+                    <span id="shape-popover-hex-value" style="font-size:13.5px; font-weight:700; font-family:monospace; color:#334155;">#17171a</span>
+                  </div>
+
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    <!-- "직접 선택" COLOR PICKER BUTTON -->
+                    <label title="더 많은 색상 직접 선택" style="position:relative; cursor:pointer; display:inline-flex; align-items:center; gap:4px; font-size:11.5px; font-weight:600; color:#334155; background:#ffffff; border:1px solid #cbd5e1; padding:4px 8px; border-radius:6px; transition:all 0.15s;">
+                      직접 선택
+                      <input type="color" id="input-shape-custom-color" value="#17171a" style="opacity:0; position:absolute; width:100%; height:100%; top:0; left:0; cursor:pointer;">
+                    </label>
+
+                    <!-- "색상 저장" BUTTON -->
+                    <button type="button" id="btn-save-shape-custom-color" title="이 색상을 저장 목록에 추가" style="display:inline-flex; align-items:center; gap:3px; font-size:11.5px; font-weight:600; color:#0f766e; background:#f0fdf4; border:1px solid #99f6e4; padding:4px 8px; border-radius:6px; cursor:pointer;">
+                      <span style="font-weight:700;">+</span> 저장
+                    </button>
+                  </div>
+                </div>
+
+                <!-- TABS DIRECTLY ABOVE COLOR GRID -->
+                <div style="display:flex; border-bottom:1px solid #e2e8f0; gap:16px; width:100%;">
+                  <button type="button" id="tab-shape-color-presets" class="color-popover-tab active">기본 색상</button>
+                  <button type="button" id="tab-shape-color-saved" class="color-popover-tab">저장된 색상 (<span id="shape-saved-colors-count">0</span>)</button>
+                </div>
+
+                <!-- TAB 1 CONTENT: 5x8 PRESET COLOR GRID -->
+                <div id="view-shape-color-presets" style="display:block; width:100%;">
+                  <div id="shape-popover-swatch-grid" style="display:grid; grid-template-columns: repeat(8, 1fr); gap:8px; width:100%;">
+                    ${TEXT_COLOR_GRID.map(c => `
+                      <button type="button" class="shape-popover-swatch-btn ${c === '#17171a' ? 'active' : ''}" data-color="${c}" style="background:${c};" title="${c}"></button>
+                    `).join('')}
+                  </div>
+                </div>
+
+                <!-- TAB 2 CONTENT: USER SAVED CUSTOM COLORS GRID -->
+                <div id="view-shape-color-saved" style="display:none; width:100%;">
+                  <div id="shape-popover-saved-grid" style="display:grid; grid-template-columns: repeat(8, 1fr); gap:8px; width:100%;">
+                    <!-- Dynamically populated from DB -->
+                  </div>
+                  <div id="shape-saved-colors-empty-msg" style="display:none; text-align:center; padding:18px 0; font-size:11.5px; color:#64748b; line-height:1.5;">
+                    저장된 색상이 없습니다.<br>'직접 선택' 후 [<strong>+ 저장</strong>] 버튼을 누르면 DB에 저장됩니다.
+                  </div>
+                </div>
+              </div>
+
+              <!-- FLOATING SHAPE STROKE COLOR PICKER POPOVER MODAL -->
+              <div id="shape-stroke-color-popover-modal" style="display:none; position:absolute; right:0; top:130px; width:100%; box-sizing:border-box; background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; box-shadow:0 10px 28px rgba(0,0,0,0.15); padding:16px; z-index:9999; flex-direction:column; gap:12px;">
+                <!-- TOP HEADER: TITLE + CLOSE (X) BUTTON -->
+                <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+                  <span style="font-size:13px; font-weight:700; color:#1e293b;">테두리 색상 선택</span>
+                  <button type="button" id="btn-close-shape-stroke-color-popover" style="background:none; border:none; font-size:16px; color:#64748b; cursor:pointer; padding:2px 6px; border-radius:4px; line-height:1;" title="닫기">✕</button>
+                </div>
+
+                <div style="height:1px; background:#f1f5f9; width:100%;"></div>
+
+                <!-- SLEEK REFINED CUSTOM COLOR PICKER VIEW -->
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; background:#f8fafc; border:1px solid #e2e8f0; padding:8px 10px; border-radius:8px; width:100%; box-sizing:border-box;">
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <div id="shape-stroke-popover-color-preview" style="width:28px; height:28px; border-radius:6px; border:1px solid #cbd5e1; background:#000000;"></div>
+                    <span id="shape-stroke-popover-hex-value" style="font-size:13.5px; font-weight:700; font-family:monospace; color:#334155;">#000000</span>
+                  </div>
+
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    <!-- "직접 선택" COLOR PICKER BUTTON -->
+                    <label title="더 많은 색상 직접 선택" style="position:relative; cursor:pointer; display:inline-flex; align-items:center; gap:4px; font-size:11.5px; font-weight:600; color:#334155; background:#ffffff; border:1px solid #cbd5e1; padding:4px 8px; border-radius:6px; transition:all 0.15s;">
+                      직접 선택
+                      <input type="color" id="input-shape-stroke-custom-color" value="#000000" style="opacity:0; position:absolute; width:100%; height:100%; top:0; left:0; cursor:pointer;">
+                    </label>
+
+                    <!-- "색상 저장" BUTTON -->
+                    <button type="button" id="btn-save-shape-stroke-custom-color" title="이 색상을 저장 목록에 추가" style="display:inline-flex; align-items:center; gap:3px; font-size:11.5px; font-weight:600; color:#0f766e; background:#f0fdf4; border:1px solid #99f6e4; padding:4px 8px; border-radius:6px; cursor:pointer;">
+                      <span style="font-weight:700;">+</span> 저장
+                    </button>
+                  </div>
+                </div>
+
+                <!-- TABS DIRECTLY ABOVE COLOR GRID -->
+                <div style="display:flex; border-bottom:1px solid #e2e8f0; gap:16px; width:100%;">
+                  <button type="button" id="tab-shape-stroke-color-presets" class="color-popover-tab active">기본 색상</button>
+                  <button type="button" id="tab-shape-stroke-color-saved" class="color-popover-tab">저장된 색상 (<span id="shape-stroke-saved-colors-count">0</span>)</button>
+                </div>
+
+                <!-- TAB 1 CONTENT: 5x8 PRESET COLOR GRID -->
+                <div id="view-shape-stroke-color-presets" style="display:block; width:100%;">
+                  <div id="shape-stroke-popover-swatch-grid" style="display:grid; grid-template-columns: repeat(8, 1fr); gap:8px; width:100%;">
+                    ${TEXT_COLOR_GRID.map(c => `
+                      <button type="button" class="shape-stroke-popover-swatch-btn ${c === '#000000' ? 'active' : ''}" data-color="${c}" style="background:${c};" title="${c}"></button>
+                    `).join('')}
+                  </div>
+                </div>
+
+                <!-- TAB 2 CONTENT: USER SAVED CUSTOM COLORS GRID -->
+                <div id="view-shape-stroke-color-saved" style="display:none; width:100%;">
+                  <div id="shape-stroke-popover-saved-grid" style="display:grid; grid-template-columns: repeat(8, 1fr); gap:8px; width:100%;">
+                    <!-- Dynamically populated from DB -->
+                  </div>
+                  <div id="shape-stroke-saved-colors-empty-msg" style="display:none; text-align:center; padding:18px 0; font-size:11.5px; color:#64748b; line-height:1.5;">
+                    저장된 색상이 없습니다.<br>'직접 선택' 후 [<strong>+ 저장</strong>] 버튼을 누르면 DB에 저장됩니다.
+                  </div>
+                </div>
+              </div>
+
+              <!-- 1. SHAPE TYPES SELECTION GRID -->
+              <div>
+                <div style="font-size:11px; font-weight:700; color:#8b8b93; margin-bottom:8px;">도형 선택</div>
+                <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:8px;">
+                  <button type="button" class="shape-picker-btn" data-shape="rectangle" title="직사각형">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2"/></svg>
+                    <span>직사각형</span>
+                  </button>
+                  <button type="button" class="shape-picker-btn" data-shape="square" title="정사각형">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/></svg>
+                    <span>정사각형</span>
+                  </button>
+                  <button type="button" class="shape-picker-btn" data-shape="circle" title="원형">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>
+                    <span>원형</span>
+                  </button>
+                  <button type="button" class="shape-picker-btn" data-shape="triangle" title="삼각형">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l10 17H2L12 3z"/></svg>
+                    <span>삼각형</span>
+                  </button>
+                  <button type="button" class="shape-picker-btn" data-shape="heart" title="하트">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.72-8.72 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    <span>하트</span>
+                  </button>
+                  <button type="button" class="shape-picker-btn" data-shape="star" title="별">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <span>별</span>
+                  </button>
+                  <button type="button" class="shape-picker-btn" data-shape="pentagon" title="오각형">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 22 9.5 18.2 21 5.8 21 2 9.5 12 2"/></svg>
+                    <span>오각형</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 2. SHAPE COLOR ROW -->
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px;">
+                <span style="font-size:13px; font-weight:600; color:#1e293b;">도형 색상</span>
+                <button type="button" id="btn-open-shape-color-popover" style="width:32px; height:32px; border-radius:8px; border:1px solid #d1d5db; background:#17171a; cursor:pointer; padding:0; outline:none;" title="도형 색상 선택"></button>
+              </div>
+
+              <!-- 3. SHAPE STROKE COLOR ROW -->
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-top:2px;">
+                <span style="font-size:13px; font-weight:600; color:#1e293b;">테두리 색상</span>
+                <button type="button" id="btn-open-shape-stroke-color-popover" style="width:32px; height:32px; border-radius:8px; border:1px solid #d1d5db; background:#000000; cursor:pointer; padding:0; outline:none;" title="테두리 색상 선택"></button>
+              </div>
+
+              <div style="height:1px; background:#f0f0f3;"></div>
+
+              <!-- 3. SHAPE BORDER (STROKE) CONTROLS -->
+              <div style="display:flex; flex-direction:column; gap:12px;">
+                <div>
+                  <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:11.5px; font-weight:650; color:#5c5c64;">
+                    <span>테두리 두께</span><span id="label-val-shape-stroke-width">0px</span>
+                  </div>
+                  <input type="range" min="0" max="5" step="1" value="0" id="slider-shape-stroke-width" class="slider-range-input">
+                </div>
+
+                <div>
+                  <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:11.5px; font-weight:650; color:#5c5c64;">
+                    <span>회전</span><span id="label-val-shape-rotation">0°</span>
+                  </div>
+                  <input type="range" min="-180" max="180" step="1" value="0" id="slider-shape-rotation" class="slider-range-input">
+                </div>
+              </div>
+
+            </div>
+
           </div>
         </div>
 
@@ -459,11 +650,19 @@ export class TShirtCustomizerApp {
           (obj.rawObject && obj.rawObject.type && String(obj.rawObject.type).toLowerCase().includes('text'))
         ));
 
+        const isShape = Boolean(obj && (
+          obj.isShape ||
+          obj.shapeType ||
+          ['rect', 'circle', 'triangle', 'path', 'polygon'].includes(String(obj.type || '').toLowerCase())
+        ) && !obj.isGuideline);
+
         const secText = document.getElementById('section-text-controls');
+        const secShape = document.getElementById('section-shape-controls');
         const secProd = document.getElementById('section-product-options');
 
         if (isText) {
           if (secText) secText.style.display = 'flex';
+          if (secShape) secShape.style.display = 'none';
           if (secProd) secProd.style.display = 'none';
 
           const txtInp = document.getElementById('input-text-content');
@@ -573,8 +772,81 @@ export class TShirtCustomizerApp {
               btn.classList.toggle('active', c === hexColor);
             });
           }
+        } else if (isShape) {
+          if (secText) secText.style.display = 'none';
+          if (secShape) secShape.style.display = 'flex';
+          if (secProd) secProd.style.display = 'none';
+
+          // Sync Shape Color
+          if (obj.fill) {
+            const hexColor = String(obj.fill).toLowerCase();
+            const openShapeBtn = document.getElementById('btn-open-shape-color-popover');
+            if (openShapeBtn) openShapeBtn.style.background = obj.fill;
+
+            const shapePopPrev = document.getElementById('shape-popover-color-preview');
+            if (shapePopPrev) shapePopPrev.style.background = obj.fill;
+
+            const shapePopHex = document.getElementById('shape-popover-hex-value');
+            if (shapePopHex) shapePopHex.textContent = hexColor;
+
+            const shapeCustomInp = document.getElementById('input-shape-custom-color');
+            if (shapeCustomInp && hexColor.startsWith('#') && hexColor.length === 7) {
+              shapeCustomInp.value = hexColor;
+            }
+
+            document.querySelectorAll('#shape-popover-swatch-grid .shape-popover-swatch-btn').forEach(btn => {
+              const c = (btn.dataset.color || '').toLowerCase();
+              btn.classList.toggle('active', c === hexColor);
+            });
+          }
+
+          // Sync Stroke Color
+          if (obj.stroke) {
+            const strokeHex = String(obj.stroke).toLowerCase();
+            const openStrokeBtn = document.getElementById('btn-open-shape-stroke-color-popover');
+            if (openStrokeBtn) openStrokeBtn.style.background = obj.stroke;
+
+            const strokePopPrev = document.getElementById('shape-stroke-popover-color-preview');
+            if (strokePopPrev) strokePopPrev.style.background = obj.stroke;
+
+            const strokePopHex = document.getElementById('shape-stroke-popover-hex-value');
+            if (strokePopHex) strokePopHex.textContent = strokeHex;
+
+            const strokeCustomInp = document.getElementById('input-shape-stroke-custom-color');
+            if (strokeCustomInp && strokeHex.startsWith('#') && strokeHex.length === 7) {
+              strokeCustomInp.value = strokeHex;
+            }
+
+            document.querySelectorAll('#shape-stroke-popover-swatch-grid .shape-stroke-popover-swatch-btn').forEach(btn => {
+              const c = (btn.dataset.color || '').toLowerCase();
+              btn.classList.toggle('active', c === strokeHex);
+            });
+          }
+
+          // Sync Stroke Width
+          const strokeWidthSld = document.getElementById('slider-shape-stroke-width');
+          const strokeWidthLbl = document.getElementById('label-val-shape-stroke-width');
+          const sWidth = Math.round(obj.strokeWidth || 0);
+          if (strokeWidthSld) {
+            strokeWidthSld.value = sWidth;
+            if (strokeWidthLbl) strokeWidthLbl.textContent = `${sWidth}px`;
+            updateSliderProgress(strokeWidthSld);
+          }
+
+          // Sync Rotation
+          const rotSld = document.getElementById('slider-shape-rotation');
+          const rotLbl = document.getElementById('label-val-shape-rotation');
+          let normAngle = Math.round((obj.angle || 0) % 360);
+          if (normAngle > 180) normAngle -= 360;
+          if (normAngle < -180) normAngle += 360;
+          if (rotSld) {
+            rotSld.value = normAngle;
+            if (rotLbl) rotLbl.textContent = `${normAngle}°`;
+            updateSliderProgress(rotSld);
+          }
         } else {
           if (secText) secText.style.display = 'none';
+          if (secShape) secShape.style.display = 'none';
           if (secProd) secProd.style.display = 'flex';
         }
         if (layerManager) layerManager.updateLayerList();
@@ -924,81 +1196,111 @@ export class TShirtCustomizerApp {
       editor.updateActiveObject({ scaleX: val / 100 });
     });
 
-    // Text Color Popover Modal Toggle
-    const popoverModal = document.getElementById('text-color-popover-modal');
-    safeAddListener('btn-open-color-popover', 'click', (e) => {
-      e.stopPropagation();
-      if (!popoverModal) return;
-      const isVisible = popoverModal.style.display === 'flex';
-      popoverModal.style.display = isVisible ? 'none' : 'flex';
-      if (!isVisible) {
-        fetchSavedColors();
-      }
+    // Shape Rail Button Click
+    safeAddListener('rail-btn-shape', 'click', (e) => {
+      if (e) e.stopPropagation();
+      const secText = document.getElementById('section-text-controls');
+      const secShape = document.getElementById('section-shape-controls');
+      const secProd = document.getElementById('section-product-options');
+      if (secText) secText.style.display = 'none';
+      if (secShape) secShape.style.display = 'flex';
+      if (secProd) secProd.style.display = 'none';
+
+      document.querySelectorAll('.tool-rail-btn').forEach(btn => btn.classList.remove('active'));
+      const shapeRailBtn = document.getElementById('rail-btn-shape');
+      if (shapeRailBtn) shapeRailBtn.classList.add('active');
     });
 
-    // Close Button inside Popover
-    safeAddListener('btn-close-color-popover', 'click', (e) => {
-      e.stopPropagation();
-      if (popoverModal) popoverModal.style.display = 'none';
+    // Shape Pickers Grid
+    document.querySelectorAll('.shape-picker-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        if (e) e.stopPropagation();
+        const shapeType = btn.dataset.shape || 'rectangle';
+        const openShapeBtn = document.getElementById('btn-open-shape-color-popover');
+        const fill = (openShapeBtn ? openShapeBtn.style.background : '#17171a') || '#17171a';
+        editor.addShape(shapeType, { fill: fill });
+      });
     });
 
-    // Saved Colors Management
-    let userSavedColors = ["#17171a", "#ef4444", "#3b82f6", "#22c55e", "#eab308"];
+    // Shape Sliders
+    safeAddListener('slider-shape-stroke-width', 'input', (e) => {
+      const val = parseInt(e.target.value, 10);
+      const lbl = document.getElementById('label-val-shape-stroke-width');
+      if (lbl) lbl.textContent = `${val}px`;
+      updateSliderProgress(e.target);
+      editor.updateActiveObject({ strokeWidth: val });
+      if (layerManager) layerManager.updateLayerList();
+    });
+
+    safeAddListener('slider-shape-rotation', 'input', (e) => {
+      const val = parseInt(e.target.value, 10);
+      const lbl = document.getElementById('label-val-shape-rotation');
+      if (lbl) lbl.textContent = `${val}°`;
+      updateSliderProgress(e.target);
+      editor.updateActiveObject({ angle: val });
+    });
 
     const renderSavedColorsGrid = () => {
-      const gridEl = document.getElementById('popover-saved-grid');
-      const emptyMsg = document.getElementById('saved-colors-empty-msg');
-      const countEl = document.getElementById('saved-colors-count');
+      const textGridEl = document.getElementById('popover-saved-grid');
+      const textEmptyMsg = document.getElementById('saved-colors-empty-msg');
+      const shapeGridEl = document.getElementById('shape-popover-saved-grid');
+      const shapeEmptyMsg = document.getElementById('shape-saved-colors-empty-msg');
+      const shapeStrokeGridEl = document.getElementById('shape-stroke-popover-saved-grid');
+      const shapeStrokeEmptyMsg = document.getElementById('shape-stroke-saved-colors-empty-msg');
 
-      if (countEl) countEl.textContent = userSavedColors.length;
+      const countSpan = document.getElementById('saved-colors-count');
+      const shapeCountSpan = document.getElementById('shape-saved-colors-count');
+      const shapeStrokeCountSpan = document.getElementById('shape-stroke-saved-colors-count');
 
-      if (!gridEl) return;
-      gridEl.innerHTML = '';
+      if (countSpan) countSpan.textContent = userSavedColors.length;
+      if (shapeCountSpan) shapeCountSpan.textContent = userSavedColors.length;
+      if (shapeStrokeCountSpan) shapeStrokeCountSpan.textContent = userSavedColors.length;
 
-      if (userSavedColors.length === 0) {
-        if (emptyMsg) emptyMsg.style.display = 'block';
-        gridEl.style.display = 'none';
-        return;
-      }
-
-      if (emptyMsg) emptyMsg.style.display = 'none';
-      gridEl.style.display = 'grid';
-
-      userSavedColors.forEach(hex => {
-        const wrap = document.createElement('div');
-        wrap.className = 'saved-swatch-wrapper';
-
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'popover-swatch-btn';
-        btn.style.background = hex;
-        btn.title = hex;
-        btn.dataset.color = hex;
-
-        const currentActiveHex = (document.getElementById('popover-hex-value')?.textContent || '').toLowerCase();
-        if (currentActiveHex === hex.toLowerCase()) {
-          btn.classList.add('active');
+      const populateGrid = (gridEl, emptyMsg, applyFn) => {
+        if (!gridEl) return;
+        gridEl.innerHTML = '';
+        if (userSavedColors.length === 0) {
+          if (emptyMsg) emptyMsg.style.display = 'block';
+          return;
         }
+        if (emptyMsg) emptyMsg.style.display = 'none';
 
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          applyTextColor(hex);
+        userSavedColors.forEach(hex => {
+          const wrap = document.createElement('div');
+          wrap.style.position = 'relative';
+          wrap.style.width = '100%';
+
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'popover-swatch-btn';
+          btn.style.background = hex;
+          btn.title = hex;
+          btn.dataset.color = hex;
+
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            applyFn(hex);
+          });
+
+          const delBtn = document.createElement('button');
+          delBtn.type = 'button';
+          delBtn.className = 'saved-swatch-delete-btn';
+          delBtn.textContent = '✕';
+          delBtn.title = '이 색상 삭제';
+          delBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            deleteSavedColor(hex);
+          });
+
+          wrap.appendChild(btn);
+          wrap.appendChild(delBtn);
+          gridEl.appendChild(wrap);
         });
+      };
 
-        const delBtn = document.createElement('button');
-        delBtn.type = 'button';
-        delBtn.className = 'saved-swatch-delete-btn';
-        delBtn.textContent = '✕';
-        delBtn.title = '이 색상 삭제';
-        delBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          deleteSavedColor(hex);
-        });
-
-        wrap.appendChild(btn);
-        wrap.appendChild(delBtn);
-        gridEl.appendChild(wrap);
-      });
+      populateGrid(textGridEl, textEmptyMsg, applyTextColor);
+      populateGrid(shapeGridEl, shapeEmptyMsg, applyShapeColor);
+      populateGrid(shapeStrokeGridEl, shapeStrokeEmptyMsg, applyShapeStrokeColor);
     };
 
     const fetchSavedColors = async () => {
@@ -1022,7 +1324,7 @@ export class TShirtCustomizerApp {
       renderSavedColorsGrid();
     };
 
-    const saveCustomColor = async (hex) => {
+    const saveCustomColor = async (hex, targetType = 'text') => {
       if (!hex) return;
       const cleanHex = hex.toLowerCase().trim();
       if (!userSavedColors.includes(cleanHex)) {
@@ -1039,9 +1341,17 @@ export class TShirtCustomizerApp {
           console.error('Error saving custom color to DB:', err);
         }
       }
-      // Switch to saved colors tab automatically
-      const tabSaved = document.getElementById('tab-color-saved');
-      if (tabSaved) tabSaved.click();
+
+      if (targetType === 'shape') {
+        const shapeTabSaved = document.getElementById('tab-shape-color-saved');
+        if (shapeTabSaved) shapeTabSaved.click();
+      } else if (targetType === 'shape-stroke') {
+        const shapeStrokeTabSaved = document.getElementById('tab-shape-stroke-color-saved');
+        if (shapeStrokeTabSaved) shapeStrokeTabSaved.click();
+      } else {
+        const tabSaved = document.getElementById('tab-color-saved');
+        if (tabSaved) tabSaved.click();
+      }
     };
 
     const deleteSavedColor = async (hex) => {
@@ -1061,14 +1371,76 @@ export class TShirtCustomizerApp {
       }
     };
 
-    // Save Custom Color Button Click
+    // Save Custom Color Buttons
     safeAddListener('btn-save-custom-color', 'click', (e) => {
       e.stopPropagation();
       const currentHex = document.getElementById('popover-hex-value')?.textContent || '#17171a';
-      saveCustomColor(currentHex);
+      saveCustomColor(currentHex, 'text');
     });
 
-    // Tabs Switching Logic
+    safeAddListener('btn-save-shape-custom-color', 'click', (e) => {
+      e.stopPropagation();
+      const currentHex = document.getElementById('shape-popover-hex-value')?.textContent || '#17171a';
+      saveCustomColor(currentHex, 'shape');
+    });
+
+    safeAddListener('btn-save-shape-stroke-custom-color', 'click', (e) => {
+      e.stopPropagation();
+      const currentHex = document.getElementById('shape-stroke-popover-hex-value')?.textContent || '#000000';
+      saveCustomColor(currentHex, 'shape-stroke');
+    });
+
+    // Color Popover Toggle Buttons
+    const popoverModal = document.getElementById('text-color-popover-modal');
+    const shapePopoverModal = document.getElementById('shape-color-popover-modal');
+    const shapeStrokePopoverModal = document.getElementById('shape-stroke-color-popover-modal');
+
+    safeAddListener('btn-open-color-popover', 'click', (e) => {
+      e.stopPropagation();
+      if (shapePopoverModal) shapePopoverModal.style.display = 'none';
+      if (shapeStrokePopoverModal) shapeStrokePopoverModal.style.display = 'none';
+      if (popoverModal) {
+        const isVis = popoverModal.style.display === 'flex';
+        popoverModal.style.display = isVis ? 'none' : 'flex';
+      }
+    });
+
+    safeAddListener('btn-close-color-popover', 'click', (e) => {
+      e.stopPropagation();
+      if (popoverModal) popoverModal.style.display = 'none';
+    });
+
+    safeAddListener('btn-open-shape-color-popover', 'click', (e) => {
+      e.stopPropagation();
+      if (popoverModal) popoverModal.style.display = 'none';
+      if (shapeStrokePopoverModal) shapeStrokePopoverModal.style.display = 'none';
+      if (shapePopoverModal) {
+        const isVis = shapePopoverModal.style.display === 'flex';
+        shapePopoverModal.style.display = isVis ? 'none' : 'flex';
+      }
+    });
+
+    safeAddListener('btn-close-shape-color-popover', 'click', (e) => {
+      e.stopPropagation();
+      if (shapePopoverModal) shapePopoverModal.style.display = 'none';
+    });
+
+    safeAddListener('btn-open-shape-stroke-color-popover', 'click', (e) => {
+      e.stopPropagation();
+      if (popoverModal) popoverModal.style.display = 'none';
+      if (shapePopoverModal) shapePopoverModal.style.display = 'none';
+      if (shapeStrokePopoverModal) {
+        const isVis = shapeStrokePopoverModal.style.display === 'flex';
+        shapeStrokePopoverModal.style.display = isVis ? 'none' : 'flex';
+      }
+    });
+
+    safeAddListener('btn-close-shape-stroke-color-popover', 'click', (e) => {
+      e.stopPropagation();
+      if (shapeStrokePopoverModal) shapeStrokePopoverModal.style.display = 'none';
+    });
+
+    // Text Popover Tabs Switching
     const tabPresets = document.getElementById('tab-color-presets');
     const tabSaved = document.getElementById('tab-color-saved');
     const viewPresets = document.getElementById('view-color-presets');
@@ -1093,6 +1465,56 @@ export class TShirtCustomizerApp {
       });
     }
 
+    // Shape Popover Tabs Switching
+    const shapeTabPresets = document.getElementById('tab-shape-color-presets');
+    const shapeTabSaved = document.getElementById('tab-shape-color-saved');
+    const shapeViewPresets = document.getElementById('view-shape-color-presets');
+    const shapeViewSaved = document.getElementById('view-shape-color-saved');
+
+    if (shapeTabPresets && shapeTabSaved) {
+      shapeTabPresets.addEventListener('click', (e) => {
+        e.stopPropagation();
+        shapeTabPresets.classList.add('active');
+        shapeTabSaved.classList.remove('active');
+        if (shapeViewPresets) shapeViewPresets.style.display = 'block';
+        if (shapeViewSaved) shapeViewSaved.style.display = 'none';
+      });
+
+      shapeTabSaved.addEventListener('click', (e) => {
+        e.stopPropagation();
+        shapeTabSaved.classList.add('active');
+        shapeTabPresets.classList.remove('active');
+        if (shapeViewSaved) shapeViewSaved.style.display = 'block';
+        if (shapeViewPresets) shapeViewPresets.style.display = 'none';
+        fetchSavedColors();
+      });
+    }
+
+    // Shape Stroke Popover Tabs Switching
+    const shapeStrokeTabPresets = document.getElementById('tab-shape-stroke-color-presets');
+    const shapeStrokeTabSaved = document.getElementById('tab-shape-stroke-color-saved');
+    const shapeStrokeViewPresets = document.getElementById('view-shape-stroke-color-presets');
+    const shapeStrokeViewSaved = document.getElementById('view-shape-stroke-color-saved');
+
+    if (shapeStrokeTabPresets && shapeStrokeTabSaved) {
+      shapeStrokeTabPresets.addEventListener('click', (e) => {
+        e.stopPropagation();
+        shapeStrokeTabPresets.classList.add('active');
+        shapeStrokeTabSaved.classList.remove('active');
+        if (shapeStrokeViewPresets) shapeStrokeViewPresets.style.display = 'block';
+        if (shapeStrokeViewSaved) shapeStrokeViewSaved.style.display = 'none';
+      });
+
+      shapeStrokeTabSaved.addEventListener('click', (e) => {
+        e.stopPropagation();
+        shapeStrokeTabSaved.classList.add('active');
+        shapeStrokeTabPresets.classList.remove('active');
+        if (shapeStrokeViewSaved) shapeStrokeViewSaved.style.display = 'block';
+        if (shapeStrokeViewPresets) shapeStrokeViewPresets.style.display = 'none';
+        fetchSavedColors();
+      });
+    }
+
     // Function to apply chosen text color
     const applyTextColor = (color) => {
       if (!color) return;
@@ -1112,7 +1534,57 @@ export class TShirtCustomizerApp {
       editor.updateActiveObject({ fill: color });
     };
 
-    // Popover Grid Swatch Clicks
+    // Function to apply chosen shape color
+    const applyShapeColor = (color) => {
+      if (!color) return;
+      const openShapeBtn = document.getElementById('btn-open-shape-color-popover');
+      if (openShapeBtn) openShapeBtn.style.background = color;
+
+      const shapePopPrev = document.getElementById('shape-popover-color-preview');
+      if (shapePopPrev) shapePopPrev.style.background = color;
+
+      const shapePopHex = document.getElementById('shape-popover-hex-value');
+      if (shapePopHex) shapePopHex.textContent = color.toLowerCase();
+
+      document.querySelectorAll('#shape-popover-swatch-grid .shape-popover-swatch-btn, #shape-popover-saved-grid .shape-popover-swatch-btn').forEach(btn => {
+        btn.classList.toggle('active', (btn.dataset.color || '').toLowerCase() === color.toLowerCase());
+      });
+
+      editor.updateActiveObject({ fill: color });
+      if (layerManager) layerManager.updateLayerList();
+    };
+
+    // Function to apply chosen shape stroke color
+    const applyShapeStrokeColor = (color) => {
+      if (!color) return;
+      const openStrokeBtn = document.getElementById('btn-open-shape-stroke-color-popover');
+      if (openStrokeBtn) openStrokeBtn.style.background = color;
+
+      const strokePopPrev = document.getElementById('shape-stroke-popover-color-preview');
+      if (strokePopPrev) strokePopPrev.style.background = color;
+
+      const strokePopHex = document.getElementById('shape-stroke-popover-hex-value');
+      if (strokePopHex) strokePopHex.textContent = color.toLowerCase();
+
+      document.querySelectorAll('#shape-stroke-popover-swatch-grid .shape-stroke-popover-swatch-btn, #shape-stroke-popover-saved-grid .shape-stroke-popover-swatch-btn').forEach(btn => {
+        btn.classList.toggle('active', (btn.dataset.color || '').toLowerCase() === color.toLowerCase());
+      });
+
+      const activeObj = editor.canvas ? editor.canvas.getActiveObject() : null;
+      let newProps = { stroke: color };
+      if (activeObj && (!activeObj.strokeWidth || activeObj.strokeWidth === 0)) {
+        newProps.strokeWidth = 1;
+        const strokeWidthSld = document.getElementById('slider-shape-stroke-width');
+        const strokeWidthLbl = document.getElementById('label-val-shape-stroke-width');
+        if (strokeWidthSld) strokeWidthSld.value = 1;
+        if (strokeWidthLbl) strokeWidthLbl.textContent = '1px';
+      }
+
+      editor.updateActiveObject(newProps);
+      if (layerManager) layerManager.updateLayerList();
+    };
+
+    // Text Popover Grid Swatch Clicks
     document.querySelectorAll('#popover-swatch-grid .popover-swatch-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -1125,22 +1597,61 @@ export class TShirtCustomizerApp {
       });
     });
 
-    // Custom Color Picker Input inside Popover
+    // Shape Popover Grid Swatch Clicks
+    document.querySelectorAll('#shape-popover-swatch-grid .shape-popover-swatch-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const color = btn.dataset.color;
+        if (color) {
+          applyShapeColor(color);
+          const customInp = document.getElementById('input-shape-custom-color');
+          if (customInp) customInp.value = color;
+        }
+      });
+    });
+
+    // Shape Stroke Popover Grid Swatch Clicks
+    document.querySelectorAll('#shape-stroke-popover-swatch-grid .shape-stroke-popover-swatch-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const color = btn.dataset.color;
+        if (color) {
+          applyShapeStrokeColor(color);
+          const customInp = document.getElementById('input-shape-stroke-custom-color');
+          if (customInp) customInp.value = color;
+        }
+      });
+    });
+
+    // Custom Color Picker Inputs
     safeAddListener('input-popover-custom-color', 'input', (e) => {
       const color = e.target.value;
       applyTextColor(color);
     });
 
+    safeAddListener('input-shape-custom-color', 'input', (e) => {
+      const color = e.target.value;
+      applyShapeColor(color);
+    });
+
     // Fetch initial saved colors
     fetchSavedColors();
 
-    // Close Color Popover on outside click
+    // Close Color Popovers on outside click
     document.addEventListener('click', (e) => {
       if (popoverModal && popoverModal.style.display === 'flex') {
         const isInsidePopover = e.target.closest('#text-color-popover-modal');
         const isInsideOpenBtn = e.target.closest('#btn-open-color-popover');
         if (!isInsidePopover && !isInsideOpenBtn) {
           popoverModal.style.display = 'none';
+        }
+      }
+
+      if (shapePopoverModal && shapePopoverModal.style.display === 'flex') {
+        const isInsideShapePopover = e.target.closest('#shape-color-popover-modal');
+        const isInsideOpenShapeBtn = e.target.closest('#btn-open-shape-color-popover');
+        if (!isInsideShapePopover && !isInsideOpenShapeBtn) {
+          shapePopoverModal.style.display = 'none';
         }
       }
     });

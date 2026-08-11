@@ -557,6 +557,122 @@ export class CanvasEditor {
     return textObj;
   }
 
+  addShape(type = 'rectangle', options = {}) {
+    const centerX = this.printBox.left + (this.printBox.width / 2);
+    const centerY = this.printBox.top + (this.printBox.height / 2);
+    const fillColor = options.fill || '#17171a';
+    const strokeColor = options.stroke || '#000000';
+    const strokeWidth = options.strokeWidth !== undefined ? options.strokeWidth : 0;
+
+    let shapeObj = null;
+
+    if (type === 'rect' || type === 'rectangle') {
+      shapeObj = new fabric.Rect({
+        width: 120,
+        height: 80,
+        fill: fillColor,
+        stroke: strokeColor,
+        strokeWidth: strokeWidth,
+        rx: 4,
+        ry: 4
+      });
+    } else if (type === 'square') {
+      shapeObj = new fabric.Rect({
+        width: 100,
+        height: 100,
+        fill: fillColor,
+        stroke: strokeColor,
+        strokeWidth: strokeWidth,
+        rx: 4,
+        ry: 4
+      });
+    } else if (type === 'circle') {
+      shapeObj = new fabric.Circle({
+        radius: 45,
+        fill: fillColor,
+        stroke: strokeColor,
+        strokeWidth: strokeWidth
+      });
+    } else if (type === 'triangle') {
+      shapeObj = new fabric.Triangle({
+        width: 100,
+        height: 88,
+        fill: fillColor,
+        stroke: strokeColor,
+        strokeWidth: strokeWidth
+      });
+    } else if (type === 'heart') {
+      const heartPath = 'M 12 21.35 l -1.45 -1.32 C 5.4 15.36 2 12.28 2 8.5 C 2 5.42 4.42 3 7.5 3 c 1.74 0 3.41 0.81 4.5 2.09 C 13.09 3.81 14.76 3 16.5 3 C 19.58 3 22 5.42 22 8.5 c 0 3.78 -3.4 6.86 -8.55 11.54 L 12 21.35 Z';
+      shapeObj = new fabric.Path(heartPath, {
+        fill: fillColor,
+        stroke: strokeColor,
+        strokeWidth: strokeWidth,
+        scaleX: 4,
+        scaleY: 4
+      });
+    } else if (type === 'star') {
+      const points = [
+        { x: 50, y: 0 },
+        { x: 63, y: 38 },
+        { x: 100, y: 38 },
+        { x: 69, y: 59 },
+        { x: 82, y: 100 },
+        { x: 50, y: 75 },
+        { x: 18, y: 100 },
+        { x: 31, y: 59 },
+        { x: 0, y: 38 },
+        { x: 37, y: 38 }
+      ];
+      shapeObj = new fabric.Polygon(points, {
+        fill: fillColor,
+        stroke: strokeColor,
+        strokeWidth: strokeWidth,
+        scaleX: 0.9,
+        scaleY: 0.9
+      });
+    } else if (type === 'pentagon') {
+      const points = [];
+      for (let i = 0; i < 5; i++) {
+        const a = (i * 2 * Math.PI / 5) - (Math.PI / 2);
+        points.push({
+          x: 50 + 45 * Math.cos(a),
+          y: 50 + 45 * Math.sin(a)
+        });
+      }
+      shapeObj = new fabric.Polygon(points, {
+        fill: fillColor,
+        stroke: strokeColor,
+        strokeWidth: strokeWidth
+      });
+    } else {
+      shapeObj = new fabric.Rect({
+        width: 100,
+        height: 100,
+        fill: fillColor,
+        stroke: strokeColor,
+        strokeWidth: strokeWidth
+      });
+    }
+
+    shapeObj.set({
+      left: centerX,
+      top: centerY,
+      originX: 'center',
+      originY: 'center',
+      cornerColor: '#f97316',
+      cornerSize: 12,
+      transparentCorners: false,
+      isShape: true,
+      shapeType: type
+    });
+
+    this.canvas.add(shapeObj);
+    this.canvas.setActiveObject(shapeObj);
+    this.canvas.renderAll();
+    this.handleSelection({ target: shapeObj, selected: [shapeObj] });
+    return shapeObj;
+  }
+
   updateActiveObject(props = {}) {
     const active = this.canvas.getActiveObject();
     if (!active) return;
@@ -580,6 +696,10 @@ export class CanvasEditor {
       active.set('angle', parseInt(props.angle, 10));
     }
     if (props.scaleX !== undefined) active.set('scaleX', parseFloat(props.scaleX));
+    if (props.scaleY !== undefined) active.set('scaleY', parseFloat(props.scaleY));
+    if (props.stroke !== undefined) active.set('stroke', props.stroke);
+    if (props.strokeWidth !== undefined) active.set('strokeWidth', parseFloat(props.strokeWidth));
+    if (props.opacity !== undefined) active.set('opacity', parseFloat(props.opacity));
 
     active.setCoords();
     this.canvas.renderAll();

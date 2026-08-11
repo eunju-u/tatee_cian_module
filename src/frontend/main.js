@@ -193,31 +193,6 @@ function getAppSkeletonHtml(productConfig) {
 
         <!-- RIGHT EDIT PANEL (372px) -->
         <div class="right-edit-panel" style="position:relative;">
-          
-          <!-- FLOATING COLOR PICKER POPOVER MODAL (Flat Design - Image 2) -->
-          <div id="text-color-popover-modal" style="display:none; position:absolute; right:16px; top:120px; width:340px; background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; box-shadow:0 8px 24px rgba(0,0,0,0.12); padding:16px; z-index:9999; flex-direction:column; gap:12px;">
-            <!-- HEADER: PREVIEW + HEX + CUSTOM COLOR PICKER -->
-            <div style="display:flex; align-items:center; justify-content:space-between;">
-              <div style="display:flex; align-items:center; gap:10px;">
-                <div id="popover-color-preview" style="width:28px; height:28px; border-radius:6px; border:1px solid #e2e8f0; background:#17171a;"></div>
-                <span id="popover-hex-value" style="font-size:14px; font-weight:700; font-family:-apple-system, BlinkMacSystemFont, sans-serif; color:#334155;">#17171a</span>
-              </div>
-              <label title="더 많은 색상 선택" style="position:relative; cursor:pointer; display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:600; color:#475569; background:#f8fafc; border:1px solid #cbd5e1; padding:4px 9px; border-radius:6px;">
-                <span style="width:12px; height:12px; border-radius:50%; background:conic-gradient(red, yellow, lime, cyan, blue, magenta, red); display:inline-block;"></span>
-                직접 선택
-                <input type="color" id="input-popover-custom-color" value="#17171a" style="opacity:0; position:absolute; width:100%; height:100%; top:0; left:0; cursor:pointer;">
-              </label>
-            </div>
-
-            <div style="height:1px; background:#f1f5f9; width:100%;"></div>
-
-            <!-- 5x8 FLAT COLOR SWATCH GRID (Image 2) -->
-            <div id="popover-swatch-grid" style="display:grid; grid-template-columns: repeat(8, 1fr); gap:8px; width:100%;">
-              ${TEXT_COLOR_GRID.map(c => `
-                <button type="button" class="popover-swatch-btn ${c === '#17171a' ? 'active' : ''}" data-color="${c}" style="background:${c};" title="${c}"></button>
-              `).join('')}
-            </div>
-          </div>
 
           <!-- SCROLLABLE CONTENT BODY -->
           <div class="panel-body-scroll" id="panel-content-body">
@@ -298,28 +273,61 @@ function getAppSkeletonHtml(productConfig) {
 
               <div style="height:1px; background:#f0f0f3;"></div>
 
-              <!-- FLOATING COLOR PICKER POPOVER MODAL (Flat Design - Image 2) -->
+              <!-- FLOATING COLOR PICKER POPOVER MODAL (With Close X, Refined Custom View & Tabs) -->
               <div id="text-color-popover-modal">
-                <!-- HEADER: PREVIEW + HEX + CUSTOM COLOR PICKER -->
-                <div style="display:flex; align-items:center; justify-content:space-between;">
-                  <div style="display:flex; align-items:center; gap:10px;">
-                    <div id="popover-color-preview" style="width:28px; height:28px; border-radius:6px; border:1px solid #e2e8f0; background:#17171a;"></div>
-                    <span id="popover-hex-value" style="font-size:14px; font-weight:700; font-family:-apple-system, BlinkMacSystemFont, sans-serif; color:#334155;">#17171a</span>
-                  </div>
-                  <label title="더 많은 색상 선택" style="position:relative; cursor:pointer; display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:600; color:#475569; background:#f8fafc; border:1px solid #cbd5e1; padding:4px 9px; border-radius:6px;">
-                    <span style="width:12px; height:12px; border-radius:50%; background:conic-gradient(red, yellow, lime, cyan, blue, magenta, red); display:inline-block;"></span>
-                    직접 선택
-                    <input type="color" id="input-popover-custom-color" value="#17171a" style="opacity:0; position:absolute; width:100%; height:100%; top:0; left:0; cursor:pointer;">
-                  </label>
+                <!-- TOP HEADER: TITLE + CLOSE (X) BUTTON -->
+                <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+                  <span style="font-size:13px; font-weight:700; color:#1e293b;">텍스트 색상 선택</span>
+                  <button type="button" id="btn-close-color-popover" style="background:none; border:none; font-size:16px; color:#64748b; cursor:pointer; padding:2px 6px; border-radius:4px; line-height:1;" title="닫기">✕</button>
                 </div>
 
                 <div style="height:1px; background:#f1f5f9; width:100%;"></div>
 
-                <!-- 5x8 FLAT COLOR SWATCH GRID (Image 2) -->
-                <div id="popover-swatch-grid" style="display:grid; grid-template-columns: repeat(8, 1fr); gap:8px; width:100%;">
-                  ${TEXT_COLOR_GRID.map(c => `
-                    <button type="button" class="popover-swatch-btn ${c === '#17171a' ? 'active' : ''}" data-color="${c}" style="background:${c};" title="${c}"></button>
-                  `).join('')}
+                <!-- SLEEK REFINED CUSTOM COLOR PICKER VIEW ("직접 선택" 뷰) -->
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; background:#f8fafc; border:1px solid #e2e8f0; padding:8px 10px; border-radius:8px; width:100%; box-sizing:border-box;">
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <div id="popover-color-preview" style="width:28px; height:28px; border-radius:6px; border:1px solid #cbd5e1; background:#17171a;"></div>
+                    <span id="popover-hex-value" style="font-size:13.5px; font-weight:700; font-family:monospace; color:#334155;">#17171a</span>
+                  </div>
+
+                  <div style="display:flex; align-items:center; gap:6px;">
+                    <!-- "직접 선택" COLOR PICKER BUTTON -->
+                    <label title="더 많은 색상 직접 선택" style="position:relative; cursor:pointer; display:inline-flex; align-items:center; gap:4px; font-size:11.5px; font-weight:600; color:#334155; background:#ffffff; border:1px solid #cbd5e1; padding:4px 8px; border-radius:6px; transition:all 0.15s;">
+                      <span style="width:12px; height:12px; border-radius:50%; background:conic-gradient(red, yellow, lime, cyan, blue, magenta, red); display:inline-block;"></span>
+                      직접 선택
+                      <input type="color" id="input-popover-custom-color" value="#17171a" style="opacity:0; position:absolute; width:100%; height:100%; top:0; left:0; cursor:pointer;">
+                    </label>
+
+                    <!-- "색상 저장" BUTTON -->
+                    <button type="button" id="btn-save-custom-color" title="이 색상을 저장 목록에 추가" style="display:inline-flex; align-items:center; gap:3px; font-size:11.5px; font-weight:600; color:#0f766e; background:#f0fdf4; border:1px solid #99f6e4; padding:4px 8px; border-radius:6px; cursor:pointer;">
+                      <span style="font-weight:700;">+</span> 저장
+                    </button>
+                  </div>
+                </div>
+
+                <!-- TABS DIRECTLY ABOVE COLOR GRID -->
+                <div style="display:flex; border-bottom:1px solid #e2e8f0; gap:16px; width:100%;">
+                  <button type="button" id="tab-color-presets" class="color-popover-tab active">기본 색상</button>
+                  <button type="button" id="tab-color-saved" class="color-popover-tab">저장된 색상 (<span id="saved-colors-count">0</span>)</button>
+                </div>
+
+                <!-- TAB 1 CONTENT: 5x8 PRESET COLOR GRID -->
+                <div id="view-color-presets" style="display:block; width:100%;">
+                  <div id="popover-swatch-grid" style="display:grid; grid-template-columns: repeat(8, 1fr); gap:8px; width:100%;">
+                    ${TEXT_COLOR_GRID.map(c => `
+                      <button type="button" class="popover-swatch-btn ${c === '#17171a' ? 'active' : ''}" data-color="${c}" style="background:${c};" title="${c}"></button>
+                    `).join('')}
+                  </div>
+                </div>
+
+                <!-- TAB 2 CONTENT: USER SAVED CUSTOM COLORS GRID -->
+                <div id="view-color-saved" style="display:none; width:100%;">
+                  <div id="popover-saved-grid" style="display:grid; grid-template-columns: repeat(8, 1fr); gap:8px; width:100%;">
+                    <!-- Dynamically populated from DB -->
+                  </div>
+                  <div id="saved-colors-empty-msg" style="display:none; text-align:center; padding:18px 0; font-size:11.5px; color:#64748b; line-height:1.5;">
+                    저장된 색상이 없습니다.<br>'직접 선택' 후 [<strong>+ 저장</strong>] 버튼을 누르면 DB에 저장됩니다.
+                  </div>
                 </div>
               </div>
 
@@ -924,7 +932,167 @@ export class TShirtCustomizerApp {
       if (!popoverModal) return;
       const isVisible = popoverModal.style.display === 'flex';
       popoverModal.style.display = isVisible ? 'none' : 'flex';
+      if (!isVisible) {
+        fetchSavedColors();
+      }
     });
+
+    // Close Button inside Popover
+    safeAddListener('btn-close-color-popover', 'click', (e) => {
+      e.stopPropagation();
+      if (popoverModal) popoverModal.style.display = 'none';
+    });
+
+    // Saved Colors Management
+    let userSavedColors = ["#17171a", "#ef4444", "#3b82f6", "#22c55e", "#eab308"];
+
+    const renderSavedColorsGrid = () => {
+      const gridEl = document.getElementById('popover-saved-grid');
+      const emptyMsg = document.getElementById('saved-colors-empty-msg');
+      const countEl = document.getElementById('saved-colors-count');
+
+      if (countEl) countEl.textContent = userSavedColors.length;
+
+      if (!gridEl) return;
+      gridEl.innerHTML = '';
+
+      if (userSavedColors.length === 0) {
+        if (emptyMsg) emptyMsg.style.display = 'block';
+        gridEl.style.display = 'none';
+        return;
+      }
+
+      if (emptyMsg) emptyMsg.style.display = 'none';
+      gridEl.style.display = 'grid';
+
+      userSavedColors.forEach(hex => {
+        const wrap = document.createElement('div');
+        wrap.className = 'saved-swatch-wrapper';
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'popover-swatch-btn';
+        btn.style.background = hex;
+        btn.title = hex;
+        btn.dataset.color = hex;
+
+        const currentActiveHex = (document.getElementById('popover-hex-value')?.textContent || '').toLowerCase();
+        if (currentActiveHex === hex.toLowerCase()) {
+          btn.classList.add('active');
+        }
+
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          applyTextColor(hex);
+        });
+
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.className = 'saved-swatch-delete-btn';
+        delBtn.textContent = '✕';
+        delBtn.title = '이 색상 삭제';
+        delBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          deleteSavedColor(hex);
+        });
+
+        wrap.appendChild(btn);
+        wrap.appendChild(delBtn);
+        gridEl.appendChild(wrap);
+      });
+    };
+
+    const fetchSavedColors = async () => {
+      try {
+        const res = await fetch('/api/saved-colors');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && Array.isArray(data.colors)) {
+            userSavedColors = data.colors;
+            renderSavedColorsGrid();
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn('Could not fetch saved colors from API, using fallback:', err);
+      }
+      try {
+        const cached = localStorage.getItem('tatee_saved_colors');
+        if (cached) userSavedColors = JSON.parse(cached);
+      } catch (e) {}
+      renderSavedColorsGrid();
+    };
+
+    const saveCustomColor = async (hex) => {
+      if (!hex) return;
+      const cleanHex = hex.toLowerCase().trim();
+      if (!userSavedColors.includes(cleanHex)) {
+        userSavedColors.unshift(cleanHex);
+        renderSavedColorsGrid();
+        try {
+          localStorage.setItem('tatee_saved_colors', JSON.stringify(userSavedColors));
+          await fetch('/api/saved-colors', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ color: cleanHex })
+          });
+        } catch (err) {
+          console.error('Error saving custom color to DB:', err);
+        }
+      }
+      // Switch to saved colors tab automatically
+      const tabSaved = document.getElementById('tab-color-saved');
+      if (tabSaved) tabSaved.click();
+    };
+
+    const deleteSavedColor = async (hex) => {
+      if (!hex) return;
+      const cleanHex = hex.toLowerCase().trim();
+      userSavedColors = userSavedColors.filter(c => c !== cleanHex);
+      renderSavedColorsGrid();
+      try {
+        localStorage.setItem('tatee_saved_colors', JSON.stringify(userSavedColors));
+        await fetch('/api/saved-colors', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ color: cleanHex })
+        });
+      } catch (err) {
+        console.error('Error deleting saved color from DB:', err);
+      }
+    };
+
+    // Save Custom Color Button Click
+    safeAddListener('btn-save-custom-color', 'click', (e) => {
+      e.stopPropagation();
+      const currentHex = document.getElementById('popover-hex-value')?.textContent || '#17171a';
+      saveCustomColor(currentHex);
+    });
+
+    // Tabs Switching Logic
+    const tabPresets = document.getElementById('tab-color-presets');
+    const tabSaved = document.getElementById('tab-color-saved');
+    const viewPresets = document.getElementById('view-color-presets');
+    const viewSaved = document.getElementById('view-color-saved');
+
+    if (tabPresets && tabSaved) {
+      tabPresets.addEventListener('click', (e) => {
+        e.stopPropagation();
+        tabPresets.classList.add('active');
+        tabSaved.classList.remove('active');
+        if (viewPresets) viewPresets.style.display = 'block';
+        if (viewSaved) viewSaved.style.display = 'none';
+      });
+
+      tabSaved.addEventListener('click', (e) => {
+        e.stopPropagation();
+        tabSaved.classList.add('active');
+        tabPresets.classList.remove('active');
+        if (viewSaved) viewSaved.style.display = 'block';
+        if (viewPresets) viewPresets.style.display = 'none';
+        fetchSavedColors();
+      });
+    }
 
     // Function to apply chosen text color
     const applyTextColor = (color) => {
@@ -938,7 +1106,7 @@ export class TShirtCustomizerApp {
       const popHex = document.getElementById('popover-hex-value');
       if (popHex) popHex.textContent = color.toLowerCase();
 
-      document.querySelectorAll('#popover-swatch-grid .popover-swatch-btn').forEach(btn => {
+      document.querySelectorAll('#popover-swatch-grid .popover-swatch-btn, #popover-saved-grid .popover-swatch-btn').forEach(btn => {
         btn.classList.toggle('active', (btn.dataset.color || '').toLowerCase() === color.toLowerCase());
       });
 
@@ -963,6 +1131,9 @@ export class TShirtCustomizerApp {
       const color = e.target.value;
       applyTextColor(color);
     });
+
+    // Fetch initial saved colors
+    fetchSavedColors();
 
     // Close Color Popover on outside click
     document.addEventListener('click', (e) => {

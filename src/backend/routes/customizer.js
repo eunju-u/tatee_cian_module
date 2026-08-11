@@ -343,4 +343,67 @@ router.post('/ai/generate-3d-meshy', async (req, res) => {
   }
 });
 
+// --- SAVED COLORS DB ENDPOINTS ---
+const SAVED_COLORS_FILE = path.resolve(process.cwd(), 'src/backend/public/saved_colors.json');
+
+function getSavedColorsFromDisk() {
+  try {
+    if (fs.existsSync(SAVED_COLORS_FILE)) {
+      const data = fs.readFileSync(SAVED_COLORS_FILE, 'utf8');
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed)) return parsed;
+    }
+  } catch (err) {
+    console.error('Error reading saved_colors.json:', err);
+  }
+  return ["#17171a", "#ef4444", "#3b82f6", "#22c55e", "#eab308"];
+}
+
+function saveSavedColorsToDisk(colors) {
+  try {
+    fs.writeFileSync(SAVED_COLORS_FILE, JSON.stringify(colors, null, 2), 'utf8');
+  } catch (err) {
+    console.error('Error writing saved_colors.json:', err);
+  }
+}
+
+/**
+ * GET /api/saved-colors
+ */
+router.get('/saved-colors', (req, res) => {
+  const colors = getSavedColorsFromDisk();
+  res.json({ success: true, colors });
+});
+
+/**
+ * POST /api/saved-colors
+ */
+router.post('/saved-colors', (req, res) => {
+  const { color } = req.body;
+  if (!color || typeof color !== 'string') {
+    return res.status(400).json({ error: 'Valid color string required' });
+  }
+  const cleanColor = color.trim().toLowerCase();
+  let colors = getSavedColorsFromDisk();
+  if (!colors.includes(cleanColor)) {
+    colors.unshift(cleanColor);
+    saveSavedColorsToDisk(colors);
+  }
+  res.json({ success: true, colors });
+});
+
+/**
+ * DELETE /api/saved-colors
+ */
+router.delete('/saved-colors', (req, res) => {
+  const { color } = req.body;
+  let colors = getSavedColorsFromDisk();
+  if (color) {
+    const cleanColor = color.trim().toLowerCase();
+    colors = colors.filter(c => c !== cleanColor);
+  }
+  saveSavedColorsToDisk(colors);
+  res.json({ success: true, colors });
+});
+
 export default router;

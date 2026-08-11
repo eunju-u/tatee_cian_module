@@ -66,21 +66,6 @@ function getAppSkeletonHtml(productConfig) {
   return `
     <div class="tshirt-customizer-container">
       
-      <!-- TOP HEADER (52px) -->
-      <div class="customizer-header">
-        <div class="header-left">
-          <div class="header-logo-badge">T</div>
-          <div class="header-title">TATEE Custom Studio</div>
-        </div>
-        <div class="header-right">
-          <button type="button" class="btn-header-outline" id="btn-header-3d">
-            ${svg.view3d}
-            <span>3D 보기</span>
-          </button>
-          <button type="button" class="btn-header-solid" id="btn-header-save">저장</button>
-        </div>
-      </div>
-
       <!-- MAIN WORKSPACE -->
       <div class="customizer-main-workspace">
 
@@ -97,10 +82,6 @@ function getAppSkeletonHtml(productConfig) {
           <button type="button" class="tool-rail-btn" id="rail-btn-shape">
             <div class="tool-rail-icon">${svg.shape}</div>
             <span class="tool-rail-label">도형</span>
-          </button>
-          <button type="button" class="tool-rail-btn" id="rail-btn-design">
-            <div class="tool-rail-icon">${svg.design}</div>
-            <span class="tool-rail-label">디자인</span>
           </button>
           <button type="button" class="tool-rail-btn" id="rail-btn-3d">
             <div class="tool-rail-icon">${svg.view3d}</div>

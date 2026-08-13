@@ -89,6 +89,14 @@ export class CanvasEditor {
     });
     const domCanvas = document.getElementById(this.canvasElementId);
     if (domCanvas) domCanvas.fabric = this.canvas;
+
+    // Auto-apply print area clipPath to user design objects when added
+    this.canvas.on('object:added', (e) => {
+      const obj = e.target;
+      if (obj && !obj.isGuideline && this.canvasClipRect) {
+        obj.clipPath = this.canvasClipRect;
+      }
+    });
   }
 
   initGuidelineBox() {
@@ -111,7 +119,7 @@ export class CanvasEditor {
     this.canvas.add(this.guidelineBox);
     this.canvas.sendToBack(this.guidelineBox);
 
-    // Set Canvas ClipPath matching print guide area so elements exceeding the boundary are trimmed visually in real-time
+    // Initialize print area clip rect for user artwork objects
     this.canvasClipRect = new fabric.Rect({
       left: this.printBox.left,
       top: this.printBox.top,
@@ -119,7 +127,6 @@ export class CanvasEditor {
       height: this.printBox.height,
       absolutePositioned: true
     });
-    this.canvas.clipPath = this.canvasClipRect;
   }
 
   updatePrintBounds(newBounds) {
@@ -1108,17 +1115,43 @@ export class CanvasEditor {
   }
 
   loadCanvasJson(json, callback) {
+    this.canvas.clipPath = null;
     this.canvas.loadFromJSON(json, () => {
-      let guide = this.canvas.getObjects().find(o => o.isGuideline);
-      if (!guide) {
-        this.canvas.add(this.guidelineBox);
-        this.canvas.add(this.snapLineX);
-        this.canvas.add(this.snapLineY);
-        guide = this.guidelineBox;
-      }
+      // Remove any legacy guideline/snapline objects restored from history JSON
+      const legacyGuides = this.canvas.getObjects().filter(o => o.isGuideline);
+      legacyGuides.forEach(g => this.canvas.remove(g));
+
+      // Re-apply clipPath to all user design objects
+      this.canvas.getObjects().forEach(obj => {
+        if (!obj.isGuideline && this.canvasClipRect) {
+          obj.clipPath = this.canvasClipRect;
+        }
+      });
+
+      // Re-inject authoritative fixed Admin guidelineBox with exact printBox dimensions
       const isVisible = this.isGuideVisible !== false;
-      if (guide) guide.set('visible', isVisible);
-      if (this.guidelineBox) this.guidelineBox.set('visible', isVisible);
+      if (this.guidelineBox) {
+        if (this.printBox) {
+          this.guidelineBox.set({
+            left: this.printBox.left,
+            top: this.printBox.top,
+            width: this.printBox.width,
+            height: this.printBox.height
+          });
+        }
+        this.guidelineBox.set('visible', isVisible);
+        this.canvas.add(this.guidelineBox);
+        this.canvas.sendToBack(this.guidelineBox);
+      }
+      if (this.snapLineX) {
+        this.snapLineX.set('visible', false);
+        this.canvas.add(this.snapLineX);
+      }
+      if (this.snapLineY) {
+        this.snapLineY.set('visible', false);
+        this.canvas.add(this.snapLineY);
+      }
+
       this.canvas.renderAll();
       if (callback) callback();
     });

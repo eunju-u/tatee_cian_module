@@ -69,23 +69,27 @@ function getAppSkeletonHtml(productConfig) {
       <!-- MAIN WORKSPACE -->
       <div class="customizer-main-workspace">
 
-        <!-- LEFT ADDITIONAL TOOLS RAIL -->
+        <!-- LEFT STUDIO TOOL DOCK (72px) -->
         <div class="left-tools-rail">
-          <button type="button" class="tool-rail-btn" id="rail-btn-image">
-            <div class="tool-rail-icon">${svg.img}</div>
-            <span class="tool-rail-label">이미지</span>
+          <button type="button" class="tool-rail-btn" id="rail-btn-color" title="색상/면 선택">
+            <div class="tool-rail-icon">${svg.design}</div>
+            <span class="tool-rail-label">색상/면</span>
           </button>
-          <button type="button" class="tool-rail-btn" id="rail-btn-text">
+          <button type="button" class="tool-rail-btn" id="rail-btn-text" title="문구 추가">
             <div class="tool-rail-icon">${svg.txt}</div>
             <span class="tool-rail-label">텍스트</span>
           </button>
-          <button type="button" class="tool-rail-btn" id="rail-btn-shape">
+          <button type="button" class="tool-rail-btn" id="rail-btn-image" title="이미지 업로드">
+            <div class="tool-rail-icon">${svg.img}</div>
+            <span class="tool-rail-label">이미지</span>
+          </button>
+          <button type="button" class="tool-rail-btn" id="rail-btn-shape" title="도형 스티커">
             <div class="tool-rail-icon">${svg.shape}</div>
             <span class="tool-rail-label">도형</span>
           </button>
-          <button type="button" class="tool-rail-btn" id="rail-btn-3d">
+          <button type="button" class="tool-rail-btn" id="rail-btn-3d" title="3D 입체 뷰어">
             <div class="tool-rail-icon">${svg.view3d}</div>
-            <span class="tool-rail-label">3D 보기</span>
+            <span class="tool-rail-label">3D 입체</span>
           </button>
         </div>
 
@@ -1096,8 +1100,13 @@ export class TShirtCustomizerApp {
         const shape = surf.shape || 'tee';
         const isFlip = surf.id === 'right' || surf.id === 'sleeveR';
 
+        const topPct = surf.printTopPct !== undefined ? surf.printTopPct : (shape === 'detail' ? 34 : 32);
+        const leftPct = surf.printLeftPct !== undefined ? surf.printLeftPct : (shape === 'detail' ? 34 : 38);
+        const widthPct = surf.printWidthPct !== undefined ? surf.printWidthPct : (shape === 'detail' ? 32 : 24);
+        const heightPct = surf.printHeightPct !== undefined ? surf.printHeightPct : 26;
+
         const artOverlay = (hasArt && surf.artworkDataUrl)
-          ? `<img src="${surf.artworkDataUrl}" class="surface-card-live-art" style="position:absolute; inset:0; width:100%; height:100%; object-fit:contain; pointer-events:none; z-index:3; padding:18%;" alt="시안">`
+          ? `<img src="${surf.artworkDataUrl}" class="surface-card-live-art" style="position:absolute; left:${leftPct}%; top:${topPct}%; width:${widthPct}%; height:${heightPct}%; object-fit:contain; pointer-events:none; z-index:3;" alt="시안">`
           : (hasArt ? `<div class="surface-card-art-box ${shape}"></div>` : '');
 
         let thumbGraphic = '';
@@ -1135,17 +1144,12 @@ export class TShirtCustomizerApp {
           const targetId = card.dataset.surfaceId;
           surfaceManager.switchSurface(targetId, (targetSurface) => {
             // Update Stage Background Image to selected surface's 2D mockup
-            const stageWrapper = document.getElementById('canvas-mockup-wrapper');
-            if (stageWrapper) {
-              if (targetSurface.bgOverlay && targetSurface.bgOverlay.startsWith('http')) {
-                stageWrapper.style.backgroundImage = `url("${targetSurface.bgOverlay}")`;
-                stageWrapper.style.backgroundSize = 'contain';
-                stageWrapper.style.backgroundPosition = 'center center';
-                stageWrapper.style.backgroundRepeat = 'no-repeat';
-              } else {
-                stageWrapper.style.backgroundImage = 'none';
-                stageWrapper.style.backgroundColor = '#4a4b30';
-              }
+            const bgLayer = document.getElementById('garment-bg-layer') || document.getElementById('canvas-mockup-wrapper');
+            if (bgLayer && targetSurface && targetSurface.bgOverlay) {
+              bgLayer.style.backgroundImage = `url("${targetSurface.bgOverlay}")`;
+              bgLayer.style.backgroundSize = 'contain';
+              bgLayer.style.backgroundPosition = 'center center';
+              bgLayer.style.backgroundRepeat = 'no-repeat';
             }
 
             // Update Pill Badge Label
@@ -2086,6 +2090,20 @@ export class TShirtCustomizerApp {
 
     safeAddListener('btn-header-3d', 'click', open3dModal);
     safeAddListener('rail-btn-3d', 'click', open3dModal);
+
+    // Left Rail: [색상/면] Button Listener
+    safeAddListener('rail-btn-color', 'click', () => {
+      const textSec = document.getElementById('section-text-controls');
+      const shapeSec = document.getElementById('section-shape-controls');
+      const productSec = document.getElementById('section-product-options');
+      if (textSec) textSec.style.display = 'none';
+      if (shapeSec) shapeSec.style.display = 'none';
+      if (productSec) productSec.style.display = 'flex';
+
+      const openSideBtn = document.getElementById('btn-open-side-popover');
+      if (openSideBtn) openSideBtn.click();
+    });
+
     safeAddListener('btn-close-3d', 'click', () => {
       if (modal3d) modal3d.classList.remove('active');
     });

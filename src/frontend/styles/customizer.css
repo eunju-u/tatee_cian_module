@@ -132,37 +132,43 @@
   display: flex;
 }
 
-/* LEFT/RIGHT TOOLS RAIL (Positioned at right: 390px in Web A according to Editor.dc.html line 724) */
+/* LEFT STUDIO TOOL DOCK (72px Dark Sidebar) */
 .left-tools-rail {
-  position: absolute;
-  right: 390px;
-  top: 74px;
+  position: relative;
+  width: 72px;
+  height: 100%;
+  background: #0f172a;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  z-index: 20;
+  align-items: center;
+  padding: 16px 0;
+  gap: 12px;
+  z-index: 30;
+  flex-shrink: 0;
 }
 
 .tool-rail-btn {
-  width: 66px;
-  height: 66px;
-  background: #ffffff;
-  border: none;
-  border-radius: 18px;
-  box-shadow: var(--customizer-shadow-tool);
+  width: 56px;
+  height: 56px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 4px;
   cursor: pointer;
-  color: var(--customizer-text-sub);
-  transition: transform 0.15s ease;
+  color: #94a3b8;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.tool-rail-btn:hover {
-  transform: translateY(-2px);
-  color: var(--customizer-accent);
+.tool-rail-btn:hover, .tool-rail-btn.active {
+  background: rgba(255, 120, 40, 0.15);
+  border-color: #ff7828;
+  color: #ff7828;
+  transform: scale(1.04);
 }
 
 .tool-rail-icon {
@@ -172,8 +178,8 @@
 }
 
 .tool-rail-label {
-  font-size: 9.5px;
-  font-weight: 650;
+  font-size: 10px;
+  font-weight: 700;
   letter-spacing: -0.01em;
 }
 
@@ -184,7 +190,10 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 14px 100px 0 20px;
+  padding: 14px 20px 0 20px;
+  background-color: #f8fafc;
+  background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
+  background-size: 24px 24px;
 }
 
 /* TOP ACTION TOOLBAR */

@@ -872,6 +872,335 @@ export class CanvasEditor {
     }, { crossOrigin: 'anonymous' });
   }
 
+  normalizeHex(colorStr) {
+    if (!colorStr) return '#000000';
+    if (colorStr.startsWith('#')) {
+      if (colorStr.length === 4) {
+        return ('#' + colorStr[1] + colorStr[1] + colorStr[2] + colorStr[2] + colorStr[3] + colorStr[3]).toLowerCase();
+      }
+      return colorStr.toLowerCase();
+    }
+    try {
+      const ctx = document.createElement('canvas').getContext('2d');
+      ctx.fillStyle = colorStr;
+      return ctx.fillStyle.toLowerCase();
+    } catch (e) {
+      return '#000000';
+    }
+  }
+
+  analyzeSvgColors(svgString) {
+    if (!svgString) {
+      return { mainColor: '#0f172a', pointColor: null, bgColor: '#ffffff' };
+    }
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(svgString, 'image/svg+xml');
+      const svgEl = doc.querySelector('svg');
+      if (!svgEl) return { mainColor: '#0f172a', pointColor: null, bgColor: '#ffffff' };
+
+      const allRects = Array.from(svgEl.querySelectorAll('rect'));
+      let bgRect = allRects.find(r => {
+        const w = r.getAttribute('width');
+        return w === '100%' || w === '300' || w === '80' || w === '90' || w === '150';
+      });
+      if (!bgRect && allRects.length > 0) bgRect = allRects[0];
+
+      let bgColor = bgRect ? (bgRect.getAttribute('fill') || '#ffffff') : '#ffffff';
+      if (!bgColor || bgColor.startsWith('url(')) bgColor = '#ffffff';
+
+      const graphicElements = Array.from(svgEl.querySelectorAll('path, circle, polygon, rect, line, ellipse')).filter(el => el !== bgRect);
+
+      const colorMap = new Map();
+      graphicElements.forEach(el => {
+        const f = el.getAttribute('fill');
+        if (f && f !== 'none' && !f.startsWith('url(')) {
+          const norm = this.normalizeHex(f);
+          colorMap.set(norm, (colorMap.get(norm) || 0) + 1);
+        }
+        const s = el.getAttribute('stroke');
+        if (s && s !== 'none' && !s.startsWith('url(')) {
+          const norm = this.normalizeHex(s);
+          colorMap.set(norm, (colorMap.get(norm) || 0) + 1);
+        }
+      });
+
+      const normBg = this.normalizeHex(bgColor);
+      colorMap.delete(normBg);
+
+      const sortedColors = Array.from(colorMap.entries()).sort((a, b) => b[1] - a[1]);
+
+      let mainColor = sortedColors[0] ? sortedColors[0][0] : '#0f172a';
+      let pointColor = sortedColors[1] ? sortedColors[1][0] : null;
+
+      if (pointColor === mainColor || pointColor === normBg) {
+        pointColor = null;
+      }
+
+      return {
+        mainColor: mainColor,
+        pointColor: pointColor,
+        bgColor: normBg
+      };
+    } catch (e) {
+      return { mainColor: '#0f172a', pointColor: null, bgColor: '#ffffff' };
+    }
+  }
+
+  recolorSvgPattern(svgString, { colorMain, colorPoint, colorBg, origPoint }) {
+    if (!svgString) return svgString;
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(svgString, 'image/svg+xml');
+      const svgEl = doc.querySelector('svg');
+      if (!svgEl) return svgString;
+
+      const allRects = Array.from(svgEl.querySelectorAll('rect'));
+      let bgRect = allRects.find(r => {
+        const w = r.getAttribute('width');
+        return w === '100%' || w === '300' || w === '80' || w === '90' || w === '150';
+      });
+
+      if (!bgRect && allRects.length > 0) bgRect = allRects[0];
+
+      if (colorBg) {
+        if (bgRect) {
+          bgRect.setAttribute('fill', colorBg);
+        } else {
+          const newBg = doc.createElementNS('http://www.w3.org/2000/svg', 'rect');
+          newBg.setAttribute('width', '100%');
+          newBg.setAttribute('height', '100%');
+          newBg.setAttribute('fill', colorBg);
+          svgEl.insertBefore(newBg, svgEl.firstChild);
+        }
+      }
+
+      const graphicElements = Array.from(svgEl.querySelectorAll('path, circle, polygon, rect, line, ellipse')).filter(el => el !== bgRect);
+
+      if (graphicElements.length > 0) {
+        graphicElements.forEach((el) => {
+          const fill = el.getAttribute('fill');
+          const stroke = el.getAttribute('stroke');
+
+          if (fill && fill !== 'none' && !fill.startsWith('url(')) {
+            const normFill = this.normalizeHex(fill);
+            if (origPoint && normFill === origPoint && colorPoint) {
+              el.setAttribute('fill', colorPoint);
+            } else if (colorMain) {
+              el.setAttribute('fill', colorMain);
+            }
+          }
+
+          if (stroke && stroke !== 'none') {
+            const normStroke = this.normalizeHex(stroke);
+            if (origPoint && normStroke === origPoint && colorPoint) {
+              el.setAttribute('stroke', colorPoint);
+            } else if (colorMain) {
+              el.setAttribute('stroke', colorMain);
+            }
+          }
+        });
+      }
+
+      const serializer = new XMLSerializer();
+      return serializer.serializeToString(doc);
+    } catch (e) {
+      console.warn('recolorSvgPattern error:', e);
+      return svgString;
+    }
+  }
+
+  addPatternObject(artOptions) {
+    if (!artOptions) return;
+
+    let svgString = artOptions.svgContent || '';
+    let imgUrl = artOptions.url || '';
+
+    if (!svgString && !imgUrl) return;
+
+    const applyPatternImage = (imageSource) => {
+      const tileWidth = imageSource.width || 100;
+      const tileHeight = imageSource.height || 100;
+
+      // Base pattern scale factor so tile repeats nicely (around 60~80px per unit tile)
+      const baseScale = Math.min(80 / tileWidth, 80 / tileHeight) || 0.5;
+
+      const pattern = new fabric.Pattern({
+        source: imageSource,
+        repeat: 'repeat',
+        patternTransform: [baseScale, 0, 0, baseScale, 0, 0]
+      });
+
+      const rect = new fabric.Rect({
+        width: 220,
+        height: 220,
+        left: this.printBox.left + (this.printBox.width / 2) - 110,
+        top: this.printBox.top + (this.printBox.height / 2) - 110,
+        fill: pattern,
+        cornerColor: '#3b82f6',
+        cornerSize: 12,
+        transparentCorners: false
+      });
+
+      const extracted = this.analyzeSvgColors(svgString);
+
+      rect.isPattern = true;
+      rect.patternSourceImg = imageSource;
+      rect.rawSvgContent = svgString;
+      rect.patternBaseScale = baseScale;
+      rect.patternScale = 1.0;    // 100%
+      rect.patternAngle = 0;      // 0 deg
+      rect.patternOpacity = 1.0;  // 100%
+      rect.patternColorMain = extracted.mainColor;
+      rect.patternColorPoint = extracted.pointColor;
+      rect.patternColorBg = extracted.bgColor;
+      rect.hasPointColor = Boolean(extracted.pointColor);
+      rect.origColorMain = extracted.mainColor;
+      rect.origColorPoint = extracted.pointColor;
+      rect.origColorBg = extracted.bgColor;
+      rect.patternTitle = artOptions.title || '패턴';
+
+      this.canvas.add(rect);
+      this.canvas.setActiveObject(rect);
+      this.canvas.renderAll();
+      this.handleSelection({ target: rect, selected: [rect] });
+    };
+
+    if (svgString) {
+      const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
+      const imgEl = new Image();
+      imgEl.crossOrigin = 'anonymous';
+      imgEl.onload = () => {
+        applyPatternImage(imgEl);
+      };
+      imgEl.src = dataUrl;
+    } else if (imgUrl) {
+      fabric.util.loadImage(imgUrl, (imgEl) => {
+        if (imgEl) applyPatternImage(imgEl);
+      }, null, 'anonymous');
+    }
+  }
+
+  updatePatternColors({ colorMain, colorPoint, colorBg }) {
+    const activeObj = this.canvas.getActiveObject();
+    if (!activeObj || !activeObj.isPattern) return;
+
+    if (colorMain !== undefined) activeObj.patternColorMain = colorMain;
+    if (colorPoint !== undefined) activeObj.patternColorPoint = colorPoint;
+    if (colorBg !== undefined) activeObj.patternColorBg = colorBg;
+
+    const rawSvg = activeObj.rawSvgContent;
+    if (rawSvg) {
+      const recoloredSvg = this.recolorSvgPattern(rawSvg, {
+        colorMain: activeObj.patternColorMain,
+        colorPoint: activeObj.patternColorPoint,
+        colorBg: activeObj.patternColorBg,
+        origPoint: activeObj.origColorPoint
+      });
+
+      const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(recoloredSvg);
+      const imgEl = new Image();
+      imgEl.crossOrigin = 'anonymous';
+      imgEl.onload = () => {
+        const tileWidth = imgEl.width || 100;
+        const tileHeight = imgEl.height || 100;
+        const baseScale = Math.min(80 / tileWidth, 80 / tileHeight) || 0.5;
+        activeObj.patternBaseScale = baseScale;
+
+        const curScale = (activeObj.patternScale !== undefined ? activeObj.patternScale : 1.0) * baseScale;
+        const curAngle = activeObj.patternAngle || 0;
+        const angleRad = (curAngle * Math.PI) / 180;
+        const cos = Math.cos(angleRad) * curScale;
+        const sin = Math.sin(angleRad) * curScale;
+
+        const pattern = new fabric.Pattern({
+          source: imgEl,
+          repeat: 'repeat',
+          patternTransform: [cos, sin, -sin, cos, 0, 0]
+        });
+
+        activeObj.set('fill', pattern);
+        this.canvas.renderAll();
+        this.triggerChange();
+      };
+      imgEl.src = dataUrl;
+    }
+  }
+
+  updatePatternProperties({ scale, angle, opacity }) {
+    const activeObj = this.canvas.getActiveObject();
+    if (!activeObj) return;
+
+    if (scale !== undefined) activeObj.patternScale = parseFloat(scale);
+    if (angle !== undefined) activeObj.patternAngle = parseFloat(angle);
+    if (opacity !== undefined) {
+      activeObj.patternOpacity = parseFloat(opacity);
+      activeObj.set('opacity', activeObj.patternOpacity);
+    }
+
+    const pattern = activeObj.fill;
+    if (pattern && pattern instanceof fabric.Pattern) {
+      const baseScale = activeObj.patternBaseScale || 0.5;
+      const curScale = (activeObj.patternScale !== undefined ? activeObj.patternScale : 1.0) * baseScale;
+      const curAngle = activeObj.patternAngle || 0;
+
+      const angleRad = (curAngle * Math.PI) / 180;
+      const cos = Math.cos(angleRad) * curScale;
+      const sin = Math.sin(angleRad) * curScale;
+
+      pattern.patternTransform = [cos, sin, -sin, cos, 0, 0];
+    }
+
+    this.canvas.renderAll();
+    this.triggerChange();
+  }
+
+  addSvgString(svgString) {
+    if (!svgString) return;
+
+    // Check if SVG contains pattern/defs definitions that Fabric loadSVGFromString drops
+    if (svgString.includes('<pattern') || svgString.includes('patternUnits')) {
+      const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
+      fabric.Image.fromURL(dataUrl, (img) => {
+        if (!img) return;
+        img.scaleToWidth(200);
+        img.set({
+          left: this.printBox.left + (this.printBox.width / 2) - 100,
+          top: this.printBox.top + (this.printBox.height / 2) - 100,
+          cornerColor: '#3b82f6',
+          cornerSize: 12,
+          transparentCorners: false
+        });
+        img.isPattern = true;
+        img.patternScale = 1.0;
+        img.patternAngle = 0;
+        img.patternOpacity = 1.0;
+        this.canvas.add(img);
+        this.canvas.setActiveObject(img);
+        this.canvas.renderAll();
+        this.handleSelection({ target: img, selected: [img] });
+      }, { crossOrigin: 'anonymous' });
+      return;
+    }
+
+    fabric.loadSVGFromString(svgString, (objects, options) => {
+      const loadedObject = fabric.util.groupSVGElements(objects, options);
+      if (!loadedObject) return;
+      loadedObject.scaleToWidth(180);
+      loadedObject.set({
+        left: this.printBox.left + (this.printBox.width / 2) - 90,
+        top: this.printBox.top + (this.printBox.height / 2) - 90,
+        cornerColor: '#3b82f6',
+        cornerSize: 12,
+        transparentCorners: false
+      });
+      this.canvas.add(loadedObject);
+      this.canvas.setActiveObject(loadedObject);
+      this.canvas.renderAll();
+      this.handleSelection({ target: loadedObject, selected: [loadedObject] });
+    });
+  }
+
   toggleGuideBox() {
     this.isGuideVisible = !this.isGuideVisible;
     const guide = this.canvas.getObjects().find(o => o.isGuideline) || this.guidelineBox;

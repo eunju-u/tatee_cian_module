@@ -74,5 +74,13 @@
     "isVector": true,
     "svgContent": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"300\" height=\"300\"><defs><pattern id=\"pat_sparkle\" width=\"90\" height=\"90\" patternUnits=\"userSpaceOnUse\"><rect width=\"90\" height=\"90\" fill=\"#fff0f5\"/><g opacity=\"0.85\"><path d=\"M 27 9 Q 27 27, 45 27 Q 27 27, 27 45 Q 27 27, 9 27 Q 27 27, 27 9 Z\" fill=\"#f472b6\"/><path d=\"M 67.5 54 Q 67.5 64.8, 78.3 64.8 Q 67.5 64.8, 67.5 75.6 Q 67.5 64.8, 56.7 64.8 Q 67.5 64.8, 67.5 54 Z\" fill=\"#f59e0b\"/></g></pattern></defs><rect width=\"100%\" height=\"100%\" fill=\"url(#pat_sparkle)\"/></svg>",
     "url": null
+  },
+  {
+    "id": "art_1786594313989",
+    "title": "트렌디 패턴",
+    "category": "pattern",
+    "isVector": true,
+    "svgContent": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"300\" height=\"160\"><defs><pattern id=\"pat_preview\" width=\"30\" height=\"30\" patternUnits=\"userSpaceOnUse\" >\n          <rect width=\"30\" height=\"30\" fill=\"#fff0f5\"/>\n          <rect width=\"15\" height=\"30\" fill=\"#c0afb8\" opacity=\"0.85\"/>\n        </pattern></defs><rect width=\"100%\" height=\"100%\" fill=\"url(#pat_preview)\"/></svg>",
+    "url": null
   }
 ]

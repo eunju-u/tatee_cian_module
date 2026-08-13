@@ -83,9 +83,13 @@ function getAppSkeletonHtml(productConfig) {
             <div class="tool-rail-icon">${svg.img}</div>
             <span class="tool-rail-label">이미지</span>
           </button>
-          <button type="button" class="tool-rail-btn" id="rail-btn-shape" title="도형 스티커">
+          <button type="button" class="tool-rail-btn" id="rail-btn-shape" title="기본 도형">
             <div class="tool-rail-icon">${svg.shape}</div>
             <span class="tool-rail-label">도형</span>
+          </button>
+          <button type="button" class="tool-rail-btn" id="rail-btn-design" title="디자인 스티커/패턴">
+            <div class="tool-rail-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"/><path d="M12 8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/><circle cx="12" cy="12" r="2"/></svg></div>
+            <span class="tool-rail-label">디자인</span>
           </button>
           <button type="button" class="tool-rail-btn" id="rail-btn-3d" title="3D 입체 뷰어">
             <div class="tool-rail-icon">${svg.view3d}</div>
@@ -369,12 +373,14 @@ function getAppSkeletonHtml(productConfig) {
               </div>
             </div>
 
-            <!-- SECTION 3: SHAPE CONTROLS -->
+            <!-- SECTION 3: SHAPE CONTROLS (BASIC GEOMETRIC SHAPES) -->
             <div id="section-shape-controls" style="display:none; flex-direction:column; gap:16px; position:relative;">
-              <div style="font-size:14px; font-weight:700; color:#1e293b;">도형 추가 및 편집</div>
+              <div style="display:flex; align-items:center; justify-content:space-between;">
+                <div style="font-size:15px; font-weight:800; color:#1e293b;">도형 추가 및 편집</div>
+              </div>
 
               <!-- FLOATING SHAPE COLOR PICKER POPOVER MODAL -->
-              <div id="shape-color-popover-modal" style="display:none; position:absolute; right:0; top:90px; width:100%; box-sizing:border-box; background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; box-shadow:0 10px 28px rgba(0,0,0,0.15); padding:16px; z-index:9999; flex-direction:column; gap:12px;">
+              <div id="shape-color-popover-modal" style="display:none; position:absolute; right:0; top:120px; width:100%; box-sizing:border-box; background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; box-shadow:0 10px 28px rgba(0,0,0,0.15); padding:16px; z-index:9999; flex-direction:column; gap:12px;">
                 <!-- TOP HEADER: TITLE + CLOSE (X) BUTTON -->
                 <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
                   <span style="font-size:13px; font-weight:700; color:#1e293b;">도형 색상 선택</span>
@@ -391,26 +397,22 @@ function getAppSkeletonHtml(productConfig) {
                   </div>
 
                   <div style="display:flex; align-items:center; gap:6px;">
-                    <!-- "직접 선택" COLOR PICKER BUTTON -->
                     <label title="더 많은 색상 직접 선택" style="position:relative; cursor:pointer; display:inline-flex; align-items:center; gap:4px; font-size:11.5px; font-weight:600; color:#334155; background:#ffffff; border:1px solid #cbd5e1; padding:4px 8px; border-radius:6px; transition:all 0.15s;">
                       직접 선택
                       <input type="color" id="input-shape-custom-color" value="#17171a" style="opacity:0; position:absolute; width:100%; height:100%; top:0; left:0; cursor:pointer;">
                     </label>
 
-                    <!-- "색상 저장" BUTTON -->
                     <button type="button" id="btn-save-shape-custom-color" title="이 색상을 저장 목록에 추가" style="display:inline-flex; align-items:center; gap:3px; font-size:11.5px; font-weight:600; color:#0f766e; background:#f0fdf4; border:1px solid #99f6e4; padding:4px 8px; border-radius:6px; cursor:pointer;">
                       <span style="font-weight:700;">+</span> 저장
                     </button>
                   </div>
                 </div>
 
-                <!-- TABS DIRECTLY ABOVE COLOR GRID -->
                 <div style="display:flex; border-bottom:1px solid #e2e8f0; gap:16px; width:100%;">
                   <button type="button" id="tab-shape-color-presets" class="color-popover-tab active">기본 색상</button>
                   <button type="button" id="tab-shape-color-saved" class="color-popover-tab">저장된 색상 (<span id="shape-saved-colors-count">0</span>)</button>
                 </div>
 
-                <!-- TAB 1 CONTENT: 5x8 PRESET COLOR GRID -->
                 <div id="view-shape-color-presets" style="display:block; width:100%;">
                   <div id="shape-popover-swatch-grid" style="display:grid; grid-template-columns: repeat(8, 1fr); gap:8px; width:100%;">
                     ${TEXT_COLOR_GRID.map(c => `
@@ -419,11 +421,8 @@ function getAppSkeletonHtml(productConfig) {
                   </div>
                 </div>
 
-                <!-- TAB 2 CONTENT: USER SAVED CUSTOM COLORS GRID -->
                 <div id="view-shape-color-saved" style="display:none; width:100%;">
-                  <div id="shape-popover-saved-grid" style="display:grid; grid-template-columns: repeat(8, 1fr); gap:8px; width:100%;">
-                    <!-- Dynamically populated from DB -->
-                  </div>
+                  <div id="shape-popover-saved-grid" style="display:grid; grid-template-columns: repeat(8, 1fr); gap:8px; width:100%;"></div>
                   <div id="shape-saved-colors-empty-msg" style="display:none; text-align:center; padding:18px 0; font-size:11.5px; color:#64748b; line-height:1.5;">
                     저장된 색상이 없습니다.<br>'직접 선택' 후 [<strong>+ 저장</strong>] 버튼을 누르면 DB에 저장됩니다.
                   </div>
@@ -431,8 +430,7 @@ function getAppSkeletonHtml(productConfig) {
               </div>
 
               <!-- FLOATING SHAPE STROKE COLOR PICKER POPOVER MODAL -->
-              <div id="shape-stroke-color-popover-modal" style="display:none; position:absolute; right:0; top:130px; width:100%; box-sizing:border-box; background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; box-shadow:0 10px 28px rgba(0,0,0,0.15); padding:16px; z-index:9999; flex-direction:column; gap:12px;">
-                <!-- TOP HEADER: TITLE + CLOSE (X) BUTTON -->
+              <div id="shape-stroke-color-popover-modal" style="display:none; position:absolute; right:0; top:160px; width:100%; box-sizing:border-box; background:#ffffff; border-radius:12px; border:1px solid #e2e8f0; box-shadow:0 10px 28px rgba(0,0,0,0.15); padding:16px; z-index:9999; flex-direction:column; gap:12px;">
                 <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
                   <span style="font-size:13px; font-weight:700; color:#1e293b;">테두리 색상 선택</span>
                   <button type="button" id="btn-close-shape-stroke-color-popover" style="background:none; border:none; font-size:16px; color:#64748b; cursor:pointer; padding:2px 6px; border-radius:4px; line-height:1;" title="닫기">✕</button>
@@ -440,7 +438,6 @@ function getAppSkeletonHtml(productConfig) {
 
                 <div style="height:1px; background:#f1f5f9; width:100%;"></div>
 
-                <!-- SLEEK REFINED CUSTOM COLOR PICKER VIEW -->
                 <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; background:#f8fafc; border:1px solid #e2e8f0; padding:8px 10px; border-radius:8px; width:100%; box-sizing:border-box;">
                   <div style="display:flex; align-items:center; gap:8px;">
                     <div id="shape-stroke-popover-color-preview" style="width:28px; height:28px; border-radius:6px; border:1px solid #cbd5e1; background:#000000;"></div>
@@ -448,26 +445,22 @@ function getAppSkeletonHtml(productConfig) {
                   </div>
 
                   <div style="display:flex; align-items:center; gap:6px;">
-                    <!-- "직접 선택" COLOR PICKER BUTTON -->
                     <label title="더 많은 색상 직접 선택" style="position:relative; cursor:pointer; display:inline-flex; align-items:center; gap:4px; font-size:11.5px; font-weight:600; color:#334155; background:#ffffff; border:1px solid #cbd5e1; padding:4px 8px; border-radius:6px; transition:all 0.15s;">
                       직접 선택
                       <input type="color" id="input-shape-stroke-custom-color" value="#000000" style="opacity:0; position:absolute; width:100%; height:100%; top:0; left:0; cursor:pointer;">
                     </label>
 
-                    <!-- "색상 저장" BUTTON -->
                     <button type="button" id="btn-save-shape-stroke-custom-color" title="이 색상을 저장 목록에 추가" style="display:inline-flex; align-items:center; gap:3px; font-size:11.5px; font-weight:600; color:#0f766e; background:#f0fdf4; border:1px solid #99f6e4; padding:4px 8px; border-radius:6px; cursor:pointer;">
                       <span style="font-weight:700;">+</span> 저장
                     </button>
                   </div>
                 </div>
 
-                <!-- TABS DIRECTLY ABOVE COLOR GRID -->
                 <div style="display:flex; border-bottom:1px solid #e2e8f0; gap:16px; width:100%;">
                   <button type="button" id="tab-shape-stroke-color-presets" class="color-popover-tab active">기본 색상</button>
                   <button type="button" id="tab-shape-stroke-color-saved" class="color-popover-tab">저장된 색상 (<span id="shape-stroke-saved-colors-count">0</span>)</button>
                 </div>
 
-                <!-- TAB 1 CONTENT: 5x8 PRESET COLOR GRID -->
                 <div id="view-shape-stroke-color-presets" style="display:block; width:100%;">
                   <div id="shape-stroke-popover-swatch-grid" style="display:grid; grid-template-columns: repeat(8, 1fr); gap:8px; width:100%;">
                     ${TEXT_COLOR_GRID.map(c => `
@@ -476,11 +469,8 @@ function getAppSkeletonHtml(productConfig) {
                   </div>
                 </div>
 
-                <!-- TAB 2 CONTENT: USER SAVED CUSTOM COLORS GRID -->
                 <div id="view-shape-stroke-color-saved" style="display:none; width:100%;">
-                  <div id="shape-stroke-popover-saved-grid" style="display:grid; grid-template-columns: repeat(8, 1fr); gap:8px; width:100%;">
-                    <!-- Dynamically populated from DB -->
-                  </div>
+                  <div id="shape-stroke-popover-saved-grid" style="display:grid; grid-template-columns: repeat(8, 1fr); gap:8px; width:100%;"></div>
                   <div id="shape-stroke-saved-colors-empty-msg" style="display:none; text-align:center; padding:18px 0; font-size:11.5px; color:#64748b; line-height:1.5;">
                     저장된 색상이 없습니다.<br>'직접 선택' 후 [<strong>+ 저장</strong>] 버튼을 누르면 DB에 저장됩니다.
                   </div>
@@ -489,7 +479,7 @@ function getAppSkeletonHtml(productConfig) {
 
               <!-- 1. SHAPE TYPES SELECTION GRID -->
               <div>
-                <div style="font-size:11px; font-weight:700; color:#8b8b93; margin-bottom:8px;">도형 선택</div>
+                <div style="font-size:11.5px; font-weight:700; color:#8b8b93; margin-bottom:8px;">기본 도형 목록</div>
                 <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:8px;">
                   <button type="button" class="shape-picker-btn" data-shape="rectangle" title="직사각형">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2"/></svg>
@@ -536,7 +526,7 @@ function getAppSkeletonHtml(productConfig) {
 
               <div style="height:1px; background:#f0f0f3;"></div>
 
-              <!-- 3. SHAPE BORDER (STROKE) CONTROLS -->
+              <!-- 4. SHAPE BORDER (STROKE) CONTROLS -->
               <div style="display:flex; flex-direction:column; gap:12px;">
                 <div>
                   <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:11.5px; font-weight:650; color:#5c5c64;">
@@ -558,6 +548,125 @@ function getAppSkeletonHtml(productConfig) {
                   </div>
                   <input type="range" min="-180" max="180" step="1" value="0" id="slider-shape-rotation" class="slider-range-input">
                 </div>
+              </div>
+            </div>
+
+            <!-- SECTION 4: DESIGN CONTROLS (STICKERS & PATTERNS ONLY) -->
+            <div id="section-design-controls" style="display:none; flex-direction:column; gap:16px; position:relative;">
+              <div style="display:flex; align-items:center; justify-content:space-between;">
+                <div style="font-size:15px; font-weight:800; color:#1e293b;">디자인 요소 추가</div>
+              </div>
+
+              <!-- SUB-TAB SWITCHER: STICKER VS PATTERN -->
+              <div style="display:flex; background:#f1f5f9; padding:4px; border-radius:10px; gap:4px; border:1px solid #e2e8f0;">
+                <button type="button" id="tab-design-sticker" class="btn-design-subtab active" style="flex:1; padding:8px 0; border:none; border-radius:8px; font-size:13px; font-weight:800; cursor:pointer; background:#ffffff; color:#0f172a; box-shadow:0 1px 3px rgba(0,0,0,0.08); transition:all 0.15s ease;">
+                  🎨 스티커
+                </button>
+                <button type="button" id="tab-design-pattern" class="btn-design-subtab" style="flex:1; padding:8px 0; border:none; border-radius:8px; font-size:13px; font-weight:800; cursor:pointer; background:transparent; color:#64748b; transition:all 0.15s ease;">
+                  🏁 패턴
+                </button>
+              </div>
+
+              <!-- PANE 1: STICKERS PANEL -->
+              <div id="pane-design-sticker" style="display:flex; flex-direction:column; gap:16px;">
+                <div>
+                  <div style="font-size:11.5px; font-weight:700; color:#8b8b93; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+                    <span>그래픽 스티커 목록</span>
+                    <span id="sticker-count-tag" style="color:#0f766e; font-weight:700;"></span>
+                  </div>
+                  <div id="user-stickers-grid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; max-height:360px; overflow-y:auto; padding:2px;">
+                    <div style="grid-column:1/-1; text-align:center; padding:12px; font-size:11.5px; color:#94a3b8;">스티커 로딩 중...</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- PANE 2: PATTERNS PANEL -->
+              <div id="pane-design-pattern" style="display:none; flex-direction:column; gap:14px;">
+                
+                <!-- PATTERN ADJUSTMENT CONTROLS SECTION -->
+                <div id="container-pattern-adjustments" style="display:flex; flex-direction:column; gap:12px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:14px; box-sizing:border-box;">
+                  <div style="display:flex; align-items:center; justify-content:space-between;">
+                    <div style="font-size:12.5px; font-weight:800; color:#0f172a; display:flex; align-items:center; gap:5px;">
+                      <span>🎛️ 패턴 세부 설정</span>
+                    </div>
+                    <span id="label-active-pattern-title" style="font-size:10.5px; font-weight:800; color:#0f766e; background:#f0fdf4; border:1px solid #99f6e4; padding:2px 6px; border-radius:4px;">선택 대기</span>
+                  </div>
+
+                  <div style="height:1px; background:#e2e8f0;"></div>
+
+                  <!-- 1. PATTERN INNER SCALE / DENSITY (패턴 밀도 / 내부 크기) -->
+                  <div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:11.5px; font-weight:650; color:#475569;">
+                      <span>패턴 밀도 (내부 크기)</span>
+                      <span id="label-val-pattern-scale" style="font-weight:700; color:#0f172a;">100%</span>
+                    </div>
+                    <input type="range" min="10" max="300" step="5" value="100" id="slider-pattern-scale" class="slider-range-input">
+                  </div>
+
+                  <!-- 2. PATTERN INNER ROTATION (패턴 내부 회전) -->
+                  <div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:11.5px; font-weight:650; color:#475569;">
+                      <span>패턴 내부 회전</span>
+                      <span id="label-val-pattern-angle" style="font-weight:700; color:#0f172a;">0°</span>
+                    </div>
+                    <input type="range" min="-180" max="180" step="1" value="0" id="slider-pattern-angle" class="slider-range-input">
+                  </div>
+
+                  <!-- 3. PATTERN OPACITY (불투명도) -->
+                  <div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:11.5px; font-weight:650; color:#475569;">
+                      <span>불투명도</span>
+                      <span id="label-val-pattern-opacity" style="font-weight:700; color:#0f172a;">100%</span>
+                    </div>
+                    <input type="range" min="10" max="100" step="1" value="100" id="slider-pattern-opacity" class="slider-range-input">
+                  </div>
+
+                  <!-- 4. PATTERN COLOR PICKERS (도형 메인, 포인트, 배경 색상) -->
+                  <div style="display:flex; flex-direction:column; gap:6px; margin-top:2px;">
+                    <div style="font-size:11.5px; font-weight:650; color:#475569;">패턴 색상 지정</div>
+                    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:6px;">
+                      
+                      <!-- Main Shape Color -->
+                      <div id="cell-pattern-color-main" style="display:flex; flex-direction:column; align-items:center; gap:3px; background:#ffffff; border:1px solid #cbd5e1; border-radius:8px; padding:6px 2px;">
+                        <span style="font-size:10px; font-weight:700; color:#64748b;">도형 색상</span>
+                        <div style="display:flex; align-items:center; gap:3px;">
+                          <input type="color" id="picker-pattern-color-main" value="#0f172a" style="width:20px; height:20px; border:none; padding:0; background:none; cursor:pointer; border-radius:50%;">
+                          <span id="label-val-pattern-color-main" style="font-size:9.5px; font-family:monospace; font-weight:700; color:#334155;">#0F172A</span>
+                        </div>
+                      </div>
+
+                      <!-- Accent / Point Color -->
+                      <div id="cell-pattern-color-point" style="display:flex; flex-direction:column; align-items:center; gap:3px; background:#ffffff; border:1px solid #cbd5e1; border-radius:8px; padding:6px 2px;">
+                        <span style="font-size:10px; font-weight:700; color:#64748b;">포인트 색</span>
+                        <div style="display:flex; align-items:center; gap:3px;">
+                          <input type="color" id="picker-pattern-color-point" value="#ff7828" style="width:20px; height:20px; border:none; padding:0; background:none; cursor:pointer; border-radius:50%;">
+                          <span id="label-val-pattern-color-point" style="font-size:9.5px; font-family:monospace; font-weight:700; color:#334155;">#FF7828</span>
+                        </div>
+                      </div>
+
+                      <!-- Background Color -->
+                      <div id="cell-pattern-color-bg" style="display:flex; flex-direction:column; align-items:center; gap:3px; background:#ffffff; border:1px solid #cbd5e1; border-radius:8px; padding:6px 2px;">
+                        <span style="font-size:10px; font-weight:700; color:#64748b;">배경 색상</span>
+                        <div style="display:flex; align-items:center; gap:3px;">
+                          <input type="color" id="picker-pattern-color-bg" value="#ffffff" style="width:20px; height:20px; border:none; padding:0; background:none; cursor:pointer; border-radius:50%;">
+                          <span id="label-val-pattern-color-bg" style="font-size:9.5px; font-family:monospace; font-weight:700; color:#334155;">#FFFFFF</span>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+
+                <div style="font-size:11.5px; font-weight:700; color:#8b8b93; display:flex; justify-content:space-between; align-items:center; margin-top:2px;">
+                  <span>등록된 패턴 라이브러리</span>
+                  <span id="pattern-count-tag" style="color:#f59e0b; font-weight:700;"></span>
+                </div>
+
+                <div id="user-patterns-grid" style="display:grid; grid-template-columns: repeat(2, 1fr); gap:10px; max-height:280px; overflow-y:auto; padding:2px;">
+                  <div style="grid-column:1/-1; text-align:center; padding:18px; font-size:11.5px; color:#94a3b8;">패턴 로딩 중...</div>
+                </div>
+              </div>
+            </div>
               </div>
 
             </div>
@@ -639,26 +748,38 @@ export class TShirtCustomizerApp {
       onSelectionChanged: (meta, selectedObj) => {
         window.customizerEditor = editor;
         const obj = selectedObj || meta;
+
+        const secText = document.getElementById('section-text-controls');
+        const secShape = document.getElementById('section-shape-controls');
+        const secDesign = document.getElementById('section-design-controls');
+        const secProd = document.getElementById('section-product-options');
+
+        const activeRailBtn = document.querySelector('.tool-rail-btn.active');
+        const activeRailId = activeRailBtn ? activeRailBtn.id : '';
+
         const isText = Boolean(obj && (
           (obj.type && String(obj.type).toLowerCase().includes('text')) ||
           obj.text !== undefined ||
           (obj.rawObject && obj.rawObject.type && String(obj.rawObject.type).toLowerCase().includes('text'))
         ));
 
-        const isShape = Boolean(obj && (
+        const isBasicShape = Boolean(obj && (
           obj.isShape ||
           obj.shapeType ||
-          ['rect', 'circle', 'triangle', 'path', 'polygon'].includes(String(obj.type || '').toLowerCase())
-        ) && !obj.isGuideline);
+          ['rect', 'circle', 'triangle', 'polygon'].some(t => String(obj.type || '').toLowerCase() === t)
+        ) && !obj.isGuideline && !obj.isSticker && !obj.isPattern && !obj.isArtwork);
 
-        const secText = document.getElementById('section-text-controls');
-        const secShape = document.getElementById('section-shape-controls');
-        const secProd = document.getElementById('section-product-options');
+        const isDesignArt = Boolean(obj && !isText && !isBasicShape && !obj.isGuideline);
 
         if (isText) {
           if (secText) secText.style.display = 'flex';
           if (secShape) secShape.style.display = 'none';
+          if (secDesign) secDesign.style.display = 'none';
           if (secProd) secProd.style.display = 'none';
+
+          document.querySelectorAll('.tool-rail-btn').forEach(btn => btn.classList.remove('active'));
+          const textRailBtn = document.getElementById('rail-btn-text');
+          if (textRailBtn) textRailBtn.classList.add('active');
 
           const txtInp = document.getElementById('input-text-content');
           const fontSel = document.getElementById('select-font-family');
@@ -688,28 +809,30 @@ export class TShirtCustomizerApp {
           let normAngle = Math.round((obj.angle || 0) % 360);
           if (normAngle > 180) normAngle -= 360;
           if (normAngle < -180) normAngle += 360;
-
-          if (rotLbl) rotLbl.textContent = `${normAngle}°`;
           if (rotSld) {
             rotSld.value = normAngle;
+            if (rotLbl) rotLbl.textContent = `${normAngle}°`;
             updateSliderProgress(rotSld);
           }
 
+          const lSpace = Math.round(obj.charSpacing || 0);
           if (letterSld) {
-            letterSld.value = Math.round((obj.charSpacing || 0) / 10);
-            if (letterLbl) letterLbl.textContent = `${((obj.charSpacing || 0) / 100).toFixed(2)}em`;
+            letterSld.value = lSpace;
+            if (letterLbl) letterLbl.textContent = `${lSpace}px`;
             updateSliderProgress(letterSld);
           }
 
+          const lHeight = Math.round((obj.lineHeight || 1) * 10) / 10;
           if (lineSld) {
-            lineSld.value = obj.lineHeight || 1.2;
-            if (lineLbl) lineLbl.textContent = (obj.lineHeight || 1.2).toFixed(2);
+            lineSld.value = lHeight;
+            if (lineLbl) lineLbl.textContent = `${lHeight.toFixed(1)}`;
             updateSliderProgress(lineSld);
           }
 
+          const sX = Math.round((obj.scaleX || 1) * 100);
           if (scaleXSld) {
-            scaleXSld.value = Math.round((obj.scaleX || 1) * 100);
-            if (scaleXLbl) scaleXLbl.textContent = `${Math.round((obj.scaleX || 1) * 100)}%`;
+            scaleXSld.value = sX;
+            if (scaleXLbl) scaleXLbl.textContent = `${sX}%`;
             updateSliderProgress(scaleXSld);
           }
 
@@ -748,7 +871,7 @@ export class TShirtCustomizerApp {
           // Sync Fill Color
           if (obj.fill) {
             const hexColor = String(obj.fill).toLowerCase();
-            const openBtn = document.getElementById('btn-open-color-popover');
+            const openBtn = document.getElementById('btn-open-text-color-popover');
             if (openBtn) openBtn.style.background = obj.fill;
 
             const popPrev = document.getElementById('popover-color-preview');
@@ -757,7 +880,7 @@ export class TShirtCustomizerApp {
             const popHex = document.getElementById('popover-hex-value');
             if (popHex) popHex.textContent = hexColor;
 
-            const customInp = document.getElementById('input-popover-custom-color');
+            const customInp = document.getElementById('input-custom-color');
             if (customInp && hexColor.startsWith('#') && hexColor.length === 7) {
               customInp.value = hexColor;
             }
@@ -767,122 +890,215 @@ export class TShirtCustomizerApp {
               btn.classList.toggle('active', c === hexColor);
             });
           }
-        } else if (isShape) {
+        } else if (isBasicShape || activeRailId === 'rail-btn-shape' || (secShape && secShape.style.display === 'flex' && !obj)) {
           if (secText) secText.style.display = 'none';
           if (secShape) secShape.style.display = 'flex';
+          if (secDesign) secDesign.style.display = 'none';
           if (secProd) secProd.style.display = 'none';
 
-          // Sync Shape Color
-          if (obj.fill) {
-            const hexColor = String(obj.fill).toLowerCase();
-            const openShapeBtn = document.getElementById('btn-open-shape-color-popover');
-            if (openShapeBtn) openShapeBtn.style.background = obj.fill;
+          document.querySelectorAll('.tool-rail-btn').forEach(btn => btn.classList.remove('active'));
+          const shapeRailBtn = document.getElementById('rail-btn-shape');
+          if (shapeRailBtn) shapeRailBtn.classList.add('active');
 
-            const shapePopPrev = document.getElementById('shape-popover-color-preview');
-            if (shapePopPrev) shapePopPrev.style.background = obj.fill;
+          if (obj) {
+            // Sync Shape Color
+            if (obj.fill) {
+              const hexColor = String(obj.fill).toLowerCase();
+              const openShapeBtn = document.getElementById('btn-open-shape-color-popover');
+              if (openShapeBtn) openShapeBtn.style.background = obj.fill;
 
-            const shapePopHex = document.getElementById('shape-popover-hex-value');
-            if (shapePopHex) shapePopHex.textContent = hexColor;
+              const shapePopPrev = document.getElementById('shape-popover-color-preview');
+              if (shapePopPrev) shapePopPrev.style.background = obj.fill;
 
-            const shapeCustomInp = document.getElementById('input-shape-custom-color');
-            if (shapeCustomInp && hexColor.startsWith('#') && hexColor.length === 7) {
-              shapeCustomInp.value = hexColor;
-            }
+              const shapePopHex = document.getElementById('shape-popover-hex-value');
+              if (shapePopHex) shapePopHex.textContent = hexColor;
 
-            document.querySelectorAll('#shape-popover-swatch-grid .shape-popover-swatch-btn').forEach(btn => {
-              const c = (btn.dataset.color || '').toLowerCase();
-              btn.classList.toggle('active', c === hexColor);
-            });
-          }
-
-          // Sync Stroke Color
-          if (obj.stroke) {
-            const strokeHex = String(obj.stroke).toLowerCase();
-            const openStrokeBtn = document.getElementById('btn-open-shape-stroke-color-popover');
-            if (openStrokeBtn) openStrokeBtn.style.background = obj.stroke;
-
-            const strokePopPrev = document.getElementById('shape-stroke-popover-color-preview');
-            if (strokePopPrev) strokePopPrev.style.background = obj.stroke;
-
-            const strokePopHex = document.getElementById('shape-stroke-popover-hex-value');
-            if (strokePopHex) strokePopHex.textContent = strokeHex;
-
-            const strokeCustomInp = document.getElementById('input-shape-stroke-custom-color');
-            if (strokeCustomInp && strokeHex.startsWith('#') && strokeHex.length === 7) {
-              strokeCustomInp.value = strokeHex;
-            }
-
-            document.querySelectorAll('#shape-stroke-popover-swatch-grid .shape-stroke-popover-swatch-btn').forEach(btn => {
-              const c = (btn.dataset.color || '').toLowerCase();
-              btn.classList.toggle('active', c === strokeHex);
-            });
-          }
-
-          // Sync Stroke Width
-          const strokeWidthSld = document.getElementById('slider-shape-stroke-width');
-          const strokeWidthLbl = document.getElementById('label-val-shape-stroke-width');
-          const sWidth = Math.round(obj.strokeWidth || 0);
-          if (strokeWidthSld) {
-            strokeWidthSld.value = sWidth;
-            if (strokeWidthLbl) strokeWidthLbl.textContent = `${sWidth}px`;
-            updateSliderProgress(strokeWidthSld);
-          }
-
-          // Sync Rotation
-          const rotSld = document.getElementById('slider-shape-rotation');
-          const rotLbl = document.getElementById('label-val-shape-rotation');
-          let normAngle = Math.round((obj.angle || 0) % 360);
-          if (normAngle > 180) normAngle -= 360;
-          if (normAngle < -180) normAngle += 360;
-          if (rotSld) {
-            rotSld.value = normAngle;
-            if (rotLbl) rotLbl.textContent = `${normAngle}°`;
-            updateSliderProgress(rotSld);
-          }
-
-          // Sync Corner Rounding (rx) for eligible shapes (Triangle, Square, Rect, Pentagon, Star)
-          let shapeType = obj.shapeType;
-          if (!shapeType) {
-            if (obj.type === 'rect') shapeType = obj.width === obj.height ? 'square' : 'rect';
-            else if (obj.type === 'triangle') shapeType = 'triangle';
-            else if (obj.originalPoints?.length === 5) shapeType = 'pentagon';
-            else if (obj.originalPoints?.length === 10) shapeType = 'star';
-          }
-
-          const isEligibleForRounding = Boolean(['triangle', 'square', 'rect', 'rectangle', 'pentagon', 'star'].includes(shapeType));
-
-          const sliderRx = document.getElementById('slider-shape-rx');
-          const labelRx = document.getElementById('label-val-shape-rx');
-          const containerRx = document.getElementById('container-shape-rx');
-
-          if (containerRx && sliderRx && labelRx) {
-            if (isEligibleForRounding) {
-              sliderRx.disabled = false;
-              containerRx.style.opacity = '1';
-              containerRx.style.pointerEvents = 'auto';
-
-              let curR = 0;
-              if (obj.type === 'rect' || ['rect', 'rectangle', 'square'].includes(shapeType)) {
-                curR = Math.round(obj.rx || 0);
-              } else {
-                curR = Math.round(obj.cornerRadius || 0);
+              const shapeCustomInp = document.getElementById('input-shape-custom-color');
+              if (shapeCustomInp && hexColor.startsWith('#') && hexColor.length === 7) {
+                shapeCustomInp.value = hexColor;
               }
-              sliderRx.value = curR;
-              labelRx.textContent = `${curR}px`;
-              updateSliderProgress(sliderRx);
+
+              document.querySelectorAll('#shape-popover-swatch-grid .shape-popover-swatch-btn').forEach(btn => {
+                const c = (btn.dataset.color || '').toLowerCase();
+                btn.classList.toggle('active', c === hexColor);
+              });
+            }
+
+            // Sync Stroke Color
+            if (obj.stroke) {
+              const strokeHex = String(obj.stroke).toLowerCase();
+              const openStrokeBtn = document.getElementById('btn-open-shape-stroke-color-popover');
+              if (openStrokeBtn) openStrokeBtn.style.background = obj.stroke;
+
+              const strokePopPrev = document.getElementById('shape-stroke-popover-color-preview');
+              if (strokePopPrev) strokePopPrev.style.background = obj.stroke;
+
+              const strokePopHex = document.getElementById('shape-stroke-popover-hex-value');
+              if (strokePopHex) strokePopHex.textContent = strokeHex;
+
+              const strokeCustomInp = document.getElementById('input-shape-stroke-custom-color');
+              if (strokeCustomInp && strokeHex.startsWith('#') && strokeHex.length === 7) {
+                strokeCustomInp.value = strokeHex;
+              }
+
+              document.querySelectorAll('#shape-stroke-popover-swatch-grid .shape-stroke-popover-swatch-btn').forEach(btn => {
+                const c = (btn.dataset.color || '').toLowerCase();
+                btn.classList.toggle('active', c === strokeHex);
+              });
+            }
+
+            // Sync Stroke Width
+            const strokeWidthSld = document.getElementById('slider-shape-stroke-width');
+            const strokeWidthLbl = document.getElementById('label-val-shape-stroke-width');
+            const sWidth = Math.round(obj.strokeWidth || 0);
+            if (strokeWidthSld) {
+              strokeWidthSld.value = sWidth;
+              if (strokeWidthLbl) strokeWidthLbl.textContent = `${sWidth}px`;
+              updateSliderProgress(strokeWidthSld);
+            }
+
+            // Sync Rotation
+            const rotSld = document.getElementById('slider-shape-rotation');
+            const rotLbl = document.getElementById('label-val-shape-rotation');
+            let normAngle = Math.round((obj.angle || 0) % 360);
+            if (normAngle > 180) normAngle -= 360;
+            if (normAngle < -180) normAngle += 360;
+            if (rotSld) {
+              rotSld.value = normAngle;
+              if (rotLbl) rotLbl.textContent = `${normAngle}°`;
+              updateSliderProgress(rotSld);
+            }
+
+            // Sync Corner Rounding (rx) for eligible shapes
+            let shapeType = obj.shapeType;
+            if (!shapeType) {
+              if (obj.type === 'rect') shapeType = obj.width === obj.height ? 'square' : 'rect';
+              else if (obj.type === 'triangle') shapeType = 'triangle';
+              else if (obj.originalPoints?.length === 5) shapeType = 'pentagon';
+              else if (obj.originalPoints?.length === 10) shapeType = 'star';
+            }
+
+            const isEligibleForRounding = Boolean(['triangle', 'square', 'rect', 'rectangle', 'pentagon', 'star'].includes(shapeType));
+
+            const sliderRx = document.getElementById('slider-shape-rx');
+            const labelRx = document.getElementById('label-val-shape-rx');
+            const containerRx = document.getElementById('container-shape-rx');
+
+            if (containerRx && sliderRx && labelRx) {
+              if (isEligibleForRounding) {
+                sliderRx.disabled = false;
+                containerRx.style.opacity = '1';
+                containerRx.style.pointerEvents = 'auto';
+
+                let curR = 0;
+                if (obj.type === 'rect' || ['rect', 'rectangle', 'square'].includes(shapeType)) {
+                  curR = Math.round(obj.rx || 0);
+                } else {
+                  curR = Math.round(obj.cornerRadius || 0);
+                }
+                sliderRx.value = curR;
+                labelRx.textContent = `${curR}px`;
+                updateSliderProgress(sliderRx);
+              } else {
+                sliderRx.disabled = true;
+                containerRx.style.opacity = '0.35';
+                containerRx.style.pointerEvents = 'none';
+                sliderRx.value = 0;
+                labelRx.textContent = '비활성화';
+                updateSliderProgress(sliderRx);
+              }
+            }
+          }
+        } else if (isDesignArt || activeRailId === 'rail-btn-design' || (secDesign && secDesign.style.display === 'flex' && !obj)) {
+          if (secText) secText.style.display = 'none';
+          if (secShape) secShape.style.display = 'none';
+          if (secDesign) secDesign.style.display = 'flex';
+          if (secProd) secProd.style.display = 'none';
+
+          document.querySelectorAll('.tool-rail-btn').forEach(btn => btn.classList.remove('active'));
+          const designRailBtn = document.getElementById('rail-btn-design');
+          if (designRailBtn) designRailBtn.classList.add('active');
+
+          if (obj) {
+            const patScaleSld = document.getElementById('slider-pattern-scale');
+            const patScaleLbl = document.getElementById('label-val-pattern-scale');
+            const patAngleSld = document.getElementById('slider-pattern-angle');
+            const patAngleLbl = document.getElementById('label-val-pattern-angle');
+            const patOpacitySld = document.getElementById('slider-pattern-opacity');
+            const patOpacityLbl = document.getElementById('label-val-pattern-opacity');
+            const patTitleTag = document.getElementById('label-active-pattern-title');
+
+            const pScalePct = Math.round((obj.patternScale !== undefined ? obj.patternScale : 1.0) * 100);
+            const pAngleDeg = Math.round(obj.patternAngle || 0);
+            const pOpacityPct = Math.round((obj.patternOpacity !== undefined ? obj.patternOpacity : (obj.opacity !== undefined ? obj.opacity : 1.0)) * 100);
+
+            if (patScaleSld) {
+              patScaleSld.value = pScalePct;
+              if (patScaleLbl) patScaleLbl.textContent = `${pScalePct}%`;
+              updateSliderProgress(patScaleSld);
+            }
+            if (patAngleSld) {
+              patAngleSld.value = pAngleDeg;
+              if (patAngleLbl) patAngleLbl.textContent = `${pAngleDeg}°`;
+              updateSliderProgress(patAngleSld);
+            }
+            if (patOpacitySld) {
+              patOpacitySld.value = pOpacityPct;
+              if (patOpacityLbl) patOpacityLbl.textContent = `${pOpacityPct}%`;
+              updateSliderProgress(patOpacitySld);
+            }
+            if (patTitleTag) {
+              patTitleTag.textContent = obj.patternTitle || (obj.isPattern ? '선택된 패턴' : '선택 중');
+            }
+
+            // Sync Pattern Color Pickers & Point Color Cell Visibility
+            const cellPoint = document.getElementById('cell-pattern-color-point');
+            const pickerMain = document.getElementById('picker-pattern-color-main');
+            const labelMain = document.getElementById('label-val-pattern-color-main');
+            const pickerPoint = document.getElementById('picker-pattern-color-point');
+            const labelPoint = document.getElementById('label-val-pattern-color-point');
+            const pickerBg = document.getElementById('picker-pattern-color-bg');
+            const labelBg = document.getElementById('label-val-pattern-color-bg');
+
+            const cMain = (obj.patternColorMain || '#0f172a').toUpperCase();
+            const cBg = (obj.patternColorBg || '#ffffff').toUpperCase();
+
+            if (pickerMain) pickerMain.value = cMain.toLowerCase();
+            if (labelMain) labelMain.textContent = cMain;
+            if (pickerBg) pickerBg.value = cBg.toLowerCase();
+            if (labelBg) labelBg.textContent = cBg;
+
+            if (obj.hasPointColor && obj.patternColorPoint) {
+              const cPoint = obj.patternColorPoint.toUpperCase();
+              if (cellPoint) cellPoint.style.display = 'flex';
+              if (pickerPoint) pickerPoint.value = cPoint.toLowerCase();
+              if (labelPoint) labelPoint.textContent = cPoint;
             } else {
-              sliderRx.disabled = true;
-              containerRx.style.opacity = '0.35';
-              containerRx.style.pointerEvents = 'none';
-              sliderRx.value = 0;
-              labelRx.textContent = '비활성화';
-              updateSliderProgress(sliderRx);
+              if (cellPoint) cellPoint.style.display = 'none';
             }
           }
         } else {
-          if (secText) secText.style.display = 'none';
-          if (secShape) secShape.style.display = 'none';
-          if (secProd) secProd.style.display = 'flex';
+          if (activeRailId === 'rail-btn-text') {
+            if (secText) secText.style.display = 'flex';
+            if (secShape) secShape.style.display = 'none';
+            if (secDesign) secDesign.style.display = 'none';
+            if (secProd) secProd.style.display = 'none';
+          } else if (activeRailId === 'rail-btn-shape') {
+            if (secText) secText.style.display = 'none';
+            if (secShape) secShape.style.display = 'flex';
+            if (secDesign) secDesign.style.display = 'none';
+            if (secProd) secProd.style.display = 'none';
+          } else if (activeRailId === 'rail-btn-design') {
+            if (secText) secText.style.display = 'none';
+            if (secShape) secShape.style.display = 'none';
+            if (secDesign) secDesign.style.display = 'flex';
+            if (secProd) secProd.style.display = 'none';
+          } else {
+            if (secText) secText.style.display = 'none';
+            if (secShape) secShape.style.display = 'none';
+            if (secDesign) secDesign.style.display = 'none';
+            if (secProd) secProd.style.display = 'flex';
+          }
         }
         if (layerManager) layerManager.updateLayerList();
       }
@@ -1309,9 +1525,56 @@ export class TShirtCustomizerApp {
     };
 
     // Initialize all sliders' initial progress background
-    ['slider-rotation', 'slider-letter-spacing', 'slider-line-height', 'slider-scale-x'].forEach(id => {
+    ['slider-rotation', 'slider-letter-spacing', 'slider-line-height', 'slider-scale-x', 'slider-pattern-scale', 'slider-pattern-angle', 'slider-pattern-opacity'].forEach(id => {
       const el = document.getElementById(id);
       if (el) updateSliderProgress(el);
+    });
+
+    // Pattern Sliders
+    safeAddListener('slider-pattern-scale', 'input', (e) => {
+      const val = parseInt(e.target.value, 10);
+      const lbl = document.getElementById('label-val-pattern-scale');
+      if (lbl) lbl.textContent = `${val}%`;
+      updateSliderProgress(e.target);
+      editor.updatePatternProperties({ scale: val / 100 });
+    });
+
+    safeAddListener('slider-pattern-angle', 'input', (e) => {
+      const val = parseInt(e.target.value, 10);
+      const lbl = document.getElementById('label-val-pattern-angle');
+      if (lbl) lbl.textContent = `${val}°`;
+      updateSliderProgress(e.target);
+      editor.updatePatternProperties({ angle: val });
+    });
+
+    safeAddListener('slider-pattern-opacity', 'input', (e) => {
+      const val = parseInt(e.target.value, 10);
+      const lbl = document.getElementById('label-val-pattern-opacity');
+      if (lbl) lbl.textContent = `${val}%`;
+      updateSliderProgress(e.target);
+      editor.updatePatternProperties({ opacity: val / 100 });
+    });
+
+    // Pattern Color Pickers
+    safeAddListener('picker-pattern-color-main', 'input', (e) => {
+      const hex = e.target.value;
+      const lbl = document.getElementById('label-val-pattern-color-main');
+      if (lbl) lbl.textContent = hex.toUpperCase();
+      editor.updatePatternColors({ colorMain: hex });
+    });
+
+    safeAddListener('picker-pattern-color-point', 'input', (e) => {
+      const hex = e.target.value;
+      const lbl = document.getElementById('label-val-pattern-color-point');
+      if (lbl) lbl.textContent = hex.toUpperCase();
+      editor.updatePatternColors({ colorPoint: hex });
+    });
+
+    safeAddListener('picker-pattern-color-bg', 'input', (e) => {
+      const hex = e.target.value;
+      const lbl = document.getElementById('label-val-pattern-color-bg');
+      if (lbl) lbl.textContent = hex.toUpperCase();
+      editor.updatePatternColors({ colorBg: hex });
     });
 
     // Bind Sliders
@@ -1347,20 +1610,220 @@ export class TShirtCustomizerApp {
       editor.updateActiveObject({ scaleX: val / 100 });
     });
 
-    // Shape Rail Button Click
+    // Shape Rail Button Click (도형)
     safeAddListener('rail-btn-shape', 'click', (e) => {
       if (e) e.stopPropagation();
       const secText = document.getElementById('section-text-controls');
       const secShape = document.getElementById('section-shape-controls');
+      const secDesign = document.getElementById('section-design-controls');
       const secProd = document.getElementById('section-product-options');
       if (secText) secText.style.display = 'none';
       if (secShape) secShape.style.display = 'flex';
+      if (secDesign) secDesign.style.display = 'none';
       if (secProd) secProd.style.display = 'none';
 
       document.querySelectorAll('.tool-rail-btn').forEach(btn => btn.classList.remove('active'));
       const shapeRailBtn = document.getElementById('rail-btn-shape');
       if (shapeRailBtn) shapeRailBtn.classList.add('active');
     });
+
+    // Design Rail Button Click (디자인: 스티커 & 패턴)
+    safeAddListener('rail-btn-design', 'click', (e) => {
+      if (e) e.stopPropagation();
+      const secText = document.getElementById('section-text-controls');
+      const secShape = document.getElementById('section-shape-controls');
+      const secDesign = document.getElementById('section-design-controls');
+      const secProd = document.getElementById('section-product-options');
+      if (secText) secText.style.display = 'none';
+      if (secShape) secShape.style.display = 'none';
+      if (secDesign) secDesign.style.display = 'flex';
+      if (secProd) secProd.style.display = 'none';
+
+      document.querySelectorAll('.tool-rail-btn').forEach(btn => btn.classList.remove('active'));
+      const designRailBtn = document.getElementById('rail-btn-design');
+      if (designRailBtn) designRailBtn.classList.add('active');
+
+      loadArtworksForCustomizer();
+    });
+
+    // Design Subtab Toggling (Sticker vs Pattern)
+    const btnTabSticker = document.getElementById('tab-design-sticker');
+    const btnTabPattern = document.getElementById('tab-design-pattern');
+    const paneSticker = document.getElementById('pane-design-sticker');
+    const panePattern = document.getElementById('pane-design-pattern');
+
+    if (btnTabSticker && btnTabPattern) {
+      btnTabSticker.addEventListener('click', () => {
+        btnTabSticker.classList.add('active');
+        btnTabSticker.style.background = '#ffffff';
+        btnTabSticker.style.color = '#0f172a';
+        btnTabSticker.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)';
+
+        btnTabPattern.classList.remove('active');
+        btnTabPattern.style.background = 'transparent';
+        btnTabPattern.style.color = '#64748b';
+        btnTabPattern.style.boxShadow = 'none';
+
+        if (paneSticker) paneSticker.style.display = 'flex';
+        if (panePattern) panePattern.style.display = 'none';
+      });
+
+      btnTabPattern.addEventListener('click', () => {
+        btnTabPattern.classList.add('active');
+        btnTabPattern.style.background = '#ffffff';
+        btnTabPattern.style.color = '#0f172a';
+        btnTabPattern.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)';
+
+        btnTabSticker.classList.remove('active');
+        btnTabSticker.style.background = 'transparent';
+        btnTabSticker.style.color = '#64748b';
+        btnTabSticker.style.boxShadow = 'none';
+
+        if (panePattern) panePattern.style.display = 'flex';
+        if (paneSticker) paneSticker.style.display = 'none';
+
+        loadArtworksForCustomizer();
+      });
+    }
+
+    const DEFAULT_FALLBACK_ARTWORKS = [
+      { id: 'pat_checker', category: 'pattern', title: '체커보드 패턴', isVector: true, svgContent: `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><rect x="0" y="0" width="150" height="150" fill="#0f172a"/><rect x="150" y="0" width="150" height="150" fill="#ffffff"/><rect x="0" y="150" width="150" height="150" fill="#ffffff"/><rect x="150" y="150" width="150" height="150" fill="#0f172a"/><rect x="30" y="30" width="90" height="90" fill="#ffffff"/><rect x="180" y="30" width="90" height="90" fill="#0f172a"/><rect x="30" y="180" width="90" height="90" fill="#0f172a"/><rect x="180" y="180" width="90" height="90" fill="#ffffff"/></svg>` },
+      { id: 'pat_dot', category: 'pattern', title: '폴카 도트 패턴', isVector: true, svgContent: `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><circle cx="50" cy="50" r="25" fill="#0f172a"/><circle cx="150" cy="50" r="25" fill="#0f172a"/><circle cx="250" cy="50" r="25" fill="#0f172a"/><circle cx="100" cy="120" r="25" fill="#0f172a"/><circle cx="200" cy="120" r="25" fill="#0f172a"/><circle cx="50" cy="190" r="25" fill="#0f172a"/><circle cx="150" cy="190" r="25" fill="#0f172a"/><circle cx="250" cy="190" r="25" fill="#0f172a"/><circle cx="100" cy="260" r="25" fill="#0f172a"/><circle cx="200" cy="260" r="25" fill="#0f172a"/></svg>` },
+      { id: 'pat_star', category: 'pattern', title: '별별 그래픽 패턴', isVector: true, svgContent: `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><path d="M 60 20 L 72 50 L 105 50 L 78 70 L 88 100 L 60 80 L 32 100 L 42 70 L 15 50 L 48 50 Z" fill="#ff7828"/><path d="M 220 20 L 232 50 L 265 50 L 238 70 L 248 100 L 220 80 L 192 100 L 202 70 L 175 50 L 208 50 Z" fill="#ff7828"/><path d="M 140 120 L 152 150 L 185 150 L 158 170 L 168 200 L 140 180 L 112 200 L 122 170 L 95 150 L 128 150 Z" fill="#0f172a"/><path d="M 60 210 L 72 240 L 105 240 L 78 260 L 88 290 L 60 270 L 32 290 L 42 260 L 15 240 L 48 240 Z" fill="#ff7828"/><path d="M 220 210 L 232 240 L 265 240 L 238 260 L 248 290 L 220 270 L 192 290 L 202 260 L 175 240 L 208 240 Z" fill="#ff7828"/></svg>` },
+      { id: 'pat_geo', category: 'pattern', title: '기하학 헥사곤 패턴', isVector: true, svgContent: `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><polygon points="150,20 230,65 230,155 150,200 70,155 70,65" fill="none" stroke="#0f172a" stroke-width="12"/><polygon points="150,50 200,80 200,140 150,170 100,140 100,80" fill="#ff7828"/><polygon points="150,80 170,100 170,120 150,140 130,120 130,100" fill="#ffffff"/></svg>` },
+      { id: 'art_1786588178970', title: '🌸 파스텔 데이지 패턴', category: 'pattern', isVector: true, svgContent: `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"><defs><pattern id="pat1" width="80" height="80" patternUnits="userSpaceOnUse"><rect width="80" height="80" fill="#fff0f5"/><circle cx="40" cy="40" r="15" fill="#f472b6"/></pattern></defs><rect width="100%" height="100%" fill="url(#pat1)"/></svg>` },
+      { id: 'art_1786588422206', title: '💫 Y2K 핑크 글리터 스파클', category: 'pattern', isVector: true, svgContent: `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"><defs><pattern id="pat_sparkle" width="90" height="90" patternUnits="userSpaceOnUse"><rect width="90" height="90" fill="#fff0f5"/><g opacity="0.85"><path d="M 27 9 Q 27 27, 45 27 Q 27 27, 27 45 Q 27 27, 9 27 Q 27 27, 27 9 Z" fill="#f472b6"/><path d="M 67.5 54 Q 67.5 64.8, 78.3 64.8 Q 67.5 64.8, 67.5 75.6 Q 67.5 64.8, 56.7 64.8 Q 67.5 64.8, 67.5 54 Z" fill="#f59e0b"/></g></pattern></defs><rect width="100%" height="100%" fill="url(#pat_sparkle)"/></svg>` },
+      { id: 'art_1786594313989', title: '트렌디 패턴', category: 'pattern', isVector: true, svgContent: `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="160"><defs><pattern id="pat_preview" width="30" height="30" patternUnits="userSpaceOnUse"><rect width="30" height="30" fill="#fff0f5"/><rect width="15" height="30" fill="#c0afb8" opacity="0.85"/></pattern></defs><rect width="100%" height="100%" fill="url(#pat_preview)"/></svg>` },
+      { id: 'art_badge_1', category: 'graphic', title: '빈티지 아웃도어 뱃지', isVector: true, svgContent: `<svg xmlns="http://www.w3.org/2000/svg" width="280" height="280" viewBox="0 0 280 280"><circle cx="140" cy="140" r="130" fill="#0f172a" stroke="#ff7828" stroke-width="8"/><circle cx="140" cy="140" r="110" fill="none" stroke="#ffffff" stroke-width="3" stroke-dasharray="6,4"/><polygon points="140,40 165,110 240,110 180,155 200,225 140,180 80,225 100,155 40,110 115,110" fill="#ff7828"/><text x="140" y="160" font-family="sans-serif" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">ORIGINAL</text></svg>` },
+      { id: 'art_label_1', category: 'label', title: '스트릿 케어 라벨', isVector: true, svgContent: `<svg xmlns="http://www.w3.org/2000/svg" width="240" height="320" viewBox="0 0 240 320"><rect x="10" y="10" width="220" height="300" rx="12" fill="#ffffff" stroke="#0f172a" stroke-width="5"/><line x1="10" y1="70" x2="230" y2="70" stroke="#0f172a" stroke-width="4"/><text x="120" y="50" font-family="monospace" font-size="20" font-weight="900" fill="#0f172a" text-anchor="middle">TATEE STUDIO</text><text x="120" y="110" font-family="sans-serif" font-size="14" font-weight="bold" fill="#ff7828" text-anchor="middle">100% COTTON</text><circle cx="60" cy="170" r="20" fill="none" stroke="#0f172a" stroke-width="3"/><circle cx="120" cy="170" r="20" fill="none" stroke="#0f172a" stroke-width="3"/><circle cx="180" cy="170" r="20" fill="none" stroke="#0f172a" stroke-width="3"/><path d="M 50 170 L 70 170" stroke="#0f172a" stroke-width="3"/><line x1="10" y1="230" x2="230" y2="230" stroke="#0f172a" stroke-width="2" stroke-dasharray="4,4"/><text x="120" y="270" font-family="sans-serif" font-size="12" fill="#64748b" text-anchor="middle">MADE IN KOREA</text></svg>` },
+      { id: 'art_1', category: 'graphic', title: '로봇 스티커 1', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=tatee1' },
+      { id: 'art_2', category: 'graphic', title: '로봇 스티커 2', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=tatee2' },
+      { id: 'art_3', category: 'graphic', title: '로봇 스티커 3', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=tatee3' }
+    ];
+
+    // Load Artworks (Stickers & Patterns) for Design Panel
+    async function loadArtworksForCustomizer() {
+      let artworks = [];
+      try {
+        const res = await fetch('/api/artworks');
+        if (res.ok) {
+          const data = await res.json();
+          artworks = data.artworks || [];
+        }
+      } catch (err) {
+        console.warn('Backend API fetch failed, loading default fallback artworks:', err);
+      }
+
+      if (!artworks || artworks.length === 0) {
+        artworks = DEFAULT_FALLBACK_ARTWORKS;
+      }
+
+      const stickersGrid = document.getElementById('user-stickers-grid');
+      const patternsGrid = document.getElementById('user-patterns-grid');
+      const stickerTag = document.getElementById('sticker-count-tag');
+      const patternTag = document.getElementById('pattern-count-tag');
+
+      const isPattern = (a) => {
+        if (!a) return false;
+        const cat = String(a.category || '').toLowerCase().trim();
+        const title = String(a.title || '').toLowerCase();
+        return cat === 'pattern' || cat === '패턴' || title.includes('패턴') || (a.svgContent && (a.svgContent.includes('<pattern') || a.svgContent.includes('patternUnits')));
+      };
+
+      const patterns = artworks.filter(a => isPattern(a));
+      const stickers = artworks.filter(a => !isPattern(a));
+
+      if (stickerTag) stickerTag.textContent = `${stickers.length}개`;
+      if (patternTag) patternTag.textContent = `${patterns.length}개`;
+
+      // Render Stickers Grid
+      if (stickersGrid) {
+        stickersGrid.innerHTML = '';
+        if (stickers.length === 0) {
+          stickersGrid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:12px; font-size:11.5px; color:#94a3b8;">등록된 스티커가 없습니다.</div>';
+        } else {
+          stickers.forEach((art, idx) => {
+            const item = document.createElement('div');
+            item.style.cssText = 'background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:6px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; transition:all 0.15s ease; box-shadow:0 1px 2px rgba(0,0,0,0.03);';
+            item.title = art.title;
+
+            let thumb = '';
+            if (art.svgContent) {
+              const scopedSvg = art.svgContent
+                .replace(/id="([^"]+)"/g, (m, id) => `id="${id}_s_${art.id || idx}"`)
+                .replace(/url\(#([^)]+)\)/g, (m, id) => `url(#${id}_s_${art.id || idx})`);
+              const svgDataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(scopedSvg);
+              thumb = `<img src="${svgDataUrl}" style="width:100%; height:54px; object-fit:contain;" alt="${art.title}">`;
+            } else if (art.url) {
+              thumb = `<img src="${art.url}" style="width:100%; height:54px; object-fit:contain;" alt="${art.title}">`;
+            } else {
+              thumb = `<div style="width:100%; height:54px; background:#f1f5f9; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:10px; color:#94a3b8;">스티커</div>`;
+            }
+
+            item.innerHTML = `
+              ${thumb}
+              <span style="font-size:10.5px; font-weight:700; color:#334155; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%;">${art.title}</span>
+            `;
+
+            item.addEventListener('click', (e) => {
+              if (e) e.stopPropagation();
+              if (art.svgContent) {
+                editor.addSvgString(art.svgContent);
+              } else if (art.url) {
+                editor.addImageUrl(art.url);
+              }
+            });
+
+            stickersGrid.appendChild(item);
+          });
+        }
+      }
+
+      // Render Patterns Grid
+      if (patternsGrid) {
+        patternsGrid.innerHTML = '';
+        if (patterns.length === 0) {
+          patternsGrid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:18px; font-size:11.5px; color:#94a3b8;">등록된 패턴이 없습니다.</div>';
+        } else {
+          patterns.forEach((art, idx) => {
+            const card = document.createElement('div');
+            card.style.cssText = 'background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; padding:8px; cursor:pointer; display:flex; flex-direction:column; gap:6px; transition:all 0.15s ease; box-shadow:0 1px 3px rgba(0,0,0,0.04);';
+            card.title = art.title;
+
+            let thumb = '';
+            if (art.svgContent) {
+              const scopedSvg = art.svgContent
+                .replace(/id="([^"]+)"/g, (m, id) => `id="${id}_p_${art.id || idx}"`)
+                .replace(/url\(#([^)]+)\)/g, (m, id) => `url(#${id}_p_${art.id || idx})`);
+              const svgDataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(scopedSvg);
+              thumb = `<img src="${svgDataUrl}" style="width:100%; height:84px; object-fit:cover; border-radius:6px; border:1px solid #f1f5f9; background:#ffffff; display:block;" alt="${art.title}">`;
+            } else if (art.url) {
+              thumb = `<img src="${art.url}" style="width:100%; height:84px; object-fit:cover; border-radius:6px; border:1px solid #f1f5f9; display:block;" alt="${art.title}">`;
+            } else {
+              thumb = `<div style="width:100%; height:84px; background:#f1f5f9; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:11px; color:#94a3b8;">패턴 이미지</div>`;
+            }
+
+            card.innerHTML = `
+              ${thumb}
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:11.5px; font-weight:800; color:#1e293b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:90px;">${art.title}</span>
+                <span style="font-size:10px; font-weight:800; color:#d97706; background:#fffbeb; padding:2px 6px; border-radius:4px; border:1px solid #fef3c7;">패턴</span>
+              </div>
+            `;
+
+            card.addEventListener('click', (e) => {
+              if (e) e.stopPropagation();
+              editor.addPatternObject(art);
+            });
+
+            patternsGrid.appendChild(card);
+          });
+        }
+      }
+    }
+
+    // Load artworks on startup
+    loadArtworksForCustomizer();
 
     // Shape Pickers Grid
     document.querySelectorAll('.shape-picker-btn').forEach(btn => {

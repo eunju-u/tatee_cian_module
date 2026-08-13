@@ -50,48 +50,25 @@
       height: 100vh;
     }
 
-    /* SIDEBAR (LNB) */
+    /* SIDEBAR (LNB) - IMAGE 1 REPLICA STYLE */
     .sidebar {
       width: 250px;
       min-width: 250px;
-      background-color: var(--white);
-      border-right: 1px solid var(--slate-200);
+      background-color: #ffffff;
+      border-right: 1px solid #e2e8f0;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 24px 16px;
+      padding: 28px 16px 20px 16px;
     }
 
     .brand-header {
       padding: 0 8px 24px 8px;
-      border-bottom: 1px solid var(--slate-100);
-      margin-bottom: 20px;
-    }
-
-    .brand-logo {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--slate-900);
-      letter-spacing: -0.02em;
-    }
-
-    .brand-badge {
-      background: var(--primary);
-      color: var(--white);
-      font-size: 10px;
-      font-weight: 800;
-      padding: 2px 7px;
-      border-radius: 4px;
-    }
-
-    .brand-desc {
-      font-size: 12px;
-      color: var(--slate-500);
-      margin-top: 4px;
-      font-weight: 500;
+      justify-content: flex-start;
+      border-bottom: 1px solid #f1f5f9;
+      margin-bottom: 16px;
     }
 
     .nav-list {
@@ -101,17 +78,25 @@
       flex: 1;
     }
 
+    .nav-group-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #94a3b8;
+      margin: 18px 0 6px 12px;
+      letter-spacing: -0.01em;
+    }
+
     .nav-item {
       display: flex;
       align-items: center;
       gap: 12px;
       width: 100%;
-      padding: 11px 14px;
-      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      border-radius: 12px;
       border: none;
       background: transparent;
-      color: var(--slate-600);
-      font-size: 14px;
+      color: #475569;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
       text-align: left;
@@ -119,15 +104,30 @@
       position: relative;
     }
 
-    .nav-item:hover {
-      background-color: var(--slate-100);
-      color: var(--slate-900);
+    .nav-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      color: inherit;
     }
 
+    .nav-item:hover {
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+
+    /* ACTIVE ITEM: LEFT BAR INDICATOR (ORIGINAL STYLE) */
     .nav-item.active {
       background-color: var(--primary-light);
       color: var(--primary-hover);
       font-weight: 700;
+      box-shadow: none;
+    }
+
+    .nav-item.active .nav-icon {
+      color: var(--primary-hover);
     }
 
     .nav-item.active::before {
@@ -139,6 +139,13 @@
       width: 4px;
       background-color: var(--primary);
       border-radius: 0 4px 4px 0;
+      display: block;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary) !important;
+      box-shadow: 0 8px 16px -2px rgba(249, 115, 22, 0.15) !important;
     }
 
     .preview-card-btn {
@@ -147,13 +154,13 @@
       justify-content: center;
       gap: 8px;
       padding: 12px;
-      border-radius: var(--radius-md);
-      background-color: var(--slate-100);
-      color: var(--slate-800);
+      border-radius: 12px;
+      background-color: #f8fafc;
+      color: #334155;
       text-decoration: none;
       font-size: 13px;
       font-weight: 700;
-      border: 1px solid var(--slate-200);
+      border: 1px solid #e2e8f0;
       transition: all 0.15s ease;
     }
 
@@ -397,34 +404,77 @@
     <aside class="sidebar">
       <div>
         <div class="brand-header">
-          <div class="brand-logo">TATEE <span class="brand-badge">ADMIN</span></div>
-          <div class="brand-desc">커스텀 상품 센터</div>
+          <svg width="150" height="42" viewBox="0 0 200 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 12 40 L 32 12 L 52 40" stroke="#FF6B00" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+            <text x="70" y="37" font-family="-apple-system, BlinkMacSystemFont, 'Outfit', 'Pretendard', sans-serif" font-size="34" font-weight="900" fill="#FF6B00" letter-spacing="0.5">TATEE</text>
+          </svg>
         </div>
 
         <nav class="nav-list">
-          <button type="button" class="nav-item active" data-tab="tab-dashboard">
-            <span>📊</span>
+          <!-- 대시보드 -->
+          <button type="button" class="nav-item" data-tab="tab-dashboard">
+            <span class="nav-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1.5"/>
+                <rect x="14" y="3" width="7" height="7" rx="1.5"/>
+                <rect x="14" y="14" width="7" height="7" rx="1.5"/>
+                <rect x="3" y="14" width="7" height="7" rx="1.5"/>
+              </svg>
+            </span>
             <span>대시보드</span>
           </button>
 
-          <button type="button" class="nav-item" data-tab="tab-products">
-            <span>📦</span>
+          <!-- 상품 그룹 -->
+          <div class="nav-group-title">상품</div>
+
+          <button type="button" class="nav-item active" data-tab="tab-products">
+            <span class="nav-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+              </svg>
+            </span>
             <span>상품 목록</span>
           </button>
-          
+
           <button type="button" class="nav-item" data-tab="tab-fonts">
-            <span>🔤</span>
+            <span class="nav-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+            </span>
             <span>웹폰트 관리</span>
-          </button>
-          
-          <button type="button" class="nav-item" data-tab="tab-orders">
-            <span>📄</span>
-            <span>주문 & 지시서</span>
           </button>
 
           <button type="button" class="nav-item" data-tab="tab-patterns">
-            <span>🎨</span>
+            <span class="nav-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="8" y1="6" x2="21" y2="6"/>
+                <line x1="8" y1="12" x2="21" y2="12"/>
+                <line x1="8" y1="18" x2="21" y2="18"/>
+                <line x1="3" y1="6" x2="3.01" y2="6"/>
+                <line x1="3" y1="12" x2="3.01" y2="12"/>
+                <line x1="3" y1="18" x2="3.01" y2="18"/>
+              </svg>
+            </span>
             <span>스티커/패턴 관리</span>
+          </button>
+
+          <!-- 주문 그룹 -->
+          <div class="nav-group-title">주문</div>
+
+          <button type="button" class="nav-item" data-tab="tab-orders">
+            <span class="nav-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </span>
+            <span>주문 & 지시서</span>
           </button>
         </nav>
       </div>
@@ -488,33 +538,41 @@
       </header>
 
       <!-- TAB 0: DASHBOARD -->
-      <div class="tab-pane active" id="tab-dashboard">
+      <div class="tab-pane" id="tab-dashboard">
         <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:16px; margin-bottom:24px;">
           <!-- KPI 1: 상품 갯수 -->
-          <div style="background:#ffffff; border:1px solid var(--slate-200); border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow-card);">
-            <span style="font-size:13px; font-weight:700; color:var(--slate-500);">📦 등록된 상품 갯수</span>
+          <div class="kpi-card" data-target-tab="tab-products" style="background:#ffffff; border:1px solid var(--slate-200); border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow-card); cursor:pointer; transition:all 0.2s ease;">
+            <span style="font-size:13px; font-weight:700; color:var(--slate-500); display:flex; justify-content:space-between; align-items:center;">
+              📦 등록된 상품 갯수 <span style="font-size:11px; color:var(--primary); font-weight:800;">이동 ➔</span>
+            </span>
             <span id="stat-count-products" style="font-size:28px; font-weight:900; color:var(--slate-900);">0개</span>
           </div>
           <!-- KPI 2: 폰트 갯수 -->
-          <div style="background:#ffffff; border:1px solid var(--slate-200); border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow-card);">
-            <span style="font-size:13px; font-weight:700; color:var(--slate-500);">🔤 사용 가능한 폰트 갯수</span>
+          <div class="kpi-card" data-target-tab="tab-fonts" style="background:#ffffff; border:1px solid var(--slate-200); border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow-card); cursor:pointer; transition:all 0.2s ease;">
+            <span style="font-size:13px; font-weight:700; color:var(--slate-500); display:flex; justify-content:space-between; align-items:center;">
+              🔤 사용 가능한 폰트 갯수 <span style="font-size:11px; color:var(--primary); font-weight:800;">이동 ➔</span>
+            </span>
             <span id="stat-count-fonts" style="font-size:28px; font-weight:900; color:var(--slate-900);">0개</span>
           </div>
           <!-- KPI 3: 지시서 갯수 -->
-          <div style="background:#ffffff; border:1px solid var(--slate-200); border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow-card);">
-            <span style="font-size:13px; font-weight:700; color:var(--slate-500);">📄 접수된 작업지시서 갯수</span>
+          <div class="kpi-card" data-target-tab="tab-orders" style="background:#ffffff; border:1px solid var(--slate-200); border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow-card); cursor:pointer; transition:all 0.2s ease;">
+            <span style="font-size:13px; font-weight:700; color:var(--slate-500); display:flex; justify-content:space-between; align-items:center;">
+              📄 접수된 작업지시서 갯수 <span style="font-size:11px; color:var(--primary); font-weight:800;">이동 ➔</span>
+            </span>
             <span id="stat-count-orders" style="font-size:28px; font-weight:900; color:var(--slate-900);">0개</span>
           </div>
           <!-- KPI 4: 스티커/패턴 갯수 -->
-          <div style="background:#ffffff; border:1px solid var(--slate-200); border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow-card);">
-            <span style="font-size:13px; font-weight:700; color:var(--slate-500);">🎨 스티커/패턴 갯수</span>
+          <div class="kpi-card" data-target-tab="tab-patterns" style="background:#ffffff; border:1px solid var(--slate-200); border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow-card); cursor:pointer; transition:all 0.2s ease;">
+            <span style="font-size:13px; font-weight:700; color:var(--slate-500); display:flex; justify-content:space-between; align-items:center;">
+              🎨 스티커/패턴 갯수 <span style="font-size:11px; color:var(--primary); font-weight:800;">이동 ➔</span>
+            </span>
             <span id="stat-count-patterns" style="font-size:28px; font-weight:900; color:var(--slate-900);">0개</span>
           </div>
         </div>
       </div>
 
       <!-- TAB 1: PRODUCTS (ONLY PRODUCT LIST: PRODUCT NO & TITLE) -->
-      <div class="tab-pane" id="tab-products">
+      <div class="tab-pane active" id="tab-products">
         <table class="data-table" style="background:#ffffff; border:1px solid var(--slate-200); border-radius:var(--radius-xl); overflow:hidden; border-spacing:0; box-shadow:var(--shadow-card);">
           <thead>
             <tr>
@@ -793,6 +851,17 @@
               pageSubtitle.textContent = '고객 에디터에서 사용할 수 있는 그래픽 스티커 및 패턴 소재를 생성하고 관리합니다.';
               pageSubtitle.style.display = 'block';
             }
+          }
+        });
+      });
+
+      // KPI Card Click Navigation to corresponding tab
+      document.querySelectorAll('.kpi-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const targetTabId = card.dataset.targetTab;
+          const targetNavBtn = document.querySelector(`.nav-item[data-tab="${targetTabId}"]`);
+          if (targetNavBtn) {
+            targetNavBtn.click();
           }
         });
       });

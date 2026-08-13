@@ -78,4 +78,22 @@ export class StorageService {
     }
     return [];
   }
+
+  /**
+   * Deletes a Work Order record by orderId
+   */
+  static async deleteOrderRecord(orderId) {
+    let orders = await this.listWorkOrders();
+    const targetOrder = orders.find(o => o.orderId === orderId);
+    orders = orders.filter(o => o.orderId !== orderId);
+    await fs.promises.writeFile(ORDERS_JSON_PATH, JSON.stringify(orders, null, 2));
+
+    if (targetOrder && targetOrder.pdfFilename) {
+      const p = path.join(PDF_DIR, targetOrder.pdfFilename);
+      if (fs.existsSync(p)) {
+        try { fs.unlinkSync(p); } catch (e) {}
+      }
+    }
+    return true;
+  }
 }

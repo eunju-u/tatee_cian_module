@@ -30,8 +30,8 @@ const defaultProductsDb = {
       '2XL': { shirtWidthCm: 56, shirtHeightCm: 76, printWidthCm: 36, printHeightCm: 36 }
     },
     surfaces: {
-      front: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80',
-      back: 'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=600&q=80',
+      front: '/uploads/surf_화이트_0_1786496110304_334.png',
+      back: '/uploads/surf_화이트_0_1786496110304_334.png',
       neck: '',
       left_sleeve: '',
       right_sleeve: ''
@@ -86,6 +86,7 @@ function loadFontsFromDisk() {
 function saveFontsToDisk(fontsArr) {
   try {
     fs.writeFileSync(FONTS_JSON_PATH, JSON.stringify(fontsArr, null, 2), 'utf-8');
+    console.log('💾 Successfully persisted updated fonts data to fonts.json!');
   } catch (err) {
     console.error('Failed to save fonts.json:', err);
   }
@@ -124,6 +125,68 @@ router.post('/upload', async (req, res) => {
 });
 
 /**
+ * POST /api/admin/remove-background
+ * Uses Python rembg (RMBG AI model) for 100% precise garment cutout
+ */
+router.post('/remove-background', async (req, res) => {
+  try {
+    const { imageBase64, filenamePrefix } = req.body;
+    if (!imageBase64) {
+      return res.status(400).json({ error: 'imageBase64 is required.' });
+    }
+
+    const inputBuf = Buffer.from(imageBase64.replace(/^data:image\/\w+;base64,/, ''), 'base64');
+    const tmpInput = path.resolve(process.cwd(), `tmp_in_${Date.now()}.png`);
+    const tmpOutput = path.resolve(process.cwd(), `tmp_out_${Date.now()}.png`);
+    fs.writeFileSync(tmpInput, inputBuf);
+
+    const pyScript = `
+import sys
+from rembg import remove
+
+try:
+    with open('${tmpInput.replace(/\\/g, '/')}', 'rb') as f:
+        data = f.read()
+    out = remove(data)
+    with open('${tmpOutput.replace(/\\/g, '/')}', 'wb') as f:
+        f.write(out)
+    print("SUCCESS")
+except Exception as e:
+    print("ERROR:", e)
+    sys.exit(1)
+`;
+    const pyFile = path.resolve(process.cwd(), `tmp_run_${Date.now()}.py`);
+    fs.writeFileSync(pyFile, pyScript, 'utf-8');
+
+    const { exec } = await import('child_process');
+    exec(`python3 "${pyFile}"`, { timeout: 15000 }, async (error, stdout) => {
+      let resultBase64 = imageBase64;
+      if (!error && fs.existsSync(tmpOutput)) {
+        const processedBuf = fs.readFileSync(tmpOutput);
+        resultBase64 = `data:image/png;base64,${processedBuf.toString('base64')}`;
+      } else {
+        console.warn('⚠️ rembg execution issue, fallback to input:', error || stdout);
+      }
+
+      // Clean up temporary files
+      [tmpInput, tmpOutput, pyFile].forEach(f => {
+        if (fs.existsSync(f)) try { fs.unlinkSync(f); } catch (e) {}
+      });
+
+      const savedMeta = await StorageService.saveImageBase64(resultBase64, filenamePrefix || 'surf_nukki');
+      res.json({
+        success: true,
+        url: savedMeta.url,
+        imageBase64: resultBase64
+      });
+    });
+  } catch (err) {
+    console.error('❌ Error in /api/admin/remove-background:', err);
+    res.status(500).json({ error: 'AI background removal failed.' });
+  }
+});
+
+/**
  * GET /api/admin/products
  */
 router.get('/products', (req, res) => {
@@ -149,6 +212,7 @@ router.post('/products', (req, res) => {
   const {
     productNo,
     title,
+    glbUrl,
     shirtWidthCm,
     shirtHeightCm,
     printWidthCm,
@@ -156,7 +220,9 @@ router.post('/products', (req, res) => {
     printTopCm,
     printLeftCm,
     sizes,
-    surfaces
+    surfaces,
+    colorSurfaces,
+    colors
   } = req.body;
 
   if (!productNo) {
@@ -166,14 +232,17 @@ router.post('/products', (req, res) => {
   productsDb[productNo] = {
     productNo,
     title: title || '커스텀 티셔츠',
+    glbUrl: glbUrl || '',
     shirtWidthCm: parseFloat(shirtWidthCm) || 50,
     shirtHeightCm: parseFloat(shirtHeightCm) || 70,
     printWidthCm: parseFloat(printWidthCm) || 30,
     printHeightCm: parseFloat(printHeightCm) || 30,
     printTopCm: parseFloat(printTopCm) || 5,
     printLeftCm: parseFloat(printLeftCm) || 10,
+    colors: Array.isArray(colors) ? colors : (productsDb[productNo]?.colors || []),
     sizes: sizes || {},
-    surfaces: surfaces || {}
+    surfaces: surfaces || {},
+    colorSurfaces: colorSurfaces || {}
   };
 
   saveProductsToDisk(productsDb);
@@ -187,6 +256,38 @@ router.post('/products', (req, res) => {
 });
 
 /**
+ * GET /api/admin/orders
+ * List all received orders and PDF work orders
+ */
+router.get('/orders', async (req, res) => {
+  try {
+    const orders = await StorageService.listWorkOrders();
+    res.json({
+      total: orders.length,
+      orders
+    });
+  } catch (err) {
+    console.error('❌ Error fetching admin orders:', err);
+    res.status(500).json({ error: 'Failed to fetch admin orders.' });
+  }
+});
+
+/**
+ * DELETE /api/admin/orders/:orderId
+ * Delete a work order
+ */
+router.delete('/orders/:orderId', async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    await StorageService.deleteOrderRecord(orderId);
+    res.json({ success: true, orderId });
+  } catch (err) {
+    console.error('❌ Error deleting order:', err);
+    res.status(500).json({ error: 'Failed to delete order.' });
+  }
+});
+
+/**
  * GET /api/admin/fonts
  */
 router.get('/fonts', (req, res) => {
@@ -195,18 +296,43 @@ router.get('/fonts', (req, res) => {
 
 /**
  * POST /api/admin/fonts
+ * Add or update font
  */
 router.post('/fonts', (req, res) => {
-  const { name, family, url } = req.body;
+  const { name, family, url, index } = req.body;
   if (!name || !family) {
     return res.status(400).json({ error: 'Font name and family are required.' });
   }
 
-  const newFont = { name, family, url: url || '' };
-  fontsDb.push(newFont);
+  const fontObj = { name, family, url: url || '' };
+
+  if (typeof index === 'number' && index >= 0 && index < fontsDb.length) {
+    fontsDb[index] = fontObj;
+  } else {
+    const existingIdx = fontsDb.findIndex(f => f.family === family || f.name === name);
+    if (existingIdx >= 0) {
+      fontsDb[existingIdx] = fontObj;
+    } else {
+      fontsDb.push(fontObj);
+    }
+  }
+
   saveFontsToDisk(fontsDb);
 
-  res.json({ success: true, font: newFont, fonts: fontsDb });
+  res.json({ success: true, font: fontObj, fonts: fontsDb });
+});
+
+/**
+ * DELETE /api/admin/fonts/:index
+ */
+router.delete('/fonts/:index', (req, res) => {
+  const idx = parseInt(req.params.index, 10);
+  if (!isNaN(idx) && idx >= 0 && idx < fontsDb.length) {
+    fontsDb.splice(idx, 1);
+    saveFontsToDisk(fontsDb);
+    return res.json({ success: true, fonts: fontsDb });
+  }
+  res.status(400).json({ error: 'Invalid font index.' });
 });
 
 /**

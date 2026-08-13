@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+     width="300mm" height="300mm" 
+     viewBox="0 0 300 300" 
+     version="1.1">
+  <g transform="scale(1.3158, 1.4583) translate(-76, -137.14285714285717)">
+    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="380" height="480" viewBox="0 0 380 480" xml:space="preserve">
+<desc>Created with Fabric.js 5.5.2</desc>
+<defs>
+<clipPath id="CLIPPATH_0" >
+	<rect transform="matrix(1 0 0 1 190.5 240.5)" x="-114" y="-102.85714285714285" rx="0" ry="0" width="228" height="205.7142857142857" />
+</clipPath>
+</defs>
+<g clip-path="url(#CLIPPATH_0)" >
+<rect x="0" y="0" width="100%" height="100%" fill="transparent"></rect>
+<g transform="matrix(1 0 0 1 190.75 240.75)"  >
+<rect style="stroke: rgb(0,0,0); stroke-width: 1.5; stroke-dasharray: 3 3; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(255,255,255); fill-opacity: 0; fill-rule: nonzero; opacity: 1; visibility: hidden;"  x="-114" y="-102.85714285714285" rx="0" ry="0" width="228" height="205.7142857142857" />
+</g>
+<g transform="matrix(1 0 0 1 190.5 240)"  >
+<line style="stroke: rgb(59,130,246); stroke-width: 1; stroke-dasharray: 3 3; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1; visibility: hidden;"  x1="0" y1="-102.85714285714286" x2="0" y2="102.85714285714286" />
+</g>
+<g transform="matrix(1 0 0 1 190 240.5)"  >
+<line style="stroke: rgb(59,130,246); stroke-width: 1; stroke-dasharray: 3 3; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1; visibility: hidden;"  x1="-114" y1="0" x2="114" y2="0" />
+</g>
+<g transform="matrix(1 0 0 1 191 293)" style=""  >
+		<text xml:space="preserve" font-family="'Pretendard Variable',Pretendard,sans-serif" font-size="28" font-style="normal" font-weight="normal" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(234,179,8); fill-rule: nonzero; opacity: 1; white-space: pre;" ><tspan x="-89.03" y="8.8" >SUMMER 2026</tspan></text>
+</g>
+<g transform="matrix(1 0 0 1 191 217)"  >
+<rect style="stroke: rgb(0,0,0); stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-dashoffset: 0; stroke-linejoin: miter; stroke-miterlimit: 4; fill: rgb(23,23,26); fill-rule: nonzero; opacity: 1;"  x="-60" y="-40" rx="4" ry="4" width="120" height="80" />
+</g>
+</g>
+</svg>
+  </g>
+</svg>

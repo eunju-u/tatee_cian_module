@@ -13,7 +13,7 @@ const router = express.Router();
  * Helper to resolve any garment image URL or base64 into an absolute local disk path
  */
 async function resolveLocalImagePath(urlOrPath, prefix = 'garment_bg') {
-  if (!urlOrPath) return null;
+  if (!urlOrPath || typeof urlOrPath !== 'string') return null;
 
   // 1. Direct existing file path
   if (fs.existsSync(urlOrPath)) {
@@ -91,6 +91,12 @@ router.post('/upload-preview', async (req, res) => {
             artworkSavedMeta = await StorageService.saveImageBase64(surfObj.artworkDataUrl, `${orderId}_${surfKey}_artwork`);
           }
 
+          // Save Composite Surface Mockup Image (Garment + Guide Box + Design)
+          let surfaceMockupResult = primaryPreviewResult;
+          if (surfObj.mockupDataUrl) {
+            surfaceMockupResult = await StorageService.saveImageBase64(surfObj.mockupDataUrl, `${orderId}_${surfKey}_mockup`);
+          }
+
           // Resolve Garment Clothing Background Mockup Image Path
           let bgUrl = surfObj.bgOverlay || (prodConfig && prodConfig.surfaces ? prodConfig.surfaces[surfKey] : null);
           let resolvedGarmentBgPath = await resolveLocalImagePath(bgUrl, `garment_${surfKey}`);
@@ -100,9 +106,15 @@ router.post('/upload-preview', async (req, res) => {
             label: surfObj.label || surfKey,
             bgOverlay: bgUrl,
             garmentBgPath: resolvedGarmentBgPath,
-            mockupFilePath: primaryPreviewResult.filePath,
+            mockupFilePath: surfaceMockupResult.filePath,
             artworkFilePath: artworkSavedMeta.filePath,
-            elementsMeta: surfObj.elementsMeta || []
+            elementsMeta: surfObj.elementsMeta || [],
+            printTopPct: surfObj.printTopPct,
+            printLeftPct: surfObj.printLeftPct,
+            printWidthPct: surfObj.printWidthPct,
+            printHeightPct: surfObj.printHeightPct,
+            printWidthCm: surfObj.printWidthCm,
+            printHeightCm: surfObj.printHeightCm
           });
         }
       }
@@ -152,15 +164,22 @@ router.post('/upload-preview', async (req, res) => {
       customerInfo: customerInfo || { name: '고객님', phone: '010-0000-0000' }
     });
 
+    const chosenColor = req.body.selectedColor || req.body.currentColor || req.body.color || (customerInfo && customerInfo.color) || '화이트';
+
     // 6. Save Order Record
     const orderRecord = {
       orderId,
       productId: targetProductNo,
+      productTitle: prodConfig ? prodConfig.title : '오버핏 시그니처 커스텀 반팔 티셔츠',
+      selectedOption: `${chosenSize} / ${chosenColor}`,
       selectedSize: chosenSize,
+      selectedColor: chosenColor,
       previewUrl: primaryPreviewResult.url,
       vectorSvgUrl: vectorSvgResult ? vectorSvgResult.url : null,
+      pdfUrl: pdfResult.pdfUrl,
       workOrderPdfUrl: pdfResult.pdfUrl,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      timestamp: new Date().toISOString()
     };
 
     await StorageService.saveOrderRecord(orderRecord);

@@ -3,547 +3,610 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TATEE 관리자 대시보드 - 상품 규격 & 3D 의류 & 인쇄 가이드 설정</title>
+  <title>TATEE 관리자 대시보드</title>
   <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #f8fafc;
-      color: #0f172a;
+    :root {
+      --primary: rgba(249, 115, 22, 0.85);
+      --primary-hover: rgba(234, 88, 12, 0.9);
+      --primary-light: rgba(255, 247, 237, 0.9);
+      --primary-bg: #fffbf7;
+      --primary-border: #ffedd5;
+      --slate-900: #0f172a;
+      --slate-800: #1e293b;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748b;
+      --slate-400: #94a3b8;
+      --slate-200: #e2e8f0;
+      --slate-100: #f1f5f9;
+      --slate-50: #f8fafc;
+      --white: #ffffff;
+      --radius-xl: 16px;
+      --radius-lg: 12px;
+      --radius-md: 8px;
+      --shadow-subtle: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+      --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+      --shadow-popover: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
       margin: 0;
-      padding: 30px;
+      padding: 0;
     }
 
-    .admin-container {
-      max-width: 1100px;
-      margin: 0 auto;
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard Variable", Pretendard, sans-serif;
+      background-color: var(--slate-50);
+      color: var(--slate-800);
+      height: 100vh;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .admin-header {
-      background: #0f172a;
-      color: #fff;
-      padding: 24px 32px;
-      border-radius: 16px;
-      margin-bottom: 24px;
+    .app-wrapper {
       display: flex;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* SIDEBAR (LNB) */
+    .sidebar {
+      width: 250px;
+      min-width: 250px;
+      background-color: var(--white);
+      border-right: 1px solid var(--slate-200);
+      display: flex;
+      flex-direction: column;
       justify-content: space-between;
-      align-items: center;
+      padding: 24px 16px;
     }
 
-    .admin-title {
-      font-size: 22px;
-      font-weight: 800;
-    }
-
-    .admin-tabs {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 24px;
-      border-bottom: 2px solid #e2e8f0;
-      padding-bottom: 12px;
-    }
-
-    .admin-tab-btn {
-      background: none;
-      border: none;
-      font-size: 15px;
-      font-weight: 700;
-      color: #64748b;
-      padding: 10px 20px;
-      cursor: pointer;
-      border-radius: 8px;
-    }
-
-    .admin-tab-btn.active {
-      background: #2563eb;
-      color: #fff;
-    }
-
-    .tab-content {
-      display: none;
-      background: #fff;
-      padding: 30px;
-      border-radius: 16px;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    .form-group {
+    .brand-header {
+      padding: 0 8px 24px 8px;
+      border-bottom: 1px solid var(--slate-100);
       margin-bottom: 20px;
     }
 
-    .form-label {
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--slate-900);
+      letter-spacing: -0.02em;
+    }
+
+    .brand-badge {
+      background: var(--primary);
+      color: var(--white);
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    .brand-desc {
+      font-size: 12px;
+      color: var(--slate-500);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: var(--radius-md);
+      border: none;
+      background: transparent;
+      color: var(--slate-600);
       font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+      position: relative;
+    }
+
+    .nav-item:hover {
+      background-color: var(--slate-100);
+      color: var(--slate-900);
+    }
+
+    .nav-item.active {
+      background-color: var(--primary-light);
+      color: var(--primary-hover);
       font-weight: 700;
-      color: #334155;
-      margin-bottom: 8px;
+    }
+
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10%;
+      bottom: 10%;
+      width: 4px;
+      background-color: var(--primary);
+      border-radius: 0 4px 4px 0;
+    }
+
+    .preview-card-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      background-color: var(--slate-100);
+      color: var(--slate-800);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid var(--slate-200);
+      transition: all 0.15s ease;
+    }
+
+    .preview-card-btn:hover {
+      background-color: var(--primary);
+      color: var(--white);
+      border-color: var(--primary);
+    }
+
+    /* MAIN CONTENT */
+    .main-area {
+      flex: 1;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 32px 40px;
+    }
+
+    .header-bar {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 28px;
+    }
+
+    .page-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--slate-900);
+      letter-spacing: -0.02em;
+    }
+
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--slate-500);
+      margin-top: 4px;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background-color: #ecfdf5;
+      color: #047857;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid #a7f3d0;
+    }
+
+    .tab-pane {
+      display: none;
+    }
+
+    .tab-pane.active {
       display: block;
+    }
+
+    /* CARD PANELS */
+    .card-panel {
+      background-color: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-xl);
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--slate-100);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--slate-900);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* FORM FIELDS */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--slate-700);
     }
 
     .form-input {
       width: 100%;
       padding: 10px 14px;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      font-size: 14px;
-      box-sizing: border-box;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      font-size: 13.5px;
+      color: var(--slate-800);
+      background-color: var(--white);
+      transition: all 0.15s ease;
     }
 
-    .size-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 12px;
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.12);
     }
 
-    .size-card {
-      background: #f1f5f9;
-      padding: 16px;
-      border-radius: 10px;
-      text-align: center;
-    }
-
-    .size-card-title {
-      font-size: 14px;
-      font-weight: 800;
-      color: #2563eb;
-      margin-bottom: 10px;
-    }
-
-    .btn-submit {
-      background: #0f172a;
-      color: #fff;
+    /* BUTTONS */
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--white);
       border: none;
-      padding: 14px 28px;
-      border-radius: 10px;
-      font-weight: 700;
-      font-size: 15px;
+      padding: 10px 20px;
+      border-radius: var(--radius-md);
+      font-size: 13.5px;
+      font-weight: 800;
       cursor: pointer;
-      margin-top: 20px;
+      transition: all 0.15s ease;
+      box-shadow: 0 2px 8px rgba(249, 115, 22, 0.15);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
     }
 
-    .btn-submit:hover {
-      background: #1e293b;
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-1px);
     }
 
-    .admin-table {
+    .btn-outline {
+      background-color: var(--white);
+      color: var(--slate-700);
+      border: 1px solid var(--slate-200);
+      padding: 8px 14px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-outline:hover {
+      background-color: var(--slate-100);
+    }
+
+    /* TABLE */
+    .data-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
+      font-size: 14px;
     }
 
-    .admin-table th, .admin-table td {
-      border: 1px solid #e2e8f0;
-      padding: 12px 16px;
+    .data-table th {
+      background-color: var(--slate-50);
+      padding: 14px 20px;
       text-align: left;
-      font-size: 13px;
-    }
-
-    .admin-table th {
-      background: #f1f5f9;
-      font-weight: 700;
-    }
-
-    .surface-upload-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin-top: 12px;
-    }
-
-    .surface-upload-card {
-      background: #f8fafc;
-      border: 1px dashed #cbd5e1;
-      padding: 16px;
-      border-radius: 12px;
-      text-align: center;
-    }
-
-    .surface-card-title {
-      font-size: 13px;
       font-weight: 800;
-      color: #0f172a;
-      margin-bottom: 8px;
+      color: var(--slate-700);
+      border-bottom: 1px solid var(--slate-200);
     }
 
-    .thumb-preview-box {
-      width: 100%;
-      height: 120px;
-      background: #e2e8f0;
-      border-radius: 8px;
-      overflow: hidden;
-      margin-bottom: 10px;
+    .data-table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--slate-100);
+      color: var(--slate-800);
+      vertical-align: middle;
+    }
+
+    .product-row-clickable {
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .product-row-clickable:hover td {
+      background-color: var(--primary-light);
+    }
+
+    /* MODAL DIALOG */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .thumb-preview-box img {
+    .modal-card {
+      background: var(--white);
+      border-radius: var(--radius-xl);
       width: 100%;
-      height: 100%;
-      object-fit: contain;
+      max-width: 520px;
+      border: 1px solid var(--slate-200);
+      box-shadow: var(--shadow-popover);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--slate-100);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--slate-50);
+    }
+
+    .modal-body {
+      padding: 20px 24px;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--slate-100);
+      background-color: var(--slate-50);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
     }
   </style>
 </head>
 <body>
 
-  <div class="admin-container">
+  <div class="app-wrapper">
     
-    <div class="admin-header">
+    <!-- SIDEBAR (LNB) -->
+    <aside class="sidebar">
       <div>
-        <div class="admin-title">TATEE 관리자 센터 ⚙️</div>
-        <div style="font-size:13px; color:#94a3b8; margin-top:4px;">쇼핑몰 상품 등록, 사이즈별 가이드 규격 세팅 및 주문 모니터링</div>
+        <div class="brand-header">
+          <div class="brand-logo">TATEE <span class="brand-badge">ADMIN</span></div>
+          <div class="brand-desc">커스텀 상품 센터</div>
+        </div>
+
+        <nav class="nav-list">
+          <button type="button" class="nav-item active" data-tab="tab-products">
+            <span>📦</span>
+            <span>상품 목록</span>
+          </button>
+          
+          <button type="button" class="nav-item" data-tab="tab-fonts">
+            <span>🔤</span>
+            <span>웹폰트 관리</span>
+          </button>
+          
+          <button type="button" class="nav-item" data-tab="tab-orders">
+            <span>📄</span>
+            <span>주문 & 지시서</span>
+          </button>
+        </nav>
       </div>
+
       <div>
-        <a href="/demo/detail_demo.html" target="_blank" style="background:#2563eb; color:#fff; text-decoration:none; padding:10px 18px; border-radius:8px; font-weight:700; font-size:13px;">
-          🛍️ 고객 상세페이지 미리보기 ➔
+        <a href="/demo/detail_demo.html" target="_blank" class="preview-card-btn">
+          🛍️ 고객 에디터 미리보기 ➔
         </a>
       </div>
-    </div>
+    </aside>
 
-    <div class="admin-tabs">
-      <button class="admin-tab-btn active" data-tab="tab-products">📦 상품 & 인쇄 규격 등록</button>
-      <button class="admin-tab-btn" data-tab="tab-fonts">🔤 폰트 관리 (눈누 웹폰트)</button>
-      <button class="admin-tab-btn" data-tab="tab-orders">📄 주문 & 공장 PDF 지시서</button>
-    </div>
+    <!-- MAIN AREA -->
+    <main class="main-area">
+      
+      <header class="header-bar">
+        <div>
+          <h1 class="page-title" id="page-main-title">상품 목록</h1>
+          <p class="page-subtitle" id="page-main-subtitle" style="display:none;"></p>
+        </div>
 
-    <!-- TAB 1: PRODUCT & PRINT BOUND REGISTRATION -->
-    <div class="tab-content active" id="tab-products">
-      <h2>📦 카페24 연동 상품 및 사이즈별 인쇄 가이드 규격 설정</h2>
-      <p style="color:#64748b; font-size:14px;">
-        상품 사이즈별로 <b>실제 옷 크기(CM)</b>와 <b>인쇄 가능 가이드 영역(CM)</b>을 다르게 설정할 수 있습니다.<br>
-        고객이 상세페이지에서 사이즈를 변경하면, 에디터 내 가이드 점선 상자가 실제 비율에 맞춰 정중앙에 배치됩니다.
-      </p>
+        <div id="header-action-products" class="tab-header-action">
+          <button type="button" onclick="window.location.href='/admin/product_detail.html?productNo=new'" class="btn-primary">
+            ➕ 신규 상품 등록
+          </button>
+        </div>
 
-      <form id="form-register-product">
-        
-        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:16px;">
-          <div class="form-group">
-            <label class="form-label">카페24 상품 번호 (productNo)</label>
-            <input type="text" id="input-product-no" class="form-input" value="TSHIRT_2026_01" required>
+        <div id="header-action-fonts" class="tab-header-action" style="display:none;">
+          <div id="font-action-buttons-normal" style="display:flex; gap:8px;">
+            <button type="button" id="btn-open-font-modal" class="btn-primary">
+              ➕ 폰트 등록
+            </button>
+            <button type="button" id="btn-enter-delete-mode" class="btn-outline" style="border-color:var(--slate-300); color:var(--slate-700);">
+              🗑️ 삭제
+            </button>
           </div>
-          <div class="form-group">
-            <label class="form-label">상품명</label>
-            <input type="text" id="input-title" class="form-input" value="오버핏 시그니처 커스텀 반팔 티셔츠" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">의류 종류 (Garment Category)</label>
-            <select id="select-garment-type" class="form-input" style="background:#fff;">
-              <option value="windbreaker">🧥 바람막이 자켓 / 긴소매 아우터</option>
-              <option value="tshirt" selected>👕 반팔 티셔츠</option>
-              <option value="hoodie">🧥 후드티 / 맨투맨</option>
-            </select>
+          <div id="font-action-buttons-delete" style="display:none; gap:8px;">
+            <button type="button" id="btn-confirm-delete-selected" style="background-color:#ef4444; color:white; border:none; padding:8px 16px; border-radius:var(--radius-md); font-size:13px; font-weight:800; cursor:pointer;">
+              🗑️ 선택 항목 삭제
+            </button>
+            <button type="button" id="btn-cancel-delete-mode" class="btn-outline">
+              취소
+            </button>
           </div>
         </div>
 
-        <!-- 3D MODEL GLB URL INPUT -->
-        <div class="form-group" style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:12px; padding:16px; margin-top:10px;">
-          <label class="form-label" style="display:flex; justify-content:space-between; align-items:center;">
-            <span>🤖 3D 입체 의류 모델 파일 (.GLB) 설정</span>
-            <span id="label-glb-status" style="font-size:12px; color:#2563eb; font-weight:normal;">기본 3D 모델 제공 중</span>
-          </label>
-          <div style="display:flex; gap:10px; align-items:center;">
-            <input type="text" id="url-glb" class="form-input" placeholder="https://.../garment.glb (비워둘 시 기본 T셔츠 3D 제공)" style="flex:1;">
-            <input type="file" id="file-glb" accept=".glb" style="display:none;">
-            <button type="button" onclick="document.getElementById('file-glb').click()" style="padding:10px 14px; background:#fff; border:1px solid #cbd5e1; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer;">📂 .GLB 파일 직접 업로드</button>
+        <div id="header-action-orders" class="tab-header-action" style="display:none;">
+          <div id="order-action-buttons-normal" style="display:flex; gap:8px;">
+            <button type="button" id="btn-enter-order-delete-mode" class="btn-outline" style="border-color:var(--slate-300); color:var(--slate-700);">
+              🗑️ 삭제
+            </button>
+          </div>
+          <div id="order-action-buttons-delete" style="display:none; gap:8px;">
+            <button type="button" id="btn-confirm-delete-selected-orders" style="background-color:#ef4444; color:white; border:none; padding:8px 16px; border-radius:var(--radius-md); font-size:13px; font-weight:800; cursor:pointer;">
+              🗑️ 선택 항목 삭제
+            </button>
+            <button type="button" id="btn-cancel-order-delete-mode" class="btn-outline">
+              취소
+            </button>
           </div>
         </div>
+      </header>
 
-        <hr style="margin:24px 0; border:none; border-top:1px solid #e2e8f0;">
+      <!-- TAB 1: PRODUCTS (ONLY PRODUCT LIST: PRODUCT NO & TITLE) -->
+      <div class="tab-pane active" id="tab-products">
+        <table class="data-table" style="background:#ffffff; border:1px solid var(--slate-200); border-radius:var(--radius-xl); overflow:hidden; border-spacing:0; box-shadow:var(--shadow-card);">
+          <thead>
+            <tr>
+              <th style="width: 30%;">상품 번호</th>
+              <th>상품명</th>
+            </tr>
+          </thead>
+          <tbody id="registered-products-list">
+            <tr>
+              <td colspan="2" style="text-align:center; padding:24px; color:var(--slate-500);">로딩 중...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-        <h3>🖼️ 면별 2D 누끼 이미지 등록 (앞면, 뒷면, 목뒤, 소매)</h3>
-        <p style="color:#64748b; font-size:13px;">직접 찍은 옷 앞/뒤/소매 사진 파일(.png, .jpg)을 선택하면 바로 이미지 서버로 자동 업로드되어 반영됩니다.</p>
-        
-        <div class="surface-upload-grid">
-          
-          <!-- FRONT SURFACE -->
-          <div class="surface-upload-card">
-            <div class="surface-card-title">1. 앞면 (Front) *필수</div>
-            <div class="thumb-preview-box">
-              <img id="thumb-front" src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80" alt="앞면">
-            </div>
-            <input type="file" id="file-front" accept="image/*" class="form-input" style="font-size:11px;">
-            <input type="hidden" id="url-front" value="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80">
-          </div>
+      <!-- TAB 2: FONTS (LIST ONLY + REGISTER/EDIT MODAL + MULTI DELETE MODE) -->
+      <div class="tab-pane" id="tab-fonts">
+        <table class="data-table" style="background:#ffffff; border:1px solid var(--slate-200); border-radius:var(--radius-xl); overflow:hidden; border-spacing:0; box-shadow:var(--shadow-card);">
+          <thead>
+            <tr id="font-table-header-tr">
+              <!-- Dynamically populated header -->
+            </tr>
+          </thead>
+          <tbody id="registered-fonts-tbody">
+            <tr>
+              <td colspan="5" style="text-align:center; padding:24px; color:var(--slate-500);">로딩 중...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-          <!-- BACK SURFACE -->
-          <div class="surface-upload-card">
-            <div class="surface-card-title">2. 뒷면 (Back)</div>
-            <div class="thumb-preview-box">
-              <img id="thumb-back" src="https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=600&q=80" alt="뒷면">
-            </div>
-            <input type="file" id="file-back" accept="image/*" class="form-input" style="font-size:11px;">
-            <input type="hidden" id="url-back" value="https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=600&q=80">
-          </div>
+      <!-- TAB 3: ORDERS -->
+      <div class="tab-pane" id="tab-orders">
+        <div id="admin-orders-list-table"></div>
+      </div>
 
-          <!-- NECK SURFACE -->
-          <div class="surface-upload-card">
-            <div class="surface-card-title">3. 목뒤 (Back Neck)</div>
-            <div class="thumb-preview-box">
-              <img id="thumb-neck" src="" alt="목뒤 (선택)">
-            </div>
-            <input type="file" id="file-neck" accept="image/*" class="form-input" style="font-size:11px;">
-            <input type="hidden" id="url-neck" value="">
-          </div>
-
-          <!-- LEFT SLEEVE SURFACE -->
-          <div class="surface-upload-card">
-            <div class="surface-card-title">4. 왼소매 (Left Sleeve)</div>
-            <div class="thumb-preview-box">
-              <img id="thumb-left-sleeve" src="" alt="왼소매 (선택)">
-            </div>
-            <input type="file" id="file-left-sleeve" accept="image/*" class="form-input" style="font-size:11px;">
-            <input type="hidden" id="url-left-sleeve" value="">
-          </div>
-
-          <!-- RIGHT SLEEVE SURFACE -->
-          <div class="surface-upload-card">
-            <div class="surface-card-title">5. 오른소매 (Right Sleeve)</div>
-            <div class="thumb-preview-box">
-              <img id="thumb-right-sleeve" src="" alt="오른소매 (선택)">
-            </div>
-            <input type="file" id="file-right-sleeve" accept="image/*" class="form-input" style="font-size:11px;">
-            <input type="hidden" id="url-right-sleeve" value="">
-          </div>
-
-          <!-- LEFT SIDE SURFACE -->
-          <div class="surface-upload-card">
-            <div class="surface-card-title">6. 좌측 (Left Side)</div>
-            <div class="thumb-preview-box">
-              <img id="thumb-left-side" src="" alt="좌측 (선택)">
-            </div>
-            <input type="file" id="file-left-side" accept="image/*" class="form-input" style="font-size:11px;">
-            <input type="hidden" id="url-left-side" value="">
-          </div>
-
-          <!-- RIGHT SIDE SURFACE -->
-          <div class="surface-upload-card">
-            <div class="surface-card-title">7. 우측 (Right Side)</div>
-            <div class="thumb-preview-box">
-              <img id="thumb-right-side" src="" alt="우측 (선택)">
-            </div>
-            <input type="file" id="file-right-side" accept="image/*" class="form-input" style="font-size:11px;">
-            <input type="hidden" id="url-right-side" value="">
-          </div>
-
-          <!-- HEM SURFACE -->
-          <div class="surface-upload-card">
-            <div class="surface-card-title">8. 밑단 (Hem)</div>
-            <div class="thumb-preview-box">
-              <img id="thumb-hem" src="" alt="밑단 (선택)">
-            </div>
-            <input type="file" id="file-hem" accept="image/*" class="form-input" style="font-size:11px;">
-            <input type="hidden" id="url-hem" value="">
-          </div>
-
-          <!-- POCKET SURFACE -->
-          <div class="surface-upload-card">
-            <div class="surface-card-title">9. 포켓 (Pocket)</div>
-            <div class="thumb-preview-box">
-              <img id="thumb-pocket" src="" alt="포켓 (선택)">
-            </div>
-            <input type="file" id="file-pocket" accept="image/*" class="form-input" style="font-size:11px;">
-            <input type="hidden" id="url-pocket" value="">
-          </div>
-
-          <!-- HOOD SURFACE -->
-          <div class="surface-upload-card">
-            <div class="surface-card-title">10. 후드 (Hood)</div>
-            <div class="thumb-preview-box">
-              <img id="thumb-hood" src="" alt="후드 (선택)">
-            </div>
-            <input type="file" id="file-hood" accept="image/*" class="form-input" style="font-size:11px;">
-            <input type="hidden" id="url-hood" value="">
-          </div>
-
-        </div>
-
-        <hr style="margin:30px 0; border:none; border-top:1px solid #e2e8f0;">
-
-        <h3>📏 사이즈별 가슴 단면(CM) & 인쇄 가이드 박스(CM) 설정</h3>
-        <p style="color:#64748b; font-size:13px;">사이즈에 따라 옷 크기와 인쇄 가능 영역의 실제 단면 비율을 세밀하게 조절하세요.</p>
-
-        <div class="size-grid">
-          
-          <!-- S -->
-          <div class="size-card">
-            <div class="size-card-title">S 사이즈</div>
-            <div class="form-group">
-              <label style="font-size:11px; font-weight:700;">가슴 단면(cm)</label>
-              <input type="number" id="s-w" class="form-input" value="46">
-            </div>
-            <div class="form-group">
-              <label style="font-size:11px; font-weight:700;">총장(cm)</label>
-              <input type="number" id="s-h" class="form-input" value="66">
-            </div>
-            <div class="form-group">
-              <label style="font-size:11px; font-weight:700; color:#2563eb;">인쇄 가로(cm)</label>
-              <input type="number" id="s-pw" class="form-input" value="26">
-            </div>
-            <div class="form-group">
-              <label style="font-size:11px; font-weight:700; color:#2563eb;">인쇄 세로(cm)</label>
-              <input type="number" id="s-ph" class="form-input" value="26">
-            </div>
-          </div>
-
-          <!-- M -->
-          <div class="size-card">
-            <div class="size-card-title">M 사이즈</div>
-            <div class="form-group">
-              <label style="font-size:11px; font-weight:700;">가슴 단면(cm)</label>
-              <input type="number" id="m-w" class="form-input" value="48">
-            </div>
-            <div class="form-group">
-              <label style="font-size:11px; font-weight:700;">총장(cm)</label>
-              <input type="number" id="m-h" class="form-input" value="68">
-            </div>
-            <div class="form-group">
-              <label style="font-size:11px; font-weight:700; color:#2563eb;">인쇄 가로(cm)</label>
-              <input type="number" id="m-pw" class="form-input" value="28">
-            </div>
-            <div class="form-group">
-              <label style="font-size:11px; font-weight:700; color:#2563eb;">인쇄 세로(cm)</label>
-              <input type="number" id="m-ph" class="form-input" value="28">
-            </div>
-          </div>
-
-          <!-- L (기준) -->
-          <div class="size-card" style="border:2px solid #2563eb; background:#eff6ff;">
-            <div class="size-card-title">L 사이즈 (기본)</div>
-            <div class="form-group">
-              <label style="font-size:11px; font-weight:700;">가슴 단면(cm)</label>
-              <input type="number" id="l-w" class="form-input" value="50">
-            </div>
-            <div class="form-group">
-              <label style="font-size:11px; font-weight:700;">총장(cm)</label>
-              <input type="number" id="l-h" class="form-input" value="70">
-            </div>
-            <div class="form-group">
-              <label style="font-size:11px; font-weight:700; color:#2563eb;">인쇄 가로(cm)</label>
-              <input type="number" id="l-pw" class="form-input" value="30">
-            </div>
-            <div class="form-group">
-              <label style="font-size:11px; font-weight:700; color:#2563eb;">인쇄 세로(cm)</label>
-              <input type="number" id="l-ph" class="form-input" value="30">
-            </div>
-          </div>
-
-          <!-- XL -->
-          <div class="size-card">
-            <div class="size-card-title">XL 사이즈</div>
-            <div class="form-group">
-              <label style="font-size:11px; font-weight:700;">가슴 단면(cm)</label>
-              <input type="number" id="xl-w" class="form-input" value="53">
-            </div>
-            <div class="form-group">
-              <label style="font-size:11px; font-weight:700;">총장(cm)</label>
-              <input type="number" id="xl-h" class="form-input" value="73">
-            </div>
-            <div class="form-group">
-              <label style="font-size:11px; font-weight:700; color:#2563eb;">인쇄 가로(cm)</label>
-              <input type="number" id="xl-pw" class="form-input" value="33">
-            </div>
-            <div class="form-group">
-              <label style="font-size:11px; font-weight:700; color:#2563eb;">인쇄 세로(cm)</label>
-              <input type="number" id="xl-ph" class="form-input" value="33">
-            </div>
-          </div>
-
-          <!-- 2XL -->
-          <div class="size-card">
-            <div class="size-card-title">2XL 사이즈</div>
-            <div class="form-group">
-              <label style="font-size:11px; font-weight:700;">가슴 단면(cm)</label>
-              <input type="number" id="xxl-w" class="form-input" value="56">
-            </div>
-            <div class="form-group">
-              <label style="font-size:11px; font-weight:700;">총장(cm)</label>
-              <input type="number" id="xxl-h" class="form-input" value="76">
-            </div>
-            <div class="form-group">
-              <label style="font-size:11px; font-weight:700; color:#2563eb;">인쇄 가로(cm)</label>
-              <input type="number" id="xxl-pw" class="form-input" value="36">
-            </div>
-            <div class="form-group">
-              <label style="font-size:11px; font-weight:700; color:#2563eb;">인쇄 세로(cm)</label>
-              <input type="number" id="xxl-ph" class="form-input" value="36">
-            </div>
-          </div>
-
-        </div>
-
-        <button type="submit" class="btn-submit">💾 카페24 DB 및 products.json에 설정 저장하기</button>
-
-      </form>
-
-      <hr style="margin:40px 0; border:none; border-top:1px solid #e2e8f0;">
-
-      <h3>📋 현재 DB에 등록된 카페24 상품 목록</h3>
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th>상품 번호</th>
-            <th>상품명</th>
-            <th>3D 의류 모델 상태</th>
-            <th>기준 의류 크기(L)</th>
-            <th>기준 인쇄 가능 가이드 영역</th>
-            <th>등록된 면 정보</th>
-          </tr>
-        </thead>
-        <tbody id="registered-products-list">
-          <tr>
-            <td colspan="6" style="text-align:center; color:#64748b;">로딩 중...</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- TAB 2: FONTS MANAGEMENT (NOONNU WEBFONTS) -->
-    <div class="tab-content" id="tab-fonts">
-      <h2>🔤 상업용 무료 폰트 등록 (눈누 / 구글 폰트 연동)</h2>
-      <p style="color:#64748b; font-size:14px;">
-        눈누(noonnu.cc) 또는 jsDelivr / Google Fonts에서 제공하는 .woff/.woff2 웹폰트 URL을 추가 등록하면 에디터 드로어 폰트 목록에 즉시 추가됩니다.
-      </p>
-
-      <form id="form-register-font" style="max-width:600px;">
-        <div class="form-group">
-          <label class="form-label">폰트 표기 명칭 (예: OK단단체 Bold)</label>
-          <input type="text" id="input-font-name" class="form-input" placeholder="OK단단체 Bold" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">폰트 패밀리명 (fontFamily)</label>
-          <input type="text" id="input-font-family" class="form-input" placeholder="OkDanDan-Bold" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">웹폰트 파일 URL (.woff2 / .woff)</label>
-          <input type="url" id="input-font-url" class="form-input" placeholder="https://cdn.jsdelivr.net/gh/projectnoonnu/2508-2@1.0/OkDanDan-Bold.woff2">
-        </div>
-        <button type="submit" class="btn-submit">➕ 폰트 추가 등록하기</button>
-      </form>
-
-      <hr style="margin:40px 0; border:none; border-top:1px solid #e2e8f0;">
-
-      <h3>📋 에디터에 등록된 폰트 목록</h3>
-      <ul id="fonts-list-container" style="line-height:2;"></ul>
-    </div>
-
-    <!-- TAB 4: ORDERS & WORK ORDERS -->
-    <div class="tab-content" id="tab-orders">
-      <h2>📄 실시간 접수된 주문 & 공장 전달용 PDF 작업지시서</h2>
-      <div id="admin-orders-list-table"></div>
-    </div>
+    </main>
 
   </div>
 
+  <!-- FONT REGISTER/EDIT MODAL -->
+  <div id="modal-register-font" class="modal-backdrop" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div id="modal-font-title" style="font-size:16px; font-weight:800; color:var(--slate-900);">🔤 신규 상업용 무료 폰트 등록</div>
+        <button type="button" id="btn-close-font-modal" style="background:transparent; border:none; font-size:16px; cursor:pointer; color:var(--slate-500);">✕</button>
+      </div>
+      <form id="form-register-font">
+        <input type="hidden" id="input-font-index" value="-1">
+        
+        <div class="modal-body" style="display:flex; flex-direction:column; gap:14px;">
+          <div class="form-group">
+            <label class="form-label">폰트 표기 명칭</label>
+            <input type="text" id="input-font-name" class="form-input" placeholder="예: OK단단체 Bold" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">폰트 패밀리명 (CSS font-family)</label>
+            <input type="text" id="input-font-family" class="form-input" placeholder="예: OkDanDan-Bold" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">웹폰트 파일 URL (.woff2 / .woff)</label>
+            <input type="text" id="input-font-url" class="form-input" placeholder="https://cdn.jsdelivr.net/gh/webfont/...">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="btn-cancel-font-modal" class="btn-outline">취소</button>
+          <button type="submit" class="btn-primary" style="padding:8px 18px; font-size:13px;">✅ 폰트 설정 저장</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- DELETE FONT CONFIRM MODAL -->
+  <div id="modal-confirm-delete-font" class="modal-backdrop" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div style="font-size:16px; font-weight:800; color:#ef4444;">🗑️ 선택한 폰트 삭제 확인</div>
+        <button type="button" id="btn-close-delete-font-modal" style="background:transparent; border:none; font-size:16px; cursor:pointer; color:var(--slate-500);">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:14px; color:var(--slate-800); line-height:1.6; margin-bottom:12px;">
+          선택하신 <b id="delete-font-count-text" style="color:#ef4444;">0</b>개의 폰트를 목록에서 삭제하시겠습니까?
+        </p>
+        <ul id="delete-font-names-list" style="background:var(--slate-50); border:1px solid var(--slate-200); border-radius:var(--radius-md); padding:12px 20px; font-size:13px; color:var(--slate-700); max-height:160px; overflow-y:auto; line-height:1.8;"></ul>
+        <p style="font-size:12px; color:var(--slate-500); margin-top:10px;">
+          ※ 삭제 시 고객 에디터 선택 목록에서도 즉시 제거됩니다.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btn-cancel-delete-font-modal" class="btn-outline">취소</button>
+        <button type="button" id="btn-execute-delete-fonts" style="background-color:#ef4444; color:white; border:none; padding:8px 18px; border-radius:var(--radius-md); font-size:13px; font-weight:800; cursor:pointer;">🗑️ 삭제 진행하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DELETE ORDER CONFIRM MODAL -->
+  <div id="modal-confirm-delete-order" class="modal-backdrop" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div style="font-size:16px; font-weight:800; color:#ef4444;">🗑️ 선택한 작업지시서 삭제 확인</div>
+        <button type="button" id="btn-close-delete-order-modal" style="background:transparent; border:none; font-size:16px; cursor:pointer; color:var(--slate-500);">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:14px; color:var(--slate-800); line-height:1.6; margin-bottom:12px;">
+          선택하신 <b id="delete-order-count-text" style="color:#ef4444;">0</b>개의 작업지시서를 목록에서 삭제하시겠습니까?
+        </p>
+        <ul id="delete-order-ids-list" style="background:var(--slate-50); border:1px solid var(--slate-200); border-radius:var(--radius-md); padding:12px 20px; font-size:13px; color:var(--slate-700); max-height:160px; overflow-y:auto; line-height:1.8;"></ul>
+        <p style="font-size:12px; color:var(--slate-500); margin-top:10px;">
+          ※ 삭제 시 해당 작업지시서 PDF 및 시안 데이터가 완전히 삭제됩니다.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btn-cancel-delete-order-modal" class="btn-outline">취소</button>
+        <button type="button" id="btn-execute-delete-orders" style="background-color:#ef4444; color:white; border:none; padding:8px 18px; border-radius:var(--radius-md); font-size:13px; font-weight:800; cursor:pointer;">🗑️ 삭제 진행하기</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // 1. Tab switching event handler (Positioned at top for guaranteed execution)
+    let globalLoadedFonts = [];
+    let isFontDeleteMode = false;
+    let selectedIndicesToDelete = [];
+
     document.addEventListener('DOMContentLoaded', () => {
-      document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+      document.querySelectorAll('.nav-item').forEach(btn => {
         btn.addEventListener('click', () => {
-          document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
-          document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+          document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+          document.querySelectorAll('.tab-pane').forEach(c => c.classList.remove('active'));
 
           btn.classList.add('active');
           const targetTabId = btn.dataset.tab;
@@ -551,122 +614,31 @@
           if (targetTab) {
             targetTab.classList.add('active');
           }
+
+          const pageTitle = document.getElementById('page-main-title');
+          const pageSubtitle = document.getElementById('page-main-subtitle');
+          const headerActionArea = document.getElementById('header-action-area');
+          if (pageTitle && pageSubtitle) {
+            if (targetTabId === 'tab-products') {
+              pageTitle.textContent = '상품 목록';
+              pageSubtitle.textContent = '';
+              pageSubtitle.style.display = 'none';
+              if (headerActionArea) headerActionArea.style.display = 'block';
+            } else if (targetTabId === 'tab-fonts') {
+              pageTitle.textContent = '웹폰트 관리';
+              pageSubtitle.textContent = '고객 에디터에서 사용 가능한 상업용 무료 웹폰트 목록입니다.';
+              pageSubtitle.style.display = 'block';
+              if (headerActionArea) headerActionArea.style.display = 'none';
+            } else if (targetTabId === 'tab-orders') {
+              pageTitle.textContent = '작업지시서';
+              pageSubtitle.textContent = '';
+              pageSubtitle.style.display = 'none';
+              if (headerActionArea) headerActionArea.style.display = 'none';
+            }
+          }
         });
       });
     });
-
-    async function uploadImageFile(file, prefix) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-          try {
-            const res = await fetch('/api/admin/upload', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                imageBase64: e.target.result,
-                filenamePrefix: prefix
-              })
-            });
-            const data = await res.json();
-            resolve(data.url);
-          } catch (err) {
-            reject(err);
-          }
-        };
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    }
-
-    function setupFilePicker(fileInputId, hiddenUrlId, thumbImgId, prefix) {
-      const fileInput = document.getElementById(fileInputId);
-      const hiddenInput = document.getElementById(hiddenUrlId);
-      const thumbImg = document.getElementById(thumbImgId);
-
-      if (!fileInput) return;
-
-      fileInput.addEventListener('change', async (e) => {
-        const file = e.target.files[0];
-        if (file) {
-          try {
-            const uploadedUrl = await uploadImageFile(file, prefix);
-            if (hiddenInput) hiddenInput.value = uploadedUrl;
-            if (thumbImg) thumbImg.src = uploadedUrl;
-            alert('✅ 이미지 파일이 성공적으로 업로드되었습니다!');
-          } catch (err) {
-            alert('❌ 이미지 업로드 중 오류가 발생했습니다.');
-          }
-        }
-      });
-    }
-
-    setupFilePicker('file-front', 'url-front', 'thumb-front', 'front');
-    setupFilePicker('file-back', 'url-back', 'thumb-back', 'back');
-    setupFilePicker('file-neck', 'url-neck', 'thumb-neck', 'neck');
-    setupFilePicker('file-left-sleeve', 'url-left-sleeve', 'thumb-left-sleeve', 'lsleeve');
-    setupFilePicker('file-right-sleeve', 'url-right-sleeve', 'thumb-right-sleeve', 'rsleeve');
-    setupFilePicker('file-left-side', 'url-left-side', 'thumb-left-side', 'lside');
-    setupFilePicker('file-right-side', 'url-right-side', 'thumb-right-side', 'rside');
-    setupFilePicker('file-hem', 'url-hem', 'thumb-hem', 'hem');
-    setupFilePicker('file-pocket', 'url-pocket', 'thumb-pocket', 'pocket');
-    setupFilePicker('file-hood', 'url-hood', 'thumb-hood', 'hood');
-
-    const fileGlbEl = document.getElementById('file-glb');
-    if (fileGlbEl) {
-      fileGlbEl.addEventListener('change', async (e) => {
-        const file = e.target.files[0];
-        if (file) {
-          try {
-            const uploadedUrl = await uploadImageFile(file, '3dmodel');
-            if (document.getElementById('url-glb')) document.getElementById('url-glb').value = uploadedUrl;
-            if (document.getElementById('label-glb-status')) document.getElementById('label-glb-status').textContent = `✅ 등록됨 (${file.name})`;
-            alert('✅ 3D 의류 모델 파일(.glb)이 성공적으로 업로드되었습니다!');
-          } catch (err) {
-            alert('❌ 3D 모델 파일 업로드 중 오류가 발생했습니다.');
-          }
-        }
-      });
-    }
-
-    async function loadFonts() {
-      try {
-        const res = await fetch('/api/admin/fonts');
-        const data = await res.json();
-        const container = document.getElementById('fonts-list-container');
-        if (!container) return;
-
-        container.innerHTML = data.fonts.map(f => `
-          <li><b>${f.name}</b> (family: <code style="color:#2563eb;">${f.family}</code>) ${f.url ? `<span style="color:#64748b; font-size:11px;">[웹폰트 로드됨]</span>` : `<span style="color:#16a34a; font-size:11px;">[기본 시스템 폰트]</span>`}</li>
-        `).join('');
-      } catch (err) {
-        console.error('Error loading fonts:', err);
-      }
-    }
-
-    const fontFormEl = document.getElementById('form-register-font');
-    if (fontFormEl) {
-      fontFormEl.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const name = document.getElementById('input-font-name').value;
-        const family = document.getElementById('input-font-family').value;
-        const url = document.getElementById('input-font-url').value;
-
-        const res = await fetch('/api/admin/fonts', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, family, url })
-        });
-
-        if (res.ok) {
-          alert('✅ 폰트가 에디터 선택 목록에 성공적으로 추가 등록되었습니다!');
-          document.getElementById('input-font-name').value = '';
-          document.getElementById('input-font-family').value = '';
-          document.getElementById('input-font-url').value = '';
-          loadFonts();
-        }
-      });
-    }
 
     async function loadProducts() {
       try {
@@ -675,165 +647,428 @@
         const tbody = document.getElementById('registered-products-list');
         if (!tbody) return;
 
+        if (!data.products || data.products.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="2" style="text-align:center; padding:24px; color:var(--slate-400);">
+                등록된 상품이 없습니다. 상단의 [➕ 신규 상품 등록] 버튼을 눌러 상품을 추가하세요.
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
         tbody.innerHTML = data.products.map(p => `
-          <tr>
-            <td><b style="color:#2563eb;">${p.productNo}</b></td>
-            <td>${p.title}</td>
-            <td>${p.glbUrl ? '✅ .GLB 3D 파일 등록됨' : '기본 3D 모델'}</td>
-            <td>가로 ${p.shirtWidthCm}cm × 세로 ${p.shirtHeightCm}cm</td>
-            <td><b style="color:#2563eb;">가로 ${p.printWidthCm}cm × 세로 ${p.printHeightCm}cm</b></td>
-            <td>${Object.keys(p.surfaces || {}).filter(k => p.surfaces[k]).join(', ') || '기본'}</td>
+          <tr class="product-row-clickable" onclick="window.location.href='/admin/product_detail.html?productNo=${encodeURIComponent(p.productNo)}'">
+            <td><b style="color:var(--primary-hover); font-size:14px;">${p.productNo}</b></td>
+            <td><b style="color:var(--slate-900); font-size:14.5px;">${p.title}</b></td>
           </tr>
         `).join('');
 
-        if (data.products && data.products.length > 0) {
-          const p = data.products[0];
-
-          if (document.getElementById('input-product-no')) document.getElementById('input-product-no').value = p.productNo || 'TSHIRT_2026_01';
-          if (document.getElementById('input-title')) document.getElementById('input-title').value = p.title || '';
-          if (document.getElementById('url-glb')) document.getElementById('url-glb').value = p.glbUrl || '';
-
-          if (p.surfaces) {
-            const surfaceMap = {
-              front: { hidden: 'url-front', thumb: 'thumb-front' },
-              back: { hidden: 'url-back', thumb: 'thumb-back' },
-              neck: { hidden: 'url-neck', thumb: 'thumb-neck' },
-              left_sleeve: { hidden: 'url-left-sleeve', thumb: 'thumb-left-sleeve' },
-              right_sleeve: { hidden: 'url-right-sleeve', thumb: 'thumb-right-sleeve' },
-              left_side: { hidden: 'url-left-side', thumb: 'thumb-left-side' },
-              right_side: { hidden: 'url-right-side', thumb: 'thumb-right-side' },
-              hem_detail: { hidden: 'url-hem', thumb: 'thumb-hem' },
-              pocket_detail: { hidden: 'url-pocket', thumb: 'thumb-pocket' },
-              hood_detail: { hidden: 'url-hood', thumb: 'thumb-hood' }
-            };
-
-            for (const [surfKey, fieldIds] of Object.entries(surfaceMap)) {
-              const urlVal = p.surfaces[surfKey] || '';
-              const hiddenEl = document.getElementById(fieldIds.hidden);
-              const thumbEl = document.getElementById(fieldIds.thumb);
-              if (hiddenEl) hiddenEl.value = urlVal;
-              if (thumbEl && urlVal) thumbEl.src = urlVal;
-            }
-          }
-
-          if (p.sizes) {
-            const szMap = { S: 's', M: 'm', L: 'l', XL: 'xl', '2XL': 'xxl' };
-            for (const [szKey, keyPrefix] of Object.entries(szMap)) {
-              if (p.sizes[szKey]) {
-                const sObj = p.sizes[szKey];
-                if (document.getElementById(`${keyPrefix}-w`)) document.getElementById(`${keyPrefix}-w`).value = sObj.shirtWidthCm || 50;
-                if (document.getElementById(`${keyPrefix}-h`)) document.getElementById(`${keyPrefix}-h`).value = sObj.shirtHeightCm || 70;
-                if (document.getElementById(`${keyPrefix}-pw`)) document.getElementById(`${keyPrefix}-pw`).value = sObj.printWidthCm || 30;
-                if (document.getElementById(`${keyPrefix}-ph`)) document.getElementById(`${keyPrefix}-ph`).value = sObj.printHeightCm || 30;
-              }
-            }
-          }
-        }
       } catch (err) {
         console.error('Error loading products:', err);
       }
     }
 
-    const prodFormEl = document.getElementById('form-register-product');
-    if (prodFormEl) {
-      prodFormEl.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const payload = {
-          productNo: document.getElementById('input-product-no').value,
-          title: document.getElementById('input-title').value,
-          glbUrl: document.getElementById('url-glb') ? document.getElementById('url-glb').value : '',
-          shirtWidthCm: document.getElementById('l-w').value,
-          shirtHeightCm: document.getElementById('l-h').value,
-          printWidthCm: document.getElementById('l-pw').value,
-          printHeightCm: document.getElementById('l-ph').value,
-          sizes: {
-            S: { shirtWidthCm: document.getElementById('s-w').value, shirtHeightCm: document.getElementById('s-h').value, printWidthCm: document.getElementById('s-pw').value, printHeightCm: document.getElementById('s-ph').value },
-            M: { shirtWidthCm: document.getElementById('m-w').value, shirtHeightCm: document.getElementById('m-h').value, printWidthCm: document.getElementById('m-pw').value, printHeightCm: document.getElementById('m-ph').value },
-            L: { shirtWidthCm: document.getElementById('l-w').value, shirtHeightCm: document.getElementById('l-h').value, printWidthCm: document.getElementById('l-pw').value, printHeightCm: document.getElementById('l-ph').value },
-            XL: { shirtWidthCm: document.getElementById('xl-w').value, shirtHeightCm: document.getElementById('xl-h').value, printWidthCm: document.getElementById('xl-pw').value, printHeightCm: document.getElementById('xl-ph').value },
-            '2XL': { shirtWidthCm: document.getElementById('xxl-w').value, shirtHeightCm: document.getElementById('xxl-h').value, printWidthCm: document.getElementById('xxl-pw').value, printHeightCm: document.getElementById('xxl-ph').value }
-          },
-          surfaces: {
-            front: document.getElementById('url-front') ? document.getElementById('url-front').value : '',
-            back: document.getElementById('url-back') ? document.getElementById('url-back').value : '',
-            neck: document.getElementById('url-neck') ? document.getElementById('url-neck').value : '',
-            left_sleeve: document.getElementById('url-left-sleeve') ? document.getElementById('url-left-sleeve').value : '',
-            right_sleeve: document.getElementById('url-right-sleeve') ? document.getElementById('url-right-sleeve').value : '',
-            left_side: document.getElementById('url-left-side') ? document.getElementById('url-left-side').value : '',
-            right_side: document.getElementById('url-right-side') ? document.getElementById('url-right-side').value : '',
-            hem_detail: document.getElementById('url-hem') ? document.getElementById('url-hem').value : '',
-            pocket_detail: document.getElementById('url-pocket') ? document.getElementById('url-pocket').value : '',
-            hood_detail: document.getElementById('url-hood') ? document.getElementById('url-hood').value : ''
-          }
-        };
+    function renderFontTableHeader() {
+      const headerTr = document.getElementById('font-table-header-tr');
+      if (!headerTr) return;
 
-        const res = await fetch('/api/admin/products', {
+      if (isFontDeleteMode) {
+        headerTr.innerHTML = `
+          <th style="width: 40px; text-align:center;">
+            <input type="checkbox" id="font-check-all" style="cursor:pointer; width:16px; height:16px;">
+          </th>
+          <th style="width: 22%;">폰트 표기명</th>
+          <th style="width: 20%;">폰트 패밀리</th>
+          <th style="width: 28%;">웹폰트 파일 URL (.woff2)</th>
+          <th style="width: 18%;">글꼴 미리보기</th>
+          <th style="width: 12%; text-align:center;">관리</th>
+        `;
+        const checkAll = document.getElementById('font-check-all');
+        if (checkAll) {
+          checkAll.addEventListener('change', (e) => {
+            const checkboxes = document.querySelectorAll('.font-select-checkbox');
+            checkboxes.forEach(cb => cb.checked = e.target.checked);
+          });
+        }
+      } else {
+        headerTr.innerHTML = `
+          <th style="width: 22%;">폰트 표기명</th>
+          <th style="width: 20%;">폰트 패밀리</th>
+          <th style="width: 28%;">웹폰트 파일 URL (.woff2)</th>
+          <th style="width: 18%;">글꼴 미리보기</th>
+          <th style="width: 12%; text-align:center;">관리</th>
+        `;
+      }
+    }
+
+    function toggleFontDeleteMode(enable) {
+      isFontDeleteMode = enable;
+      const normalBtns = document.getElementById('font-action-buttons-normal');
+      const deleteBtns = document.getElementById('font-action-buttons-delete');
+      if (normalBtns) normalBtns.style.display = enable ? 'none' : 'flex';
+      if (deleteBtns) deleteBtns.style.display = enable ? 'flex' : 'none';
+
+      renderFontTableHeader();
+      renderFontsTableBody();
+    }
+
+    function renderFontsTableBody() {
+      const tbody = document.getElementById('registered-fonts-tbody');
+      if (!tbody) return;
+
+      if (globalLoadedFonts.length === 0) {
+        const colSpan = isFontDeleteMode ? 6 : 5;
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="${colSpan}" style="text-align:center; padding:24px; color:var(--slate-400);">
+              등록된 폰트가 없습니다. 상단의 [➕ 폰트 등록] 버튼을 눌러 추가하세요.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = globalLoadedFonts.map((f, idx) => `
+        <tr>
+          ${isFontDeleteMode ? `
+            <td style="text-align:center;">
+              <input type="checkbox" class="font-select-checkbox" data-index="${idx}" style="cursor:pointer; width:16px; height:16px;">
+            </td>
+          ` : ''}
+          <td><b style="color:var(--slate-900); font-size:14px;">${f.name}</b></td>
+          <td><code style="background:var(--slate-100); padding:3px 8px; border-radius:4px; font-size:12.5px; color:var(--slate-700); font-weight:700;">${f.family}</code></td>
+          <td>
+            ${f.url ? `<a href="${f.url}" target="_blank" style="color:var(--primary-hover); font-weight:700; text-decoration:none; font-size:13px;">WOFF2 링크 ↗</a> <span style="font-size:11px; color:var(--slate-400); word-break:break-all; display:block; max-width:240px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${f.url}</span>` : `<span style="color:var(--slate-400); font-size:13px;">기본 시스템 폰트</span>`}
+          </td>
+          <td>
+            <span style="font-family:'${f.family}', sans-serif; font-size:15px; font-weight:700;">가나다라 ABC 123</span>
+          </td>
+          <td style="text-align:center; white-space:nowrap;">
+            <button type="button" class="btn-outline" onclick="openEditFontModal(${idx})" style="padding:4px 10px; font-size:12px;">✏️ 수정</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function loadFonts() {
+      try {
+        const res = await fetch('/api/admin/fonts');
+        const data = await res.json();
+        globalLoadedFonts = data.fonts || [];
+      } catch (err) {
+        console.error('Error loading fonts:', err);
+        if (globalLoadedFonts.length === 0) {
+          globalLoadedFonts = [
+            { name: 'Pretendard (기본)', family: 'Pretendard', url: '' },
+            { name: 'Gmarket Sans (눈누 상업용)', family: 'Gmarket Sans', url: 'https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff' },
+            { name: 'Black Han Sans (굵은 한글)', family: 'Black Han Sans', url: 'https://fonts.gstatic.com/s/blackhansans/v17/ea8A42B3z23p8i071M89BsB4_YptA_0.woff2' }
+          ];
+        }
+      }
+      renderFontTableHeader();
+      renderFontsTableBody();
+    }
+
+    // FONT ADD / EDIT MODAL LOGIC
+    const fontModal = document.getElementById('modal-register-font');
+    const openFontModalBtn = document.getElementById('btn-open-font-modal');
+    const closeFontModalBtn = document.getElementById('btn-close-font-modal');
+    const cancelFontModalBtn = document.getElementById('btn-cancel-font-modal');
+
+    function openAddFontModal() {
+      document.getElementById('modal-font-title').textContent = '🔤 신규 상업용 무료 폰트 등록';
+      document.getElementById('input-font-index').value = '-1';
+      document.getElementById('input-font-name').value = '';
+      document.getElementById('input-font-family').value = '';
+      document.getElementById('input-font-url').value = '';
+      if (fontModal) fontModal.style.display = 'flex';
+    }
+
+    function openEditFontModal(index) {
+      const font = globalLoadedFonts[index];
+      if (!font) return;
+
+      document.getElementById('modal-font-title').textContent = '🔤 폰트 정보 및 WOFF2 링크 수정';
+      document.getElementById('input-font-index').value = index;
+      document.getElementById('input-font-name').value = font.name || '';
+      document.getElementById('input-font-family').value = font.family || '';
+      document.getElementById('input-font-url').value = font.url || '';
+      if (fontModal) fontModal.style.display = 'flex';
+    }
+
+    function closeFontModal() {
+      if (fontModal) fontModal.style.display = 'none';
+      const form = document.getElementById('form-register-font');
+      if (form) form.reset();
+    }
+
+    if (openFontModalBtn) openFontModalBtn.addEventListener('click', openAddFontModal);
+    if (closeFontModalBtn) closeFontModalBtn.addEventListener('click', closeFontModal);
+    if (cancelFontModalBtn) cancelFontModalBtn.addEventListener('click', closeFontModal);
+
+    const fontFormEl = document.getElementById('form-register-font');
+    if (fontFormEl) {
+      fontFormEl.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const index = parseInt(document.getElementById('input-font-index').value, 10);
+        const name = document.getElementById('input-font-name').value.trim();
+        const family = document.getElementById('input-font-family').value.trim();
+        const url = document.getElementById('input-font-url').value.trim();
+
+        const payload = { name, family, url };
+        if (index >= 0) payload.index = index;
+
+        const res = await fetch('/api/admin/fonts', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
 
         if (res.ok) {
-          alert('✅ 카페24 상품 데이터베이스 및 products.json에 성공적으로 영구 저장되었습니다!');
-          loadProducts();
+          alert('✅ 폰트 정보 및 WOFF2 파일 URL이 성공적으로 저장/수정되었습니다!');
+          closeFontModal();
+          loadFonts();
         }
       });
     }
 
+    // MULTI-DELETE SELECTION MODAL LOGIC
+    const enterDeleteBtn = document.getElementById('btn-enter-delete-mode');
+    const cancelDeleteBtn = document.getElementById('btn-cancel-delete-mode');
+    const confirmDeleteSelectedBtn = document.getElementById('btn-confirm-delete-selected');
 
+    if (enterDeleteBtn) enterDeleteBtn.addEventListener('click', () => toggleFontDeleteMode(true));
+    if (cancelDeleteBtn) cancelDeleteBtn.addEventListener('click', () => toggleFontDeleteMode(false));
+
+    if (confirmDeleteSelectedBtn) {
+      confirmDeleteSelectedBtn.addEventListener('click', () => {
+        const checkedEls = document.querySelectorAll('.font-select-checkbox:checked');
+        if (checkedEls.length === 0) {
+          alert('삭제할 폰트를 선택해주세요.');
+          return;
+        }
+
+        selectedIndicesToDelete = Array.from(checkedEls).map(el => parseInt(el.dataset.index, 10)).sort((a, b) => b - a);
+
+        const countText = document.getElementById('delete-font-count-text');
+        const listUl = document.getElementById('delete-font-names-list');
+        if (countText) countText.textContent = selectedIndicesToDelete.length;
+        if (listUl) {
+          listUl.innerHTML = selectedIndicesToDelete.map(idx => {
+            const font = globalLoadedFonts[idx];
+            return `<li><b>${font.name}</b> (${font.family})</li>`;
+          }).join('');
+        }
+
+        const deleteModal = document.getElementById('modal-confirm-delete-font');
+        if (deleteModal) deleteModal.style.display = 'flex';
+      });
+    }
+
+    const closeDeleteModalBtn = document.getElementById('btn-close-delete-font-modal');
+    const cancelDeleteModalBtn = document.getElementById('btn-cancel-delete-font-modal');
+    const executeDeleteFontsBtn = document.getElementById('btn-execute-delete-fonts');
+
+    function closeDeleteFontModal() {
+      const deleteModal = document.getElementById('modal-confirm-delete-font');
+      if (deleteModal) deleteModal.style.display = 'none';
+      selectedIndicesToDelete = [];
+    }
+
+    if (closeDeleteModalBtn) closeDeleteModalBtn.addEventListener('click', closeDeleteFontModal);
+    if (cancelDeleteModalBtn) cancelDeleteModalBtn.addEventListener('click', closeDeleteFontModal);
+
+    if (executeDeleteFontsBtn) {
+      executeDeleteFontsBtn.addEventListener('click', async () => {
+        if (selectedIndicesToDelete.length === 0) return;
+
+        try {
+          for (const idx of selectedIndicesToDelete) {
+            await fetch(`/api/admin/fonts/${idx}`, { method: 'DELETE' });
+          }
+
+          alert(`✅ 선택한 ${selectedIndicesToDelete.length}개의 폰트가 성공적으로 삭제되었습니다.`);
+          closeDeleteFontModal();
+          toggleFontDeleteMode(false);
+          loadFonts();
+        } catch (err) {
+          console.error('Error deleting fonts:', err);
+          alert('폰트 삭제 처리 중 오류가 발생했습니다.');
+        }
+      });
+    }
+
+    let isOrderDeleteMode = false;
+    let selectedOrderIdsToDelete = [];
+
+    function toggleOrderDeleteMode(enable) {
+      isOrderDeleteMode = enable;
+      const normalBtns = document.getElementById('order-action-buttons-normal');
+      const deleteBtns = document.getElementById('order-action-buttons-delete');
+      if (normalBtns) normalBtns.style.display = enable ? 'none' : 'flex';
+      if (deleteBtns) deleteBtns.style.display = enable ? 'flex' : 'none';
+
+      loadAdminOrders();
+    }
 
     async function loadAdminOrders() {
       const container = document.getElementById('admin-orders-list-table');
       if (!container) return;
 
       try {
-        const res = await fetch('/api/work-orders');
+        let res;
+        try {
+          res = await fetch('/api/admin/orders');
+        } catch (e) {
+          res = await fetch('http://localhost:4000/api/admin/orders');
+        }
         const data = await res.json();
 
         if (!data.orders || data.orders.length === 0) {
-          container.innerHTML = '<div style="color:#64748b;">아직 생성된 주문이 없습니다.</div>';
+          container.innerHTML = `
+            <div style="text-align:center; padding:30px; color:var(--slate-400);">
+              접수된 작업지시서가 없습니다.
+            </div>
+          `;
           return;
         }
 
+        const showCheckboxes = isOrderDeleteMode;
+
         container.innerHTML = `
-          <table class="admin-table">
+          <table class="data-table" style="background:#ffffff; border:1px solid var(--slate-200); border-radius:var(--radius-xl); overflow:hidden; border-spacing:0; box-shadow:var(--shadow-card);">
             <thead>
               <tr>
+                ${showCheckboxes ? `
+                  <th style="width: 40px; text-align:center;">
+                    <input type="checkbox" id="order-check-all" style="cursor:pointer; width:16px; height:16px;">
+                  </th>
+                ` : ''}
                 <th>주문 번호</th>
-                <th>상품 ID / 사이즈</th>
-                <th>생성 일시</th>
-                <th>시안 미리보기</th>
-                <th>공장 전달용 PDF 지시서</th>
-                <th>인쇄용 벡터 (SVG/AI) 원본</th>
+                <th>상품명</th>
+                <th>주문 일시</th>
+                <th>수량</th>
+                <th>선택 옵션</th>
+                <th>작업지시서 & 시안</th>
               </tr>
             </thead>
             <tbody>
-              ${data.orders.map(o => `
+              ${data.orders.map(ord => `
                 <tr>
-                  <td><b style="color:#2563eb;">${o.orderId}</b></td>
-                  <td>${o.productId} (${o.selectedSize || 'L'})</td>
-                  <td>${new Date(o.createdAt).toLocaleString('ko-KR')}</td>
-                  <td><a href="${o.previewUrl}" target="_blank" style="color:#2563eb;">[미리보기]</a></td>
-                  <td><a href="${o.workOrderPdfUrl}" target="_blank" style="color:#dc2626; font-weight:bold;">[📄 PDF 지시서]</a></td>
+                  ${showCheckboxes ? `
+                    <td style="text-align:center;">
+                      <input type="checkbox" class="order-select-checkbox" data-order-id="${ord.orderId}" style="cursor:pointer; width:16px; height:16px;">
+                    </td>
+                  ` : ''}
+                  <td><b style="color:var(--primary-hover);">${ord.orderId || 'WO-000000'}</b></td>
+                  <td><b>${ord.productTitle || ord.productId || '커스텀 티셔츠'}</b></td>
+                  <td>${ord.timestamp || ord.createdAt ? new Date(ord.timestamp || ord.createdAt).toLocaleString('ko-KR') : '-'}</td>
+                  <td>1개</td>
+                  <td><span style="background:var(--slate-100); padding:3px 8px; border-radius:4px; font-size:12px; font-weight:700;">${(ord.selectedOption || `${ord.selectedSize || 'L'} / ${ord.selectedColor || '화이트'}`).replace('기본색상', '화이트')}</span></td>
                   <td>
-                    ${o.vectorSvgUrl ? `<a href="${o.vectorSvgUrl}" target="_blank" style="color:#16a34a; font-weight:bold;">[🎨 벡터 (SVG/AI) 다운로드]</a>` : '<span style="color:#64748b;">미생성</span>'}
+                    <div style="display:flex; gap:10px; align-items:center;">
+                      ${ord.pdfUrl || ord.workOrderPdfUrl ? `<a href="${ord.pdfUrl || ord.workOrderPdfUrl}" target="_blank" style="color:#ef4444; font-weight:800; text-decoration:none; font-size:13px;">📄 PDF 다운로드 ↗</a>` : ''}
+                      ${ord.vectorSvgUrl ? `<a href="${ord.vectorSvgUrl}" target="_blank" style="color:#2563eb; font-weight:700; text-decoration:none; font-size:12px;">🎨 SVG 벡터 ↗</a>` : ''}
+                      ${ord.previewUrl ? `<a href="${ord.previewUrl}" target="_blank" style="color:var(--slate-600); font-weight:700; text-decoration:none; font-size:12px;">🖼️ 썸네일 ↗</a>` : ''}
+                    </div>
                   </td>
                 </tr>
               `).join('')}
             </tbody>
           </table>
         `;
+
+        if (showCheckboxes) {
+          const checkAll = document.getElementById('order-check-all');
+          if (checkAll) {
+            checkAll.addEventListener('change', (e) => {
+              const checkboxes = document.querySelectorAll('.order-select-checkbox');
+              checkboxes.forEach(cb => cb.checked = e.target.checked);
+            });
+          }
+        }
+
       } catch (err) {
         console.error('Error loading orders:', err);
+        container.innerHTML = `
+          <div style="text-align:center; padding:30px; color:var(--slate-400);">
+            백엔드 서버 연동 시 접수된 PDF 지시서 목록이 자동으로 표시됩니다. (현재 로컬 오프라인 상태)
+          </div>
+        `;
       }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      loadProducts();
-      loadFonts();
-      loadAdminOrders();
-    });
+    // MULTI-DELETE ORDER HANDLERS
+    const enterOrderDeleteBtn = document.getElementById('btn-enter-order-delete-mode');
+    const cancelOrderDeleteBtn = document.getElementById('btn-cancel-order-delete-mode');
+    const confirmDeleteSelectedOrdersBtn = document.getElementById('btn-confirm-delete-selected-orders');
+
+    if (enterOrderDeleteBtn) enterOrderDeleteBtn.addEventListener('click', () => toggleOrderDeleteMode(true));
+    if (cancelOrderDeleteBtn) cancelOrderDeleteBtn.addEventListener('click', () => toggleOrderDeleteMode(false));
+
+    if (confirmDeleteSelectedOrdersBtn) {
+      confirmDeleteSelectedOrdersBtn.addEventListener('click', () => {
+        const checkedEls = document.querySelectorAll('.order-select-checkbox:checked');
+        if (checkedEls.length === 0) {
+          alert('삭제할 작업지시서를 선택해주세요.');
+          return;
+        }
+
+        selectedOrderIdsToDelete = Array.from(checkedEls).map(el => el.dataset.orderId);
+
+        const countText = document.getElementById('delete-order-count-text');
+        const listUl = document.getElementById('delete-order-ids-list');
+        if (countText) countText.textContent = selectedOrderIdsToDelete.length;
+        if (listUl) {
+          listUl.innerHTML = selectedOrderIdsToDelete.map(id => `<li><b>${id}</b></li>`).join('');
+        }
+
+        const deleteModal = document.getElementById('modal-confirm-delete-order');
+        if (deleteModal) deleteModal.style.display = 'flex';
+      });
+    }
+
+    const closeDeleteOrderModalBtn = document.getElementById('btn-close-delete-order-modal');
+    const cancelDeleteOrderModalBtn = document.getElementById('btn-cancel-delete-order-modal');
+    const executeDeleteOrdersBtn = document.getElementById('btn-execute-delete-orders');
+
+    function closeDeleteOrderModal() {
+      const deleteModal = document.getElementById('modal-confirm-delete-order');
+      if (deleteModal) deleteModal.style.display = 'none';
+      selectedOrderIdsToDelete = [];
+    }
+
+    if (closeDeleteOrderModalBtn) closeDeleteOrderModalBtn.addEventListener('click', closeDeleteOrderModal);
+    if (cancelDeleteOrderModalBtn) cancelDeleteOrderModalBtn.addEventListener('click', closeDeleteOrderModal);
+
+    if (executeDeleteOrdersBtn) {
+      executeDeleteOrdersBtn.addEventListener('click', async () => {
+        if (selectedOrderIdsToDelete.length === 0) return;
+
+        try {
+          for (const orderId of selectedOrderIdsToDelete) {
+            try {
+              await fetch(`/api/admin/orders/${encodeURIComponent(orderId)}`, { method: 'DELETE' });
+            } catch (e) {
+              await fetch(`http://localhost:4000/api/admin/orders/${encodeURIComponent(orderId)}`, { method: 'DELETE' });
+            }
+          }
+
+          alert(`✅ 선택한 ${selectedOrderIdsToDelete.length}개의 작업지시서가 성공적으로 삭제되었습니다.`);
+          closeDeleteOrderModal();
+          toggleOrderDeleteMode(false);
+        } catch (err) {
+          console.error('Error deleting orders:', err);
+          alert('작업지시서 삭제 처리 중 오류가 발생했습니다.');
+        }
+      });
+    }
+
+    loadProducts();
+    loadFonts();
+    loadAdminOrders();
   </script>
 </body>
 </html>

@@ -27,6 +27,14 @@ app.use('/admin', express.static(path.resolve(process.cwd(), 'admin')));
 app.use('/api', customizerRoutes);
 app.use('/api/admin', adminRoutes);
 
+// Redirect Root and Login endpoints
+app.get('/', (req, res) => res.redirect('/demo/detail_demo.html'));
+app.get('/login', (req, res) => res.redirect('/admin/admin_demo.html'));
+app.get('/admin/login', (req, res) => res.redirect('/admin/admin_demo.html'));
+app.post('/login', (req, res) => res.redirect('/admin/admin_demo.html'));
+app.post('/admin/login', (req, res) => res.redirect('/admin/admin_demo.html'));
+app.post('/api/login', (req, res) => res.json({ success: true, message: '로그인 성공', redirectUrl: '/admin/admin_demo.html' }));
+
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', time: new Date().toISOString() });

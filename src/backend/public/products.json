@@ -2,36 +2,99 @@
   "TSHIRT_2026_01": {
     "productNo": "TSHIRT_2026_01",
     "title": "오버핏 시그니처 커스텀 반팔 티셔츠",
+    "glbUrl": "",
     "shirtWidthCm": 50,
     "shirtHeightCm": 70,
-    "printWidthCm": 20,
-    "printHeightCm": 40,
+    "printWidthCm": 30,
+    "printHeightCm": 50,
     "printTopCm": 5,
     "printLeftCm": 10,
+    "colors": [
+      [
+        "#ffffff",
+        "화이트"
+      ],
+      [
+        "#c8d6e5",
+        "스카이"
+      ],
+      [
+        "#0f4c4c",
+        "딥그린"
+      ],
+      [
+        "#8e9c85",
+        "세이지"
+      ],
+      [
+        "#d9b779",
+        "카멜"
+      ],
+      [
+        "#a9c9b4",
+        "민트"
+      ],
+      [
+        "#3a3a3f",
+        "차콜"
+      ],
+      [
+        "#efefe8",
+        "아이보리"
+      ],
+      [
+        "#1e3fa0",
+        "네이비"
+      ],
+      [
+        "#4a4b30",
+        "올리브"
+      ],
+      [
+        "#c8302f",
+        "레드"
+      ],
+      [
+        "#7a2430",
+        "버건디"
+      ],
+      [
+        "#c78ad0",
+        "라일락"
+      ],
+      [
+        "#17171a",
+        "블랙"
+      ],
+      [
+        "#f5d64e",
+        "옐로우"
+      ]
+    ],
     "sizes": {
       "S": {
-        "shirtWidthCm": "46",
-        "shirtHeightCm": "66",
-        "printWidthCm": "26",
-        "printHeightCm": "26"
+        "shirtWidthCm": 50,
+        "shirtHeightCm": 70,
+        "printWidthCm": 30,
+        "printHeightCm": 50
       },
       "M": {
         "shirtWidthCm": "48",
         "shirtHeightCm": "68",
-        "printWidthCm": "28",
-        "printHeightCm": "28"
+        "printWidthCm": 30,
+        "printHeightCm": 50
       },
       "L": {
         "shirtWidthCm": "50",
         "shirtHeightCm": "70",
-        "printWidthCm": "20",
-        "printHeightCm": "40"
+        "printWidthCm": 30,
+        "printHeightCm": 50
       },
       "XL": {
         "shirtWidthCm": "53",
         "shirtHeightCm": "73",
-        "printWidthCm": "33",
-        "printHeightCm": "33"
+        "printWidthCm": 30,
+        "printHeightCm": 50
       },
       "2XL": {
         "shirtWidthCm": "56",
@@ -41,11 +104,110 @@
       }
     },
     "surfaces": {
-      "front": "http://localhost:4000/uploads/front_1785828909372_635.png",
-      "back": "http://localhost:4000/uploads/back_1785807283154_707.png",
-      "neck": "http://localhost:4000/uploads/neck_1785807288210_715.png",
-      "left_sleeve": "http://localhost:4000/uploads/lsleeve_1785807293329_658.png",
-      "right_sleeve": "http://localhost:4000/uploads/rsleeve_1785807298537_339.png"
+      "front": {
+        "url": "http://localhost:4000/uploads/surf_화이트_0_1786496110304_334.png",
+        "name": "앞면",
+        "printWidthCm": 10,
+        "printHeightCm": 11,
+        "printTopPct": 23.955829326923077,
+        "printLeftPct": 54.481534090909086,
+        "printWidthPct": 19.86328125,
+        "printHeightPct": 15.623497596153847
+      },
+      "back": {
+        "url": "http://localhost:4000/uploads/back_1785807283154_707.png",
+        "name": "뒷면",
+        "printWidthCm": 30,
+        "printHeightCm": 50,
+        "printTopPct": 20,
+        "printLeftPct": 25,
+        "printWidthPct": 50,
+        "printHeightPct": 60
+      },
+      "neck": {
+        "url": "http://localhost:4000/uploads/neck_1785807288210_715.png",
+        "name": "목뒤",
+        "printWidthCm": 30,
+        "printHeightCm": 50,
+        "printTopPct": 20,
+        "printLeftPct": 25,
+        "printWidthPct": 50,
+        "printHeightPct": 60
+      },
+      "left_sleeve": {
+        "url": "http://localhost:4000/uploads/lsleeve_1785807293329_658.png",
+        "name": "왼소매",
+        "printWidthCm": 30,
+        "printHeightCm": 50,
+        "printTopPct": 20,
+        "printLeftPct": 25,
+        "printWidthPct": 50,
+        "printHeightPct": 60
+      },
+      "right_sleeve": {
+        "url": "http://localhost:4000/uploads/rsleeve_1785807298537_339.png",
+        "name": "오른소매",
+        "printWidthCm": 30,
+        "printHeightCm": 50,
+        "printTopPct": 20,
+        "printLeftPct": 25,
+        "printWidthPct": 50,
+        "printHeightPct": 60
+      }
+    },
+    "colorSurfaces": {
+      "화이트": {
+        "front": {
+          "url": "http://localhost:4000/uploads/surf_화이트_0_1786496110304_334.png",
+          "name": "앞면",
+          "printWidthCm": 10,
+          "printHeightCm": 11,
+          "printTopPct": 23.955829326923077,
+          "printLeftPct": 54.481534090909086,
+          "printWidthPct": 19.86328125,
+          "printHeightPct": 15.623497596153847
+        },
+        "back": {
+          "url": "http://localhost:4000/uploads/back_1785807283154_707.png",
+          "name": "뒷면",
+          "printWidthCm": 30,
+          "printHeightCm": 50,
+          "printTopPct": 20,
+          "printLeftPct": 25,
+          "printWidthPct": 50,
+          "printHeightPct": 60
+        },
+        "neck": {
+          "url": "http://localhost:4000/uploads/neck_1785807288210_715.png",
+          "name": "목뒤",
+          "printWidthCm": 30,
+          "printHeightCm": 50,
+          "printTopPct": 20,
+          "printLeftPct": 25,
+          "printWidthPct": 50,
+          "printHeightPct": 60
+        },
+        "left_sleeve": {
+          "url": "http://localhost:4000/uploads/lsleeve_1785807293329_658.png",
+          "name": "왼소매",
+          "printWidthCm": 30,
+          "printHeightCm": 50,
+          "printTopPct": 20,
+          "printLeftPct": 25,
+          "printWidthPct": 50,
+          "printHeightPct": 60
+        },
+        "right_sleeve": {
+          "url": "http://localhost:4000/uploads/rsleeve_1785807298537_339.png",
+          "name": "오른소매",
+          "printWidthCm": 30,
+          "printHeightCm": 50,
+          "printTopPct": 20,
+          "printLeftPct": 25,
+          "printWidthPct": 50,
+          "printHeightPct": 60
+        }
+      }
     }
   }
 }

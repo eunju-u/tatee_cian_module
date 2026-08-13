@@ -3,7 +3,7 @@ import { CanvasEditor } from './editor/CanvasEditor.js';
 import { SurfaceManager } from './editor/SurfaceManager.js';
 import { LayerManager } from './editor/LayerManager.js';
 import { Viewer3D } from './viewer/Viewer3D.js';
-import { Cafe24Bridge } from './bridge/Cafe24Bridge.js';
+import { CustomizerBridge, Cafe24Bridge } from './bridge/CustomizerBridge.js';
 
 // SVG ICON DEFINITIONS MATCHING Editor.dc.html 100%
 const svg = {
@@ -170,8 +170,11 @@ function getAppSkeletonHtml(productConfig) {
             </div>
 
             <!-- MOCKUP CANVAS -->
-            <div class="canvas-mockup-stage" id="canvas-mockup-wrapper" style="background-image: url('${productConfig.surfaces.front}');">
-              <canvas id="customizer-canvas" width="380" height="480"></canvas>
+            <div class="canvas-mockup-stage" id="canvas-mockup-wrapper" style="position:relative; width:500px; height:590px; display:flex; align-items:center; justify-content:center; overflow:visible; touch-action:none;">
+              <div id="garment-bg-layer" style="position:absolute; inset:0; background-image: url('${productConfig.surfaces.front}'); background-size:contain; background-position:center center; background-repeat:no-repeat; pointer-events:none; z-index:1;"></div>
+              <div id="canvas-fg-layer" style="position:relative; z-index:2;">
+                <canvas id="customizer-canvas" width="380" height="480"></canvas>
+              </div>
             </div>
 
           </div>
@@ -538,6 +541,13 @@ function getAppSkeletonHtml(productConfig) {
                   <input type="range" min="0" max="5" step="1" value="0" id="slider-shape-stroke-width" class="slider-range-input">
                 </div>
 
+                <div id="container-shape-rx">
+                  <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:11.5px; font-weight:650; color:#5c5c64;">
+                    <span>라운드 처리 (모서리)</span><span id="label-val-shape-rx">0px</span>
+                  </div>
+                  <input type="range" min="0" max="40" step="1" value="0" id="slider-shape-rx" class="slider-range-input">
+                </div>
+
                 <div>
                   <div style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:11.5px; font-weight:650; color:#5c5c64;">
                     <span>회전</span><span id="label-val-shape-rotation">0°</span>
@@ -592,8 +602,8 @@ export class TShirtCustomizerApp {
     const productConfig = {
       title: '17수 라운드 티셔츠 (남녀공용)',
       surfaces: {
-        front: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80',
-        back: 'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&w=600&q=80'
+        front: '/uploads/surf_화이트_0_1786496110304_334.png',
+        back: '/uploads/surf_화이트_0_1786496110304_334.png'
       }
     };
 
@@ -825,6 +835,46 @@ export class TShirtCustomizerApp {
             if (rotLbl) rotLbl.textContent = `${normAngle}°`;
             updateSliderProgress(rotSld);
           }
+
+          // Sync Corner Rounding (rx) for eligible shapes (Triangle, Square, Rect, Pentagon, Star)
+          let shapeType = obj.shapeType;
+          if (!shapeType) {
+            if (obj.type === 'rect') shapeType = obj.width === obj.height ? 'square' : 'rect';
+            else if (obj.type === 'triangle') shapeType = 'triangle';
+            else if (obj.originalPoints?.length === 5) shapeType = 'pentagon';
+            else if (obj.originalPoints?.length === 10) shapeType = 'star';
+          }
+
+          const isEligibleForRounding = Boolean(['triangle', 'square', 'rect', 'rectangle', 'pentagon', 'star'].includes(shapeType));
+
+          const sliderRx = document.getElementById('slider-shape-rx');
+          const labelRx = document.getElementById('label-val-shape-rx');
+          const containerRx = document.getElementById('container-shape-rx');
+
+          if (containerRx && sliderRx && labelRx) {
+            if (isEligibleForRounding) {
+              sliderRx.disabled = false;
+              containerRx.style.opacity = '1';
+              containerRx.style.pointerEvents = 'auto';
+
+              let curR = 0;
+              if (obj.type === 'rect' || ['rect', 'rectangle', 'square'].includes(shapeType)) {
+                curR = Math.round(obj.rx || 0);
+              } else {
+                curR = Math.round(obj.cornerRadius || 0);
+              }
+              sliderRx.value = curR;
+              labelRx.textContent = `${curR}px`;
+              updateSliderProgress(sliderRx);
+            } else {
+              sliderRx.disabled = true;
+              containerRx.style.opacity = '0.35';
+              containerRx.style.pointerEvents = 'none';
+              sliderRx.value = 0;
+              labelRx.textContent = '비활성화';
+              updateSliderProgress(sliderRx);
+            }
+          }
         } else {
           if (secText) secText.style.display = 'none';
           if (secShape) secShape.style.display = 'none';
@@ -852,20 +902,133 @@ export class TShirtCustomizerApp {
           prod = data.products ? (data.products.find(p => p.productNo === productNo) || data.products[0]) : null;
         }
 
-        if (prod && prod.surfaces) {
-          surfaceManager.setSurfaceConfig(prod.surfaces);
-          // Set initial front background image on stage if present
-          const stageWrapper = document.getElementById('canvas-mockup-wrapper');
-          if (stageWrapper && surfaceManager.surfaces.front && surfaceManager.surfaces.front.bgOverlay) {
-            stageWrapper.style.backgroundImage = `url("${surfaceManager.surfaces.front.bgOverlay}")`;
+        if (prod) {
+          if (prod.title) {
+            const titleEl = document.getElementById('label-product-title');
+            if (titleEl) titleEl.textContent = prod.title;
           }
-          // Re-render popover grid with loaded admin 2D mockup images
-          renderSidePopoverGrid();
+
+          // Apply print guide bounds from admin configuration (printWidthCm & printHeightCm)
+          const printW = parseFloat(prod.printWidthCm) || 30;
+          const printH = parseFloat(prod.printHeightCm) || 50;
+          const shirtW = parseFloat(prod.shirtWidthCm) || 50;
+          const shirtH = parseFloat(prod.shirtHeightCm) || 70;
+
+          editor.updatePrintBounds({
+            shirtWidthCm: shirtW,
+            shirtHeightCm: shirtH,
+            printAreaWidthCm: printW,
+            printAreaHeightCm: printH
+          });
+
+          if (prod.colors && Array.isArray(prod.colors) && prod.colors.length > 0) {
+            const swatchesContainer = document.getElementById('product-color-swatches');
+            const lblSelectedName = document.getElementById('label-selected-color-name');
+            if (swatchesContainer) {
+              swatchesContainer.innerHTML = prod.colors.map(([c, n], idx) => `
+                <button type="button" class="swatch-circle-btn ${idx === 0 ? 'active' : ''}" data-color="${c}" data-name="${n}" title="${n}" style="background:${c}; width:28px; height:28px;"></button>
+              `).join('');
+
+              if (lblSelectedName && prod.colors[0]) {
+                lblSelectedName.textContent = prod.colors[0][1] || prod.colors[0][0];
+              }
+
+              const stageWrapper = document.getElementById('canvas-mockup-wrapper');
+              if (stageWrapper) {
+                stageWrapper.style.backgroundColor = 'transparent';
+              }
+            }
+          }
+
+          window.currentProductConfig = prod;
+
+          if (prod.sizes && typeof prod.sizes === 'object') {
+            const sizeBtnsContainer = document.getElementById('product-size-btns');
+            if (sizeBtnsContainer) {
+              const sizeEntries = Object.entries(prod.sizes);
+              if (sizeEntries.length > 0) {
+                sizeBtnsContainer.innerHTML = sizeEntries.map(([sName, sData], idx) => `
+                  <button type="button" class="product-size-btn ${sName === 'L' || (idx === 0) ? 'active' : ''}" data-size="${sName}">
+                    <span style="font-size:13px; font-weight:700;">${sName}</span>
+                  </button>
+                `).join('');
+              }
+            }
+          }
+
+          const initialColorName = (prod.colors && prod.colors[0] && prod.colors[0][1]) ? prod.colors[0][1] : '화이트';
+          const targetSurfaces = (prod.colorSurfaces && prod.colorSurfaces[initialColorName]) ? prod.colorSurfaces[initialColorName] : (prod.surfaces || {});
+
+          if (targetSurfaces) {
+            surfaceManager.setSurfaceConfig(targetSurfaces);
+            const activeSurf = surfaceManager.surfaces[surfaceManager.activeSurfaceId];
+            if (activeSurf) {
+              const bgLayer = document.getElementById('garment-bg-layer') || document.getElementById('canvas-mockup-wrapper');
+              if (bgLayer && activeSurf.bgOverlay) {
+                bgLayer.style.backgroundImage = `url("${activeSurf.bgOverlay}")`;
+              }
+              editor.updatePrintBounds({
+                printAreaWidthCm: activeSurf.printWidthCm || 30,
+                printAreaHeightCm: activeSurf.printHeightCm || 50,
+                printTopPct: activeSurf.printTopPct,
+                printLeftPct: activeSurf.printLeftPct,
+                printWidthPct: activeSurf.printWidthPct,
+                printHeightPct: activeSurf.printHeightPct
+              });
+            }
+            renderSidePopoverGrid();
+          }
+
+          const cafe24Select = document.getElementById('cafe24-size-select') || document.querySelector(config.sizeSelectSelector || '#cafe24-size-select');
+          const initialSize = cafe24Select ? cafe24Select.value : 'L';
+          applySizeScale(initialSize);
         }
       } catch (err) {
         console.warn('Could not fetch admin products configuration:', err);
       }
     };
+
+    const applySizeScale = (sizeName) => {
+      if (!sizeName) return;
+      const bgLayer = document.getElementById('garment-bg-layer');
+      if (!bgLayer) return;
+
+      const prod = window.currentProductConfig;
+      const sizesData = (prod && prod.sizes) ? prod.sizes : {
+        "S": { shirtWidthCm: 46, shirtHeightCm: 66 },
+        "M": { shirtWidthCm: 48, shirtHeightCm: 68 },
+        "L": { shirtWidthCm: 50, shirtHeightCm: 70 },
+        "XL": { shirtWidthCm: 53, shirtHeightCm: 73 },
+        "2XL": { shirtWidthCm: 56, shirtHeightCm: 76 }
+      };
+
+      const baseS = sizesData["S"] || { shirtWidthCm: 46, shirtHeightCm: 66 };
+      const selectedSizeObj = sizesData[sizeName] || sizesData["L"] || baseS;
+
+      const baseWidth = parseFloat(baseS.shirtWidthCm) || 46;
+      const targetWidth = parseFloat(selectedSizeObj.shirtWidthCm) || baseWidth;
+
+      const scaleRatio = targetWidth / baseWidth;
+
+      // Scale ONLY the garment background layer, leaving canvas & print guide box 100% fixed
+      bgLayer.style.transformOrigin = 'center center';
+      bgLayer.style.transition = 'transform 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
+      bgLayer.style.transform = `scale(${scaleRatio})`;
+
+      const sizeBtnsContainer = document.getElementById('product-size-btns');
+      if (sizeBtnsContainer) {
+        sizeBtnsContainer.querySelectorAll('.product-size-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.size === sizeName);
+        });
+      }
+
+      const cafe24Select = document.getElementById('cafe24-size-select') || document.querySelector(config.sizeSelectSelector || '#cafe24-size-select');
+      if (cafe24Select && cafe24Select.value !== sizeName) {
+        cafe24Select.value = sizeName;
+      }
+    };
+    window.applySizeScale = applySizeScale;
+
     fetchAdminProductConfig();
 
     const fetchAdminFonts = async () => {
@@ -976,6 +1139,9 @@ export class TShirtCustomizerApp {
             if (stageWrapper) {
               if (targetSurface.bgOverlay && targetSurface.bgOverlay.startsWith('http')) {
                 stageWrapper.style.backgroundImage = `url("${targetSurface.bgOverlay}")`;
+                stageWrapper.style.backgroundSize = 'contain';
+                stageWrapper.style.backgroundPosition = 'center center';
+                stageWrapper.style.backgroundRepeat = 'no-repeat';
               } else {
                 stageWrapper.style.backgroundImage = 'none';
                 stageWrapper.style.backgroundColor = '#4a4b30';
@@ -1219,6 +1385,15 @@ export class TShirtCustomizerApp {
       if (lbl) lbl.textContent = `${val}°`;
       updateSliderProgress(e.target);
       editor.updateActiveObject({ angle: val });
+    });
+
+    safeAddListener('slider-shape-rx', 'input', (e) => {
+      const val = parseInt(e.target.value, 10) || 0;
+      const lbl = document.getElementById('label-val-shape-rx');
+      if (lbl) lbl.textContent = `${val}px`;
+      updateSliderProgress(e.target);
+      editor.setCornerRadius(val);
+      if (layerManager) layerManager.updateLayerList();
     });
 
     const renderSavedColorsGrid = () => {
@@ -1822,6 +1997,62 @@ export class TShirtCustomizerApp {
       if (btn) btn.classList.toggle('active', isVisible);
     });
 
+    // Product Swatches Click Handler
+    document.addEventListener('click', (e) => {
+      const swatchBtn = e.target.closest('.swatch-circle-btn');
+      if (swatchBtn) {
+        const swatchesContainer = swatchBtn.closest('#product-color-swatches');
+        if (swatchesContainer) {
+          const colorHex = swatchBtn.dataset.color;
+          const colorName = swatchBtn.dataset.name;
+          swatchesContainer.querySelectorAll('.swatch-circle-btn').forEach(b => b.classList.remove('active'));
+          swatchBtn.classList.add('active');
+          const lbl = document.getElementById('label-selected-color-name');
+          if (lbl) lbl.textContent = colorName || colorHex;
+
+          if (window.currentProductConfig && window.currentProductConfig.colorSurfaces) {
+            const newSurfaces = window.currentProductConfig.colorSurfaces[colorName] || window.currentProductConfig.colorSurfaces['화이트'];
+            if (newSurfaces) {
+              surfaceManager.setSurfaceConfig(newSurfaces);
+              const activeSurf = surfaceManager.surfaces[surfaceManager.activeSurfaceId];
+              if (activeSurf) {
+                const bgLayer = document.getElementById('garment-bg-layer') || document.getElementById('canvas-mockup-wrapper');
+                if (bgLayer && activeSurf.bgOverlay) {
+                  bgLayer.style.backgroundImage = `url("${activeSurf.bgOverlay}")`;
+                }
+                editor.updatePrintBounds({
+                  printAreaWidthCm: activeSurf.printWidthCm || 30,
+                  printAreaHeightCm: activeSurf.printHeightCm || 50,
+                  printTopPct: activeSurf.printTopPct,
+                  printLeftPct: activeSurf.printLeftPct,
+                  printWidthPct: activeSurf.printWidthPct,
+                  printHeightPct: activeSurf.printHeightPct
+                });
+              }
+              renderSidePopoverGrid();
+            }
+          }
+        }
+      }
+    });
+
+    // Product Size Buttons Click Handler
+    document.addEventListener('click', (e) => {
+      const sizeBtn = e.target.closest('.product-size-btn');
+      if (sizeBtn) {
+        const sizeName = sizeBtn.dataset.size;
+        applySizeScale(sizeName);
+      }
+    });
+
+    // Cafe24 Size Dropdown Change Handler
+    const cafe24SizeSelect = document.getElementById('cafe24-size-select') || document.querySelector(config.sizeSelectSelector || '#cafe24-size-select');
+    if (cafe24SizeSelect) {
+      cafe24SizeSelect.addEventListener('change', (e) => {
+        applySizeScale(e.target.value);
+      });
+    }
+
     // Deselect active layer when clicking anywhere on the stage/dashboard background
     document.addEventListener('click', (e) => {
       const activeObj = editor.canvas ? editor.canvas.getActiveObject() : null;
@@ -1859,13 +2090,13 @@ export class TShirtCustomizerApp {
       if (modal3d) modal3d.classList.remove('active');
     });
 
-    // Cafe24 Bridge
-    new Cafe24Bridge({
+    // Customizer Bridge (Connects customizer editor canvas to store purchase button & PDF generation)
+    new CustomizerBridge({
       apiUrl: `${apiHost}/api/upload-preview`,
-      buyButtonSelector: config.buyButtonSelector || '#actionBuy',
+      buyButtonSelector: config.buyButtonSelector || '#actionBuy, .btn-buy, .btn-purchase',
       hiddenOptionSelector: config.hiddenOptionSelector || '#custom_preview_url',
-      getSurfacesData: () => surfaceManager.getAllSurfacesData(),
-      getCanvasDataUrl: () => editor.toDataURL(2),
+      getSurfacesData: async () => await surfaceManager.getAllSurfacesData(),
+      getCanvasDataUrl: async () => await editor.toPrintGuideThumbnail(2),
       getVectorSvg: () => editor.toSVG()
     });
 

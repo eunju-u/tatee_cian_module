@@ -1,0 +1,1640 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>상품 정보 및 인쇄 규격 설정</title>
+  <style>
+    :root {
+      --primary: rgba(249, 115, 22, 0.85);
+      --primary-hover: rgba(234, 88, 12, 0.9);
+      --primary-light: rgba(255, 247, 237, 0.9);
+      --primary-bg: #fffbf7;
+      --primary-border: #ffedd5;
+      --slate-900: #0f172a;
+      --slate-800: #1e293b;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748b;
+      --slate-400: #94a3b8;
+      --slate-200: #e2e8f0;
+      --slate-100: #f1f5f9;
+      --slate-50: #f8fafc;
+      --white: #ffffff;
+      --radius-xl: 16px;
+      --radius-lg: 12px;
+      --radius-md: 8px;
+      --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+      --shadow-popover: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard Variable", Pretendard, sans-serif;
+      background-color: var(--slate-50);
+      color: var(--slate-800);
+      min-height: 100vh;
+      padding: 32px 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .page-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--slate-900);
+      letter-spacing: -0.02em;
+    }
+
+    .card-panel {
+      background-color: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-xl);
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--slate-100);
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--slate-900);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* VERTICAL FORM LAYOUT */
+    .vertical-field-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--slate-700);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      font-size: 13.5px;
+      color: var(--slate-800);
+      background-color: var(--white);
+      transition: all 0.15s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.12);
+    }
+
+    /* COLOR SWATCH CHIPS */
+    .color-swatch-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .swatch-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      background-color: var(--slate-100);
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--slate-700);
+      border: 1px solid var(--slate-200);
+    }
+
+    .swatch-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+    }
+
+    /* DYNAMIC SURFACE GRID */
+    .surface-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .surface-card {
+      background-color: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .surface-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+
+    .img-box {
+      width: 100%;
+      height: 120px;
+      background-color: var(--slate-50);
+      border: 1px dashed var(--slate-200);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8px;
+    }
+
+    .img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .no-img-text {
+      font-size: 11.5px;
+      color: var(--slate-400);
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    /* DYNAMIC SIZE GRID */
+    .size-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .size-card {
+      background-color: var(--white);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      position: relative;
+    }
+
+    .size-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+
+    /* BUTTONS */
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      padding: 14px 28px;
+      border-radius: var(--radius-lg);
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: 0 2px 8px rgba(249, 115, 22, 0.15);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background-color: var(--white);
+      color: var(--slate-700);
+      border: 1px solid var(--slate-200);
+      padding: 8px 14px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-outline:hover {
+      background-color: var(--slate-100);
+    }
+
+    /* BLACK X DELETE BUTTON */
+    .btn-delete-item {
+      background-color: transparent;
+      color: #0f172a;
+      border: none;
+      padding: 4px 8px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      line-height: 1;
+      opacity: 0.75;
+      transition: all 0.15s ease;
+    }
+
+    .btn-delete-item:hover {
+      opacity: 1.0;
+      color: #000000;
+      transform: scale(1.15);
+    }
+
+    /* MODAL DIALOG */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-card {
+      background: var(--white);
+      border-radius: var(--radius-xl);
+      width: 100%;
+      max-width: 580px;
+      border: 1px solid var(--slate-200);
+      box-shadow: var(--shadow-popover);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--slate-100);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--slate-50);
+    }
+
+    .modal-body {
+      padding: 20px 24px;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--slate-100);
+      background-color: var(--slate-50);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <header class="page-header">
+      <h1 class="page-title" id="page-display-title">[TSHIRT_2026_01] 오버핏 시그니처 커스텀 반팔 티셔츠</h1>
+      <button type="button" class="btn-outline" onclick="window.location.href='/admin/admin_demo.html'">
+        ← 상품 목록으로 돌아가기
+      </button>
+    </header>
+
+    <form id="form-register-product">
+      
+      <!-- STEP 1: 기본 정보 -->
+      <div class="card-panel">
+        <div class="card-header">
+          <div class="card-title">기본 정보</div>
+        </div>
+
+        <div class="vertical-field-grid">
+          <div class="form-group">
+            <label class="form-label">상품 번호</label>
+            <input type="text" id="input-product-no" class="form-input" value="TSHIRT_2026_01" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">상품명</label>
+            <input type="text" id="input-title" class="form-input" value="오버핏 시그니처 커스텀 반팔 티셔츠" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">의류 종류</label>
+            <select id="select-garment-type" class="form-input">
+              <option value="windbreaker">🧥 바람막이 자켓</option>
+              <option value="tshirt" selected>👕 반팔 티셔츠</option>
+              <option value="hoodie">🧥 후드티 / 맨투맨</option>
+            </select>
+          </div>
+
+          <div style="padding:14px; background-color:var(--primary-bg); border:1px solid var(--primary-border); border-radius:var(--radius-lg);">
+            <label class="form-label" style="display:flex; justify-content:space-between; margin-bottom:6px;">
+              <span>🤖 3D 입체 의류 모델 파일 (.GLB)</span>
+              <span id="label-glb-status" style="color:var(--primary-hover); font-weight:700;">기본 3D 모델 제공 중</span>
+            </label>
+            <div style="display:flex; gap:10px;">
+              <input type="text" id="url-glb" class="form-input" placeholder="https://.../garment.glb">
+              <input type="file" id="file-glb" accept=".glb" style="display:none;">
+              <button type="button" onclick="document.getElementById('file-glb').click()" class="btn-outline" style="white-space:nowrap;">
+                📂 .GLB 업로드
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 2: 색상 -->
+      <div class="card-panel">
+        <div class="card-header">
+          <div class="card-title">색상</div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span id="label-color-count" style="font-size:12px; font-weight:700; color:var(--slate-500);">15개 적용 중</span>
+            <button type="button" id="btn-open-color-modal" class="btn-primary" style="padding:7px 14px; font-size:12.5px;">
+              ⚙️ 색상 수정 / 관리
+            </button>
+          </div>
+        </div>
+
+        <div class="color-swatch-bar" id="product-color-swatches-summary">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <!-- STEP 3: 면별 이미지 (색상별 다중 등록) -->
+      <div class="card-panel">
+        <div class="card-header" style="margin-bottom:12px;">
+          <div class="card-title">
+            <span>면별 이미지</span>
+            <span style="font-size:12px; font-weight:600; color:var(--slate-500); margin-left:4px;">(등록된 색상별로 각각 다른 2D 누끼 이미지를 업로드할 수 있습니다)</span>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button type="button" id="btn-copy-default-surfaces" class="btn-outline" style="font-size:12px; border-color:var(--slate-300);">
+              📋 기본 색상 면 구성 복사
+            </button>
+            <button type="button" id="btn-add-surface" class="btn-outline" style="font-size:12.5px;">
+              ➕ 면 추가하기
+            </button>
+          </div>
+        </div>
+
+        <!-- COLOR SELECTOR TABS -->
+        <div id="surface-color-tabs-bar" style="display:flex; gap:8px; overflow-x:auto; padding-bottom:12px; margin-bottom:16px; border-bottom:1px solid var(--slate-100);">
+          <!-- Rendered via JS -->
+        </div>
+
+        <div class="surface-grid" id="surface-cards-container">
+          <!-- Rendered dynamically via JS for activeColorTab -->
+        </div>
+      </div>
+
+      <!-- STEP 4: 사이즈 -->
+      <div class="card-panel">
+        <div class="card-header">
+          <div class="card-title">사이즈</div>
+          <button type="button" id="btn-add-size" class="btn-outline" style="font-size:12.5px;">
+            ➕ 사이즈 추가하기
+          </button>
+        </div>
+
+        <div class="size-grid" id="size-cards-container">
+          <!-- Rendered dynamically via JS -->
+        </div>
+      </div>
+
+      <!-- SUBMIT -->
+      <div style="margin-bottom:32px; text-align:right;">
+        <button type="submit" class="btn-primary" style="width:100%; padding:16px;">
+          💾 카페24 DB 및 products.json에 설정 저장하기
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+
+  <!-- COLOR MODAL -->
+  <div id="modal-manage-colors" class="modal-backdrop" style="display:none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div style="font-size:16px; font-weight:800; color:var(--slate-900);">🎨 상품 선택 가능 색상 관리</div>
+        <button type="button" id="btn-close-color-modal" style="background:transparent; border:none; font-size:16px; cursor:pointer; color:var(--slate-500);">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="modal-color-rows-container" style="display:flex; flex-direction:column; gap:8px; max-height:320px; overflow-y:auto; padding-right:4px;">
+          <!-- Rendered via JS -->
+        </div>
+        <button type="button" id="btn-add-modal-color-row" class="btn-outline" style="margin-top:12px; width:100%;">
+          ➕ 새 색상 추가하기
+        </button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btn-cancel-color-modal" class="btn-outline">취소</button>
+        <button type="button" id="btn-save-color-modal" class="btn-primary" style="padding:8px 18px; font-size:13px;">✅ 색상 설정 완료</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- VISUAL GUIDE DRAWER MODAL -->
+  <div id="modal-draw-guide" class="modal-backdrop" style="display:none; z-index:9999;">
+    <div class="modal-card" style="max-width:820px; width:92vw;">
+      <div class="modal-header">
+        <div>
+          <div style="font-size:16px; font-weight:800; color:var(--slate-900);">🎯 마우스 드래그로 면별 인쇄 영역 가이드 그리기</div>
+          <div style="font-size:12px; color:var(--slate-500); margin-top:2px;" id="guide-drawer-surface-label">면: 앞면 (화이트)</div>
+        </div>
+        <button type="button" id="btn-close-draw-guide-modal" style="background:transparent; border:none; font-size:18px; cursor:pointer; color:var(--slate-500);">✕</button>
+      </div>
+
+      <div class="modal-body" style="display:flex; gap:20px; padding:16px 20px;">
+        <!-- LEFT: INTERACTIVE GARMENT STAGE WITH DRAGGABLE GUIDE RECTANGLE -->
+        <div style="position:relative; width:440px; height:520px; background:#f1f5f9; border-radius:12px; border:1.5px solid #cbd5e1; display:flex; align-items:center; justify-content:center; overflow:hidden; user-select:none;" id="guide-stage-container">
+          <img id="guide-stage-garment-img" src="" alt="의류 누끼" style="max-width:100%; max-height:100%; object-fit:contain; pointer-events:none;">
+          
+          <!-- DRAGGABLE & RESIZABLE DASHED GUIDE BOX -->
+          <div id="guide-overlay-box" style="position:absolute; top:20%; left:20%; width:60%; height:50%; border:2.5px dashed #f97316; background:rgba(249, 115, 22, 0.15); cursor:move; box-sizing:border-box;">
+            <div style="position:absolute; top:6px; left:6px; font-size:11px; font-weight:800; color:#c2540a; background:rgba(255,255,255,0.92); padding:3px 8px; border-radius:4px; pointer-events:none; white-space:nowrap; box-shadow:0 2px 4px rgba(0,0,0,0.1);" id="guide-box-badge">
+              가로 30cm x 세로 50cm
+            </div>
+            <!-- RESIZE HANDLE AT BOTTOM RIGHT -->
+            <div id="guide-box-resize-handle" style="position:absolute; bottom:-7px; right:-7px; width:16px; height:16px; background:#f97316; border:2.5px solid #ffffff; border-radius:50%; cursor:se-resize; box-shadow:0 2px 5px rgba(0,0,0,0.2);"></div>
+          </div>
+        </div>
+
+        <!-- RIGHT: SPEC & AUTO-CALCULATED RESULTS PANEL -->
+        <div style="flex:1; display:flex; flex-direction:column; gap:14px;">
+          <div style="background:#fff7ed; border:1px solid #ffedd5; padding:12px; border-radius:10px;">
+            <div style="font-size:12.5px; font-weight:800; color:#c2540a; margin-bottom:4px;">💡 가이드 작성 안내</div>
+            <div style="font-size:11.5px; color:#9a3412; line-height:1.4;">
+              왼쪽 옷 이미지 위에서 **주황색 점선 상자를 마우스로 드래그**하여 원하는 인쇄 위치로 이동시키고, **우측 하단 핸들**을 끌어 크기를 조절하세요.
+            </div>
+          </div>
+
+          <div style="background:#f8fafc; border:1px solid #e2e8f0; padding:12px; border-radius:10px; display:flex; flex-direction:column; gap:10px;">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+              <div style="font-size:13px; font-weight:800; color:#1e293b;">📏 의류 실측 규격 (cm)</div>
+              <select id="drawer-size-ref-select" class="form-input" style="font-size:11px; padding:3px 8px; width:auto; font-weight:700; color:var(--primary-hover); border-color:var(--primary);">
+                <!-- Populated dynamically from Step 4 currentSizes -->
+              </select>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <div>
+                <label style="font-size:11px; font-weight:700; color:#475569;">옷 가슴단면 (cm)</label>
+                <input type="number" id="drawer-shirt-w" class="form-input" value="50" style="font-size:12px; padding:6px;">
+              </div>
+              <div>
+                <label style="font-size:11px; font-weight:700; color:#475569;">옷 총장 (cm)</label>
+                <input type="number" id="drawer-shirt-h" class="form-input" value="70" style="font-size:12px; padding:6px;">
+              </div>
+            </div>
+          </div>
+
+          <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:12px; border-radius:10px; display:flex; flex-direction:column; gap:8px;">
+            <div style="font-size:13px; font-weight:800; color:#166534;">🎯 자동 계산된 인쇄 가이드 규격</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <div>
+                <label style="font-size:11px; font-weight:700; color:#15803d;">인쇄 가로 (cm)</label>
+                <input type="number" id="drawer-calc-w" class="form-input" value="30" readonly style="font-size:13px; font-weight:800; background:#ffffff; color:#166534;">
+              </div>
+              <div>
+                <label style="font-size:11px; font-weight:700; color:#15803d;">인쇄 세로 (cm)</label>
+                <input type="number" id="drawer-calc-h" class="form-input" value="50" readonly style="font-size:13px; font-weight:800; background:#ffffff; color:#166534;">
+              </div>
+            </div>
+            <div style="font-size:11px; color:#166534; margin-top:2px;" id="drawer-pos-text">
+              위치: 상단 20%, 좌측 20%
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" id="btn-cancel-draw-guide" class="btn-outline">취소</button>
+        <button type="button" id="btn-save-draw-guide" class="btn-primary" style="padding:10px 20px;">🎯 이 가이드 규격 확정 및 반영</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI BACKGROUND REMOVAL (NUKKI) CONFIRM MODAL -->
+  <div id="modal-confirm-nukki" class="modal-backdrop" style="display:none; z-index:10000;">
+    <div class="modal-card" style="max-width:520px; width:90vw; border-radius:16px;">
+      <div class="modal-header" style="background:#f8fafc; border-bottom:1px solid #e2e8f0; padding:16px 20px;">
+        <div>
+          <div style="font-size:16px; font-weight:800; color:#0f172a;" id="nukki-modal-title">✨ AI 이미지 배경 제거 (누끼 따기)</div>
+          <div style="font-size:12px; color:#64748b; margin-top:2px;" id="nukki-modal-subtitle">면: 앞면 (화이트)</div>
+        </div>
+        <button type="button" id="btn-close-nukki-modal" style="background:transparent; border:none; font-size:18px; cursor:pointer; color:#64748b;">✕</button>
+      </div>
+
+      <div class="modal-body" style="padding:20px; display:flex; flex-direction:column; align-items:center; gap:16px; text-align:center;">
+        <div style="width:240px; height:240px; background:#f1f5f9; border-radius:12px; border:1.5px dashed #cbd5e1; display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative;">
+          <img id="nukki-preview-img" src="" alt="업로드 이미지" style="max-width:100%; max-height:100%; object-fit:contain;">
+          <div id="nukki-spinner-overlay" style="display:none; position:absolute; inset:0; background:rgba(255,255,255,0.88); flex-direction:column; align-items:center; justify-content:center; gap:8px;">
+            <div style="font-size:24px; animation:spin 1s linear infinite;">⏳</div>
+            <div style="font-size:13px; font-weight:800; color:#2563eb;">AI가 배경을 투명하게 가공 중입니다...</div>
+          </div>
+        </div>
+
+        <div style="background:#eff6ff; border:1px solid #bfdbfe; padding:12px 16px; border-radius:10px; width:100%; text-align:left;">
+          <div style="font-size:13px; font-weight:800; color:#1e40af; margin-bottom:4px;">💡 AI 배경 자동 제거 안내</div>
+          <div style="font-size:12px; color:#1e3a8a; line-height:1.4;">
+            옷 이미지 뒤의 **흰색/단색 배경을 투명하게 제거**하시겠습니까?<br>
+            배경을 제거하면 **고객이 옷 색상을 바꿀 때 원단 색상이 자연스럽게 입혀집니다!**
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="padding:14px 20px; background:#f8fafc; border-top:1px solid #e2e8f0; display:flex; gap:10px; justify-content:flex-end;">
+        <button type="button" id="btn-nukki-skip" class="btn-outline" style="font-size:13px; padding:9px 16px;">🖼️ 원본 그대로 업로드</button>
+        <button type="button" id="btn-nukki-process" class="btn-primary" style="font-size:13px; padding:9px 18px; background:linear-gradient(135deg, #2563eb, #4f46e5); border:none;">✨ AI 배경 제거 (누끼 따기)</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Global States
+    let currentProductColors = [
+      ['#ffffff', '화이트'], ['#c8d6e5', '스카이'], ['#0f4c4c', '딥그린'], ['#8e9c85', '세이지'], ['#d9b779', '카멜'],
+      ['#a9c9b4', '민트'], ['#3a3a3f', '차콜'], ['#efefe8', '아이보리'], ['#1e3fa0', '네이비'], ['#4a4b30', '올리브'],
+      ['#c8302f', '레드'], ['#7a2430', '버건디'], ['#c78ad0', '라일락'], ['#17171a', '블랙'], ['#f5d64e', '옐로우']
+    ];
+
+    // Map colorName -> Array of surface objects: [{ key, name, url }, ...]
+    let colorSurfacesMap = {
+      '화이트': [
+        { key: 'front', name: '앞면', url: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80' },
+        { key: 'back', name: '뒷면', url: 'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=600&q=80' }
+      ]
+    };
+
+    let activeColorTab = '화이트';
+
+    let currentSizes = [
+      { label: 'S', shirtWidthCm: 46, shirtHeightCm: 66, printWidthCm: 26, printHeightCm: 26 },
+      { label: 'M', shirtWidthCm: 48, shirtHeightCm: 68, printWidthCm: 28, printHeightCm: 28 },
+      { label: 'L', shirtWidthCm: 50, shirtHeightCm: 70, printWidthCm: 30, printHeightCm: 30 },
+      { label: 'XL', shirtWidthCm: 53, shirtHeightCm: 73, printWidthCm: 33, printHeightCm: 33 },
+      { label: '2XL', shirtWidthCm: 56, shirtHeightCm: 76, printWidthCm: 36, printHeightCm: 36 }
+    ];
+
+    // COLOR LOGIC
+    function renderCompactColorSwatches() {
+      const container = document.getElementById('product-color-swatches-summary');
+      const countLabel = document.getElementById('label-color-count');
+      if (!container) return;
+
+      container.innerHTML = '';
+      if (countLabel) countLabel.textContent = `${currentProductColors.length}개 적용 중`;
+
+      if (currentProductColors.length === 0) {
+        container.innerHTML = '<span style="color:var(--slate-400); font-size:13px;">등록된 색상이 없습니다.</span>';
+        return;
+      }
+
+      currentProductColors.forEach(([hex, name]) => {
+        const pill = document.createElement('div');
+        pill.className = 'swatch-chip';
+        pill.innerHTML = `
+          <span class="swatch-dot" style="background-color: ${hex};"></span>
+          <span>${name}</span>
+        `;
+        container.appendChild(pill);
+      });
+
+      renderSurfaceColorTabs();
+    }
+
+    function openColorManageModal() {
+      const modal = document.getElementById('modal-manage-colors');
+      const container = document.getElementById('modal-color-rows-container');
+      if (!modal || !container) return;
+
+      container.innerHTML = '';
+      currentProductColors.forEach(([hex, name]) => {
+        addModalColorRow(hex, name);
+      });
+
+      modal.style.display = 'flex';
+    }
+
+    function closeColorManageModal() {
+      const modal = document.getElementById('modal-manage-colors');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function addModalColorRow(hex = '#ffffff', name = '') {
+      const container = document.getElementById('modal-color-rows-container');
+      if (!container) return;
+
+      const row = document.createElement('div');
+      row.className = 'color-row-item';
+      row.style.cssText = 'display:flex; align-items:center; gap:8px; background:var(--slate-50); padding:8px 12px; border-radius:8px; border:1px solid var(--slate-200);';
+
+      row.innerHTML = `
+        <div style="width:24px; height:24px; border-radius:50%; background:${hex}; border:1px solid var(--slate-200); flex-shrink:0;" class="color-preview-pill"></div>
+        <input type="color" class="color-picker-input" value="${hex}" style="width:32px; height:32px; border:none; background:transparent; cursor:pointer; padding:0;">
+        <input type="text" class="color-hex-text form-input" value="${hex}" placeholder="#ffffff" style="width:95px; font-family:monospace; font-size:12px; padding:6px 8px;" required>
+        <input type="text" class="color-name-text form-input" value="${name}" placeholder="색상명" style="flex:1; font-size:12.5px; padding:6px 10px;" required>
+        <button type="button" class="btn-delete-item" title="삭제">✕</button>
+      `;
+
+      const picker = row.querySelector('.color-picker-input');
+      const hexText = row.querySelector('.color-hex-text');
+      const removeBtn = row.querySelector('.btn-delete-item');
+      const pill = row.querySelector('.color-preview-pill');
+
+      picker.addEventListener('input', (e) => {
+        hexText.value = e.target.value;
+        if (pill) pill.style.backgroundColor = e.target.value;
+      });
+      hexText.addEventListener('input', (e) => {
+        if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
+          picker.value = e.target.value;
+          if (pill) pill.style.backgroundColor = e.target.value;
+        }
+      });
+      removeBtn.addEventListener('click', () => row.remove());
+
+      container.appendChild(row);
+    }
+
+    function saveColorsFromModal() {
+      const rows = document.querySelectorAll('#modal-color-rows-container .color-row-item');
+      const newColors = [];
+      rows.forEach(row => {
+        const hexInput = row.querySelector('.color-hex-text');
+        const nameInput = row.querySelector('.color-name-text');
+        if (hexInput && nameInput) {
+          const hex = hexInput.value.trim();
+          const name = nameInput.value.trim();
+          if (hex && name) {
+            newColors.push([hex, name]);
+          }
+        }
+      });
+
+      currentProductColors = newColors;
+      renderCompactColorSwatches();
+      closeColorManageModal();
+    }
+
+    // COLOR-SPECIFIC SURFACE LOGIC
+    function getActiveColorName() {
+      if (currentProductColors.length === 0) return '화이트';
+      const found = currentProductColors.find(([hex, name]) => name === activeColorTab);
+      return found ? found[1] : currentProductColors[0][1];
+    }
+
+    function renderSurfaceColorTabs() {
+      const container = document.getElementById('surface-color-tabs-bar');
+      if (!container) return;
+
+      if (currentProductColors.length === 0) {
+        container.innerHTML = '<span style="color:var(--slate-400); font-size:12px;">등록된 색상이 없습니다. Step 2에서 색상을 먼저 추가해주세요.</span>';
+        return;
+      }
+
+      const colorNames = currentProductColors.map(([hex, name]) => name);
+      if (!colorNames.includes(activeColorTab)) {
+        activeColorTab = colorNames[0];
+      }
+
+      container.innerHTML = currentProductColors.map(([hex, name]) => {
+        const isActive = name === activeColorTab;
+        return `
+          <button type="button" onclick="switchSurfaceColorTab('${name}')" style="
+            display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:20px; font-size:12.5px; font-weight:700; cursor:pointer; transition:all 0.15s ease; white-space:nowrap;
+            border: 1.5px solid ${isActive ? 'var(--primary)' : 'var(--slate-200)'};
+            background-color: ${isActive ? 'var(--primary-light)' : 'var(--white)'};
+            color: ${isActive ? 'var(--primary-hover)' : 'var(--slate-700)'};
+            box-shadow: ${isActive ? '0 2px 6px rgba(249, 115, 22, 0.15)' : 'none'};
+          ">
+            <span style="width:12px; height:12px; border-radius:50%; background:${hex}; border:1px solid rgba(0,0,0,0.15); display:inline-block;"></span>
+            <span>${name}</span>
+          </button>
+        `;
+      }).join('');
+
+      renderSurfaceCards();
+    }
+
+    function switchSurfaceColorTab(colorName) {
+      activeColorTab = colorName;
+      renderSurfaceColorTabs();
+    }
+
+    function getSurfacesForActiveColor() {
+      const colorName = getActiveColorName();
+      if (!colorSurfacesMap[colorName]) {
+        const firstColorKey = Object.keys(colorSurfacesMap)[0];
+        if (firstColorKey && colorSurfacesMap[firstColorKey] && colorSurfacesMap[firstColorKey].length > 0) {
+          colorSurfacesMap[colorName] = colorSurfacesMap[firstColorKey].map(s => ({
+            key: s.key,
+            name: s.name,
+            url: ''
+          }));
+        } else {
+          colorSurfacesMap[colorName] = [
+            { key: 'front', name: '앞면', url: '' },
+            { key: 'back', name: '뒷면', url: '' }
+          ];
+        }
+      }
+      return colorSurfacesMap[colorName];
+    }
+
+    function renderSurfaceCards() {
+      const container = document.getElementById('surface-cards-container');
+      if (!container) return;
+
+      const surfaces = getSurfacesForActiveColor();
+      const activeColorName = getActiveColorName();
+
+      container.innerHTML = '';
+
+      if (surfaces.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: span 4; text-align:center; padding:32px; color:var(--slate-400); font-size:13px;">
+            [${activeColorName}] 색상에 등록된 면이 없습니다. 상단의 [➕ 면 추가하기] 버튼을 눌러 추가하세요.
+          </div>
+        `;
+        return;
+      }
+
+      surfaces.forEach((surf, idx) => {
+        const card = document.createElement('div');
+        card.className = 'surface-card';
+        card.dataset.index = idx;
+
+        card.innerHTML = `
+          <div>
+            <div class="surface-header-bar">
+              <span style="font-size:11px; font-weight:800; color:var(--primary-hover); background:var(--primary-light); padding:2px 6px; border-radius:4px; white-space:nowrap;">${activeColorName}</span>
+              <input type="text" class="form-input surf-name-input" value="${surf.name}" placeholder="면 이름" style="font-weight:800; font-size:12.5px; padding:4px 8px; flex:1; margin:0 4px;">
+              <button type="button" class="btn-delete-item btn-del-surf" title="삭제">✕</button>
+            </div>
+            <div class="img-box">
+              ${surf.url ? `<img src="${surf.url}" alt="${surf.name}">` : `<span class="no-img-text">[${activeColorName}] ${surf.name}<br>이미지 미등록</span>`}
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <button type="button" class="btn-outline btn-draw-guide" style="font-size:11.5px; padding:6px 10px; font-weight:700; color:var(--primary-hover); border-color:var(--primary); background:var(--primary-light);">
+              🎯 마우스 드래그로 가이드 직접 그리기
+            </button>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; background:#f8fafc; padding:6px 8px; border-radius:8px; border:1px solid #e2e8f0;">
+              <div>
+                <label style="font-size:10.5px; font-weight:700; color:#475569; display:block; margin-bottom:2px;">인쇄 가로(cm)</label>
+                <input type="number" class="form-input surf-w-input" value="${surf.printWidthCm || 30}" style="font-size:11.5px; padding:4px 6px;" min="1" max="200" placeholder="30">
+              </div>
+              <div>
+                <label style="font-size:10.5px; font-weight:700; color:#475569; display:block; margin-bottom:2px;">인쇄 세로(cm)</label>
+                <input type="number" class="form-input surf-h-input" value="${surf.printHeightCm || 50}" style="font-size:11.5px; padding:4px 6px;" min="1" max="200" placeholder="50">
+              </div>
+            </div>
+            <input type="file" accept="image/*" class="form-input surf-file-input" style="font-size:10px; padding:4px;">
+            <input type="hidden" class="surf-url-hidden" value="${surf.url || ''}">
+          </div>
+        `;
+
+        const nameInput = card.querySelector('.surf-name-input');
+        const fileInput = card.querySelector('.surf-file-input');
+        const hiddenInput = card.querySelector('.surf-url-hidden');
+        const delBtn = card.querySelector('.btn-del-surf');
+        const imgBox = card.querySelector('.img-box');
+        const wInput = card.querySelector('.surf-w-input');
+        const hInput = card.querySelector('.surf-h-input');
+        const drawBtn = card.querySelector('.btn-draw-guide');
+
+        nameInput.addEventListener('input', (e) => {
+          surf.name = e.target.value;
+        });
+
+        wInput.addEventListener('input', (e) => {
+          surf.printWidthCm = parseFloat(e.target.value) || 30;
+        });
+
+        hInput.addEventListener('input', (e) => {
+          surf.printHeightCm = parseFloat(e.target.value) || 50;
+        });
+
+        drawBtn.addEventListener('click', () => {
+          openDrawGuideModal(surf, activeColorName);
+        });
+
+        fileInput.addEventListener('change', async (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            askAndProcessNukkiModal(file, surf, activeColorName, idx, hiddenInput, imgBox);
+          }
+        });
+
+        delBtn.addEventListener('click', () => {
+          surfaces.splice(idx, 1);
+          renderSurfaceCards();
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    function addSurfaceCard() {
+      const surfaces = getSurfacesForActiveColor();
+      surfaces.push({ key: `custom_${Date.now()}`, name: `새 인쇄면 ${surfaces.length + 1}`, url: '' });
+      renderSurfaceCards();
+    }
+
+    function copyDefaultSurfacesStructure() {
+      const activeColorName = getActiveColorName();
+      const colorNames = currentProductColors.map(([hex, name]) => name);
+      const firstColorName = colorNames[0];
+
+      if (!firstColorName || firstColorName === activeColorName) {
+        alert('현재 선택된 색상이 이미 첫 번째 기본 색상입니다.');
+        return;
+      }
+
+      const defaultSurfaces = colorSurfacesMap[firstColorName] || [];
+      if (defaultSurfaces.length === 0) {
+        alert(`[${firstColorName}] 색상에 등록된 면 구성 정보가 없습니다.`);
+        return;
+      }
+
+      if (!confirm(`[${firstColorName}] 색상의 면 구성(${defaultSurfaces.map(s => s.name).join(', ')})을 [${activeColorName}] 색상으로 복사하시겠습니까?`)) {
+        return;
+      }
+
+      colorSurfacesMap[activeColorName] = defaultSurfaces.map(s => ({
+        key: s.key,
+        name: s.name,
+        url: ''
+      }));
+
+      renderSurfaceCards();
+    }
+
+    // DYNAMIC SIZE RENDER
+    function renderSizeCards() {
+      const container = document.getElementById('size-cards-container');
+      if (!container) return;
+
+      container.innerHTML = '';
+      currentSizes.forEach((sz, idx) => {
+        const card = document.createElement('div');
+        card.className = 'size-card';
+        card.dataset.index = idx;
+
+        card.innerHTML = `
+          <div class="size-header-bar">
+            <input type="text" class="form-input sz-label-input" value="${sz.label}" placeholder="사이즈명" style="font-weight:800; font-size:13px; padding:4px 8px; width:90px;">
+            <button type="button" class="btn-delete-item btn-del-size" title="삭제">✕</button>
+          </div>
+
+          <div class="form-group" style="margin-bottom:8px;">
+            <label class="form-label" style="font-size:11px; font-weight:700;">가슴단면(cm)</label>
+            <input type="number" class="form-input sz-sw-input" value="${sz.shirtWidthCm || 50}" style="padding:5px 8px;" placeholder="50">
+          </div>
+          <div class="form-group" style="margin-bottom:4px;">
+            <label class="form-label" style="font-size:11px; font-weight:700;">총장(cm)</label>
+            <input type="number" class="form-input sz-sh-input" value="${sz.shirtHeightCm || 70}" style="padding:5px 8px;" placeholder="70">
+          </div>
+        `;
+
+        const labelInput = card.querySelector('.sz-label-input');
+        const swInput = card.querySelector('.sz-sw-input');
+        const shInput = card.querySelector('.sz-sh-input');
+        const delBtn = card.querySelector('.btn-del-size');
+
+        labelInput.addEventListener('input', (e) => { sz.label = e.target.value; });
+        swInput.addEventListener('input', (e) => { sz.shirtWidthCm = parseFloat(e.target.value) || 0; });
+        shInput.addEventListener('input', (e) => { sz.shirtHeightCm = parseFloat(e.target.value) || 0; });
+
+        delBtn.addEventListener('click', () => {
+          currentSizes.splice(idx, 1);
+          renderSizeCards();
+        });
+
+        container.appendChild(card);
+      });
+    }
+
+    function addSizeCard() {
+      currentSizes.push({ label: 'XL', shirtWidthCm: 52, shirtHeightCm: 72, printWidthCm: 32, printHeightCm: 32 });
+      renderSizeCards();
+    }
+
+    function removeBackgroundSmart(imageBase64) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+
+          const width = canvas.width;
+          const height = canvas.height;
+          const imgData = ctx.getImageData(0, 0, width, height);
+          const data = imgData.data;
+
+          const corners = [[0, 0], [width - 1, 0], [0, height - 1], [width - 1, height - 1]];
+          let bgR = 0, bgG = 0, bgB = 0;
+          corners.forEach(([cx, cy]) => {
+            const idx = (cy * width + cx) * 4;
+            bgR += data[idx];
+            bgG += data[idx + 1];
+            bgB += data[idx + 2];
+          });
+          bgR = Math.round(bgR / corners.length);
+          bgG = Math.round(bgG / corners.length);
+          bgB = Math.round(bgB / corners.length);
+
+          const colorDist = (r, g, b) => Math.sqrt((r - bgR) ** 2 + (g - bgG) ** 2 + (b - bgB) ** 2);
+          const tolerance = 38;
+
+          const visited = new Uint8Array(width * height);
+          const queue = [];
+
+          for (let x = 0; x < width; x++) {
+            queue.push(x, 0);
+            queue.push(x, height - 1);
+          }
+          for (let y = 1; y < height - 1; y++) {
+            queue.push(0, y);
+            queue.push(width - 1, y);
+          }
+
+          let qIdx = 0;
+          while (qIdx < queue.length) {
+            const x = queue[qIdx++];
+            const y = queue[qIdx++];
+            const pixIdx = y * width + x;
+
+            if (visited[pixIdx]) continue;
+            visited[pixIdx] = 1;
+
+            const dataIdx = pixIdx * 4;
+            const r = data[dataIdx];
+            const g = data[dataIdx + 1];
+            const b = data[dataIdx + 2];
+
+            if (colorDist(r, g, b) <= tolerance) {
+              data[dataIdx + 3] = 0;
+
+              if (x > 0 && !visited[pixIdx - 1]) queue.push(x - 1, y);
+              if (x < width - 1 && !visited[pixIdx + 1]) queue.push(x + 1, y);
+              if (y > 0 && !visited[pixIdx - width]) queue.push(x, y - 1);
+              if (y < height - 1 && !visited[pixIdx + width]) queue.push(x, y + 1);
+            }
+          }
+
+          ctx.putImageData(imgData, 0, 0);
+          const transparentDataUrl = canvas.toDataURL('image/png');
+          trimTransparentPadding(transparentDataUrl).then(resolve);
+        };
+        img.onerror = () => resolve(imageBase64);
+        img.src = imageBase64;
+      });
+    }
+
+    function askAndProcessNukkiModal(file, surf, colorName, idx, hiddenInput, imgBox) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const rawBase64 = e.target.result;
+        const modal = document.getElementById('modal-confirm-nukki');
+        const titleEl = document.getElementById('nukki-modal-title');
+        const subtitleEl = document.getElementById('nukki-modal-subtitle');
+        const previewImg = document.getElementById('nukki-preview-img');
+        const spinner = document.getElementById('nukki-spinner-overlay');
+
+        if (!modal || !previewImg) return;
+
+        titleEl.textContent = `✨ [${surf.name}] 업로드 이미지 배경 제거`;
+        subtitleEl.textContent = `면: ${surf.name} (${colorName})`;
+        previewImg.src = rawBase64;
+        if (spinner) spinner.style.display = 'none';
+
+        modal.style.display = 'flex';
+
+        const btnSkip = document.getElementById('btn-nukki-skip');
+        const btnProcess = document.getElementById('btn-nukki-process');
+        const btnClose = document.getElementById('btn-close-nukki-modal');
+
+        const closeModal = () => {
+          modal.style.display = 'none';
+        };
+
+        const onSkip = async () => {
+          closeModal();
+          try {
+            const uploadedUrl = await uploadImageFile(file, `surf_${colorName}_${idx}`);
+            surf.url = uploadedUrl;
+            hiddenInput.value = uploadedUrl;
+            imgBox.innerHTML = `<img src="${uploadedUrl}" alt="${surf.name}">`;
+          } catch (err) {
+            alert('❌ 이미지 업로드 중 오류가 발생했습니다.');
+          }
+          cleanup();
+        };
+
+        const onProcess = async () => {
+          if (spinner) spinner.style.display = 'flex';
+          try {
+            const res = await fetch('/api/admin/remove-background', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ imageBase64: rawBase64, filenamePrefix: `surf_nukki_${colorName}_${idx}` })
+            });
+            const data = await res.json();
+            const uploadedUrl = data.url;
+
+            surf.url = uploadedUrl;
+            hiddenInput.value = uploadedUrl;
+            imgBox.innerHTML = `<img src="${uploadedUrl}" alt="${surf.name}">`;
+
+            closeModal();
+          } catch (err) {
+            alert('❌ 배경 제거 처리 중 오류가 발생했습니다.');
+            closeModal();
+          }
+          cleanup();
+        };
+
+        const cleanup = () => {
+          btnSkip.removeEventListener('click', onSkip);
+          btnProcess.removeEventListener('click', onProcess);
+          btnClose.removeEventListener('click', closeModal);
+        };
+
+        btnSkip.addEventListener('click', onSkip, { once: true });
+        btnProcess.addEventListener('click', onProcess, { once: true });
+        btnClose.addEventListener('click', closeModal, { once: true });
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function trimTransparentPadding(imageBase64) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+
+          const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const data = imgData.data;
+
+          let minX = canvas.width, minY = canvas.height, maxX = 0, maxY = 0;
+          let foundPixel = false;
+
+          for (let y = 0; y < canvas.height; y++) {
+            for (let x = 0; x < canvas.width; x++) {
+              const alpha = data[(y * canvas.width + x) * 4 + 3];
+              if (alpha > 10) {
+                foundPixel = true;
+                if (x < minX) minX = x;
+                if (x > maxX) maxX = x;
+                if (y < minY) minY = y;
+                if (y > maxY) maxY = y;
+              }
+            }
+          }
+
+          if (!foundPixel || minX >= maxX || minY >= maxY) {
+            resolve(imageBase64);
+            return;
+          }
+
+          const trimW = maxX - minX + 1;
+          const trimH = maxY - minY + 1;
+
+          const trimmedCanvas = document.createElement('canvas');
+          trimmedCanvas.width = trimW;
+          trimmedCanvas.height = trimH;
+          const trimmedCtx = trimmedCanvas.getContext('2d');
+
+          trimmedCtx.drawImage(canvas, minX, minY, trimW, trimH, 0, 0, trimW, trimH);
+          resolve(trimmedCanvas.toDataURL('image/png'));
+        };
+        img.onerror = () => resolve(imageBase64);
+        img.src = imageBase64;
+      });
+    }
+
+    async function uploadImageFile(file, prefix) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          try {
+            const processedBase64 = file.type.includes('png') ? await trimTransparentPadding(e.target.result) : e.target.result;
+            const res = await fetch('/api/admin/upload', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ imageBase64: processedBase64, filenamePrefix: prefix })
+            });
+            const data = await res.json();
+            resolve(data.url);
+          } catch (err) {
+            reject(err);
+          }
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    const fileGlbEl = document.getElementById('file-glb');
+    if (fileGlbEl) {
+      fileGlbEl.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          try {
+            const uploadedUrl = await uploadImageFile(file, '3dmodel');
+            if (document.getElementById('url-glb')) document.getElementById('url-glb').value = uploadedUrl;
+            if (document.getElementById('label-glb-status')) document.getElementById('label-glb-status').textContent = `✅ 등록됨 (${file.name})`;
+          } catch (err) {
+            alert('❌ 3D 모델 파일 업로드 중 오류가 발생했습니다.');
+          }
+        }
+      });
+    }
+
+    function updateHeaderTitle() {
+      const pNo = document.getElementById('input-product-no').value.trim();
+      const title = document.getElementById('input-title').value.trim();
+      document.getElementById('page-display-title').textContent = `[${pNo}] ${title}`;
+      document.title = `[${pNo}] ${title}`;
+    }
+
+    document.getElementById('input-product-no').addEventListener('input', updateHeaderTitle);
+    document.getElementById('input-title').addEventListener('input', updateHeaderTitle);
+
+    async function initProductDetail() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetProductNo = urlParams.get('productNo') || 'TSHIRT_2026_01';
+
+      document.getElementById('btn-open-color-modal').addEventListener('click', openColorManageModal);
+      document.getElementById('btn-close-color-modal').addEventListener('click', closeColorManageModal);
+      document.getElementById('btn-cancel-color-modal').addEventListener('click', closeColorManageModal);
+      document.getElementById('btn-save-color-modal').addEventListener('click', saveColorsFromModal);
+      document.getElementById('btn-add-modal-color-row').addEventListener('click', () => addModalColorRow('#ffffff', ''));
+
+      document.getElementById('btn-add-surface').addEventListener('click', addSurfaceCard);
+      document.getElementById('btn-copy-default-surfaces').addEventListener('click', copyDefaultSurfacesStructure);
+      document.getElementById('btn-add-size').addEventListener('click', addSizeCard);
+
+      if (targetProductNo === 'new') {
+        updateHeaderTitle();
+        renderCompactColorSwatches();
+        renderSurfaceCards();
+        renderSizeCards();
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/admin/products');
+        const data = await res.json();
+        const p = (data.products || []).find(item => item.productNo === targetProductNo) || data.products[0];
+
+        if (p) {
+          if (document.getElementById('input-product-no')) document.getElementById('input-product-no').value = p.productNo || '';
+          if (document.getElementById('input-title')) document.getElementById('input-title').value = p.title || '';
+          if (document.getElementById('url-glb')) document.getElementById('url-glb').value = p.glbUrl || '';
+
+          updateHeaderTitle();
+
+          if (p.colors && p.colors.length > 0) {
+            currentProductColors = p.colors;
+          }
+
+          if (p.colorSurfaces) {
+            colorSurfacesMap = {};
+            for (const [cName, sMap] of Object.entries(p.colorSurfaces)) {
+              colorSurfacesMap[cName] = Object.entries(sMap).map(([k, val]) => ({
+                key: k,
+                name: typeof val === 'object' && val.name ? val.name : (k === 'front' ? '앞면' : k === 'back' ? '뒷면' : k === 'neck' ? '목뒤' : k === 'left_sleeve' ? '왼소매' : k === 'right_sleeve' ? '오른소매' : k),
+                url: typeof val === 'string' ? val : (val ? val.url || '' : ''),
+                printWidthCm: typeof val === 'object' && val.printWidthCm ? parseFloat(val.printWidthCm) : (p.printWidthCm || 30),
+                printHeightCm: typeof val === 'object' && val.printHeightCm ? parseFloat(val.printHeightCm) : (p.printHeightCm || 50),
+                printTopPct: typeof val === 'object' && val.printTopPct !== undefined ? parseFloat(val.printTopPct) : 20,
+                printLeftPct: typeof val === 'object' && val.printLeftPct !== undefined ? parseFloat(val.printLeftPct) : 25,
+                printWidthPct: typeof val === 'object' && val.printWidthPct !== undefined ? parseFloat(val.printWidthPct) : 50,
+                printHeightPct: typeof val === 'object' && val.printHeightPct !== undefined ? parseFloat(val.printHeightPct) : 60
+              }));
+            }
+          } else if (p.surfaces) {
+            const defaultSurfaces = Object.entries(p.surfaces).map(([key, val]) => ({
+              key,
+              name: typeof val === 'object' && val.name ? val.name : (key === 'front' ? '앞면' : key === 'back' ? '뒷면' : key === 'neck' ? '목뒤' : key === 'left_sleeve' ? '왼소매' : key === 'right_sleeve' ? '오른소매' : key),
+              url: typeof val === 'string' ? val : (val ? val.url || '' : ''),
+              printWidthCm: typeof val === 'object' && val.printWidthCm ? parseFloat(val.printWidthCm) : (p.printWidthCm || 30),
+              printHeightCm: typeof val === 'object' && val.printHeightCm ? parseFloat(val.printHeightCm) : (p.printHeightCm || 50),
+              printTopPct: typeof val === 'object' && val.printTopPct !== undefined ? parseFloat(val.printTopPct) : 20,
+              printLeftPct: typeof val === 'object' && val.printLeftPct !== undefined ? parseFloat(val.printLeftPct) : 25,
+              printWidthPct: typeof val === 'object' && val.printWidthPct !== undefined ? parseFloat(val.printWidthPct) : 50,
+              printHeightPct: typeof val === 'object' && val.printHeightPct !== undefined ? parseFloat(val.printHeightPct) : 60
+            }));
+            colorSurfacesMap = { '화이트': defaultSurfaces };
+          }
+
+          if (p.sizes) {
+            currentSizes = Object.entries(p.sizes).map(([label, sObj]) => ({
+              label,
+              shirtWidthCm: sObj.shirtWidthCm,
+              shirtHeightCm: sObj.shirtHeightCm,
+              printWidthCm: sObj.printWidthCm,
+              printHeightCm: sObj.printHeightCm
+            }));
+          }
+        }
+      } catch (err) {
+        console.warn('Could not fetch products from API, rendering default local states:', err);
+      }
+
+      renderCompactColorSwatches();
+      renderSurfaceColorTabs();
+      renderSizeCards();
+    }
+
+    const prodFormEl = document.getElementById('form-register-product');
+    if (prodFormEl) {
+      prodFormEl.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Convert colorSurfacesMap to JSON object
+        const colorSurfacesObj = {};
+        for (const [cName, surfArr] of Object.entries(colorSurfacesMap)) {
+          colorSurfacesObj[cName] = {};
+          surfArr.forEach((s, idx) => {
+            const k = s.key || `surface_${idx}`;
+            colorSurfacesObj[cName][k] = {
+              url: s.url || '',
+              name: s.name || k,
+              printWidthCm: s.printWidthCm || 30,
+              printHeightCm: s.printHeightCm || 50,
+              printTopPct: s.printTopPct !== undefined ? s.printTopPct : 20,
+              printLeftPct: s.printLeftPct !== undefined ? s.printLeftPct : 25,
+              printWidthPct: s.printWidthPct !== undefined ? s.printWidthPct : 50,
+              printHeightPct: s.printHeightPct !== undefined ? s.printHeightPct : 60
+            };
+          });
+        }
+
+        const defaultSurfacesObj = colorSurfacesObj['화이트'] || colorSurfacesObj[Object.keys(colorSurfacesObj)[0]] || {};
+
+        // Convert currentSizes array to object map
+        const sizesObj = {};
+        currentSizes.forEach((sz) => {
+          sizesObj[sz.label || 'L'] = {
+            shirtWidthCm: sz.shirtWidthCm,
+            shirtHeightCm: sz.shirtHeightCm,
+            printWidthCm: sz.printWidthCm,
+            printHeightCm: sz.printHeightCm
+          };
+        });
+
+        const defaultSize = currentSizes.find(s => s.label === 'S') || currentSizes[0] || { shirtWidthCm: 46, shirtHeightCm: 66, printWidthCm: 26, printHeightCm: 26 };
+
+        const payload = {
+          productNo: document.getElementById('input-product-no').value,
+          title: document.getElementById('input-title').value,
+          glbUrl: document.getElementById('url-glb') ? document.getElementById('url-glb').value : '',
+          shirtWidthCm: defaultSize.shirtWidthCm,
+          shirtHeightCm: defaultSize.shirtHeightCm,
+          printWidthCm: defaultSize.printWidthCm,
+          printHeightCm: defaultSize.printHeightCm,
+          colors: currentProductColors,
+          sizes: sizesObj,
+          surfaces: defaultSurfacesObj,
+          colorSurfaces: colorSurfacesObj
+        };
+
+        const res = await fetch('/api/admin/products', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          window.location.href = '/admin/admin_demo.html';
+        }
+      });
+    }
+
+    // VISUAL GUIDE DRAWER MODAL LOGIC
+    let currentEditingSurface = null;
+    let currentEditingColorName = '';
+
+    function openDrawGuideModal(surf, colorName) {
+      currentEditingSurface = surf;
+      currentEditingColorName = colorName;
+
+      const modal = document.getElementById('modal-draw-guide');
+      const imgEl = document.getElementById('guide-stage-garment-img');
+      const labelEl = document.getElementById('guide-drawer-surface-label');
+
+      if (!modal || !imgEl) return;
+
+      labelEl.textContent = `면: ${surf.name || '인쇄면'} (${colorName})`;
+      imgEl.src = surf.url || 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=600&q=80';
+
+      const sizeSelect = document.getElementById('drawer-size-ref-select');
+      let shirtW = 50;
+      let shirtH = 70;
+
+      if (sizeSelect && currentSizes.length > 0) {
+        sizeSelect.innerHTML = currentSizes.map(sz => {
+          return `<option value="${sz.label}" data-w="${sz.shirtWidthCm || 50}" data-h="${sz.shirtHeightCm || 70}">기준: ${sz.label} (${sz.shirtWidthCm || 50}x${sz.shirtHeightCm || 70}cm)</option>`;
+        }).join('');
+
+        const defaultOpt = Array.from(sizeSelect.options).find(opt => opt.value === 'S') || Array.from(sizeSelect.options).find(opt => opt.value === 's') || sizeSelect.options[0];
+        if (defaultOpt) {
+          sizeSelect.value = defaultOpt.value;
+          shirtW = parseFloat(defaultOpt.dataset.w) || 50;
+          shirtH = parseFloat(defaultOpt.dataset.h) || 70;
+          document.getElementById('drawer-shirt-w').value = shirtW;
+          document.getElementById('drawer-shirt-h').value = shirtH;
+        }
+      }
+
+      const box = document.getElementById('guide-overlay-box');
+      const hasSavedDimensions = surf.printWidthCm > 0 && surf.printHeightCm > 0;
+
+      let topPct = surf.printTopPct !== undefined ? surf.printTopPct : 20;
+      let leftPct = surf.printLeftPct !== undefined ? surf.printLeftPct : 20;
+      let widthPct = surf.printWidthPct !== undefined ? surf.printWidthPct : 60;
+      let heightPct = surf.printHeightPct !== undefined ? surf.printHeightPct : 50;
+
+      if (hasSavedDimensions) {
+        widthPct = Math.min(100, Math.max(5, (surf.printWidthCm / shirtW) * 100));
+        heightPct = Math.min(100, Math.max(5, (surf.printHeightCm / shirtH) * 100));
+
+        const calcWEl = document.getElementById('drawer-calc-w');
+        const calcHEl = document.getElementById('drawer-calc-h');
+        if (calcWEl) calcWEl.value = surf.printWidthCm;
+        if (calcHEl) calcHEl.value = surf.printHeightCm;
+      }
+
+      box.style.top = `${topPct}%`;
+      box.style.left = `${leftPct}%`;
+      box.style.width = `${widthPct}%`;
+      box.style.height = `${heightPct}%`;
+
+      modal.style.display = 'flex';
+      setTimeout(() => {
+        if (!hasSavedDimensions) {
+          updateGuideDrawerCalculations();
+        } else {
+          const badgeEl = document.getElementById('guide-box-badge');
+          const posTextEl = document.getElementById('drawer-pos-text');
+          if (badgeEl) badgeEl.textContent = `가로 ${surf.printWidthCm}cm x 세로 ${surf.printHeightCm}cm`;
+          if (posTextEl) posTextEl.textContent = `위치: 상단 ${Math.round(topPct)}%, 좌측 ${Math.round(leftPct)}%`;
+        }
+      }, 60);
+    }
+
+    function updateGuideDrawerCalculations() {
+      const stage = document.getElementById('guide-stage-container');
+      const box = document.getElementById('guide-overlay-box');
+      const shirtWInput = document.getElementById('drawer-shirt-w');
+      const shirtHInput = document.getElementById('drawer-shirt-h');
+
+      if (!stage || !box) return;
+
+      const stageWidth = stage.offsetWidth || 440;
+      const stageHeight = stage.offsetHeight || 520;
+
+      const boxWidth = box.offsetWidth || (stageWidth * 0.6);
+      const boxHeight = box.offsetHeight || (stageHeight * 0.5);
+
+      const boxLeft = box.offsetLeft || (stageWidth * 0.2);
+      const boxTop = box.offsetTop || (stageHeight * 0.2);
+
+      const shirtW = parseFloat(shirtWInput ? shirtWInput.value : 50) || 50;
+      const shirtH = parseFloat(shirtHInput ? shirtHInput.value : 70) || 70;
+
+      const widthPct = (boxWidth / stageWidth) * 100;
+      const heightPct = (boxHeight / stageHeight) * 100;
+      const leftPct = (boxLeft / stageWidth) * 100;
+      const topPct = (boxTop / stageHeight) * 100;
+
+      const calcW = Math.round(shirtW * (widthPct / 100));
+      const calcH = Math.round(shirtH * (heightPct / 100));
+
+      const calcWEl = document.getElementById('drawer-calc-w');
+      const calcHEl = document.getElementById('drawer-calc-h');
+      const badgeEl = document.getElementById('guide-box-badge');
+      const posTextEl = document.getElementById('drawer-pos-text');
+
+      if (calcWEl) calcWEl.value = isNaN(calcW) ? 30 : calcW;
+      if (calcHEl) calcHEl.value = isNaN(calcH) ? 50 : calcH;
+      if (badgeEl) badgeEl.textContent = `가로 ${isNaN(calcW) ? 30 : calcW}cm x 세로 ${isNaN(calcH) ? 50 : calcH}cm`;
+      if (posTextEl) posTextEl.textContent = `위치: 상단 ${Math.round(topPct)}%, 좌측 ${Math.round(leftPct)}%`;
+    }
+
+    // Drag & Resize Mouse Handlers
+    let isDraggingBox = false;
+    let isResizingBox = false;
+    let dragStartX = 0, dragStartY = 0, boxStartLeft = 0, boxStartTop = 0, boxStartW = 0, boxStartH = 0;
+
+    const guideBox = document.getElementById('guide-overlay-box');
+    const resizeHandle = document.getElementById('guide-box-resize-handle');
+    const stageContainer = document.getElementById('guide-stage-container');
+
+    if (guideBox && resizeHandle && stageContainer) {
+      guideBox.addEventListener('mousedown', (e) => {
+        if (e.target === resizeHandle) return;
+        isDraggingBox = true;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        boxStartLeft = guideBox.offsetLeft;
+        boxStartTop = guideBox.offsetTop;
+        e.preventDefault();
+      });
+
+      resizeHandle.addEventListener('mousedown', (e) => {
+        isResizingBox = true;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        boxStartW = guideBox.offsetWidth;
+        boxStartH = guideBox.offsetHeight;
+        e.stopPropagation();
+        e.preventDefault();
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (isDraggingBox) {
+          const dx = e.clientX - dragStartX;
+          const dy = e.clientY - dragStartY;
+          let newLeft = boxStartLeft + dx;
+          let newTop = boxStartTop + dy;
+
+          const maxLeft = stageContainer.offsetWidth - guideBox.offsetWidth;
+          const maxTop = stageContainer.offsetHeight - guideBox.offsetHeight;
+
+          newLeft = Math.max(0, Math.min(newLeft, maxLeft));
+          newTop = Math.max(0, Math.min(newTop, maxTop));
+
+          guideBox.style.left = `${(newLeft / stageContainer.offsetWidth) * 100}%`;
+          guideBox.style.top = `${(newTop / stageContainer.offsetHeight) * 100}%`;
+
+          updateGuideDrawerCalculations();
+        } else if (isResizingBox) {
+          const dx = e.clientX - dragStartX;
+          const dy = e.clientY - dragStartY;
+          let newW = boxStartW + dx;
+          let newH = boxStartH + dy;
+
+          const maxW = stageContainer.offsetWidth - guideBox.offsetLeft;
+          const maxH = stageContainer.offsetHeight - guideBox.offsetTop;
+
+          newW = Math.max(40, Math.min(newW, maxW));
+          newH = Math.max(40, Math.min(newH, maxH));
+
+          guideBox.style.width = `${(newW / stageContainer.offsetWidth) * 100}%`;
+          guideBox.style.height = `${(newH / stageContainer.offsetHeight) * 100}%`;
+
+          updateGuideDrawerCalculations();
+        }
+      });
+
+      window.addEventListener('mouseup', () => {
+        if (isDraggingBox || isResizingBox) {
+          isDraggingBox = false;
+          isResizingBox = false;
+        }
+      });
+    }
+
+    const drawerShirtW = document.getElementById('drawer-shirt-w');
+    const drawerShirtH = document.getElementById('drawer-shirt-h');
+    const drawerSizeSelect = document.getElementById('drawer-size-ref-select');
+
+    if (drawerShirtW) drawerShirtW.addEventListener('input', updateGuideDrawerCalculations);
+    if (drawerShirtH) drawerShirtH.addEventListener('input', updateGuideDrawerCalculations);
+    if (drawerSizeSelect) {
+      drawerSizeSelect.addEventListener('change', () => {
+        const opt = drawerSizeSelect.options[drawerSizeSelect.selectedIndex];
+        if (opt) {
+          const newW = parseFloat(opt.dataset.w) || 50;
+          const newH = parseFloat(opt.dataset.h) || 70;
+          if (drawerShirtW) drawerShirtW.value = newW;
+          if (drawerShirtH) drawerShirtH.value = newH;
+
+          if (currentEditingSurface && currentEditingSurface.printWidthCm > 0 && currentEditingSurface.printHeightCm > 0) {
+            const box = document.getElementById('guide-overlay-box');
+            const wPct = Math.min(100, Math.max(5, (currentEditingSurface.printWidthCm / newW) * 100));
+            const hPct = Math.min(100, Math.max(5, (currentEditingSurface.printHeightCm / newH) * 100));
+            if (box) {
+              box.style.width = `${wPct}%`;
+              box.style.height = `${hPct}%`;
+            }
+            const calcWEl = document.getElementById('drawer-calc-w');
+            const calcHEl = document.getElementById('drawer-calc-h');
+            if (calcWEl) calcWEl.value = currentEditingSurface.printWidthCm;
+            if (calcHEl) calcHEl.value = currentEditingSurface.printHeightCm;
+            const badgeEl = document.getElementById('guide-box-badge');
+            if (badgeEl) badgeEl.textContent = `가로 ${currentEditingSurface.printWidthCm}cm x 세로 ${currentEditingSurface.printHeightCm}cm`;
+          } else {
+            updateGuideDrawerCalculations();
+          }
+        }
+      });
+    }
+
+    const btnCloseGuideModal = document.getElementById('btn-close-draw-guide-modal');
+    const btnCancelGuideModal = document.getElementById('btn-cancel-draw-guide');
+    const btnSaveGuideModal = document.getElementById('btn-save-draw-guide');
+
+    const closeGuideDrawer = () => {
+      const modal = document.getElementById('modal-draw-guide');
+      if (modal) modal.style.display = 'none';
+    };
+
+    if (btnCloseGuideModal) btnCloseGuideModal.addEventListener('click', closeGuideDrawer);
+    if (btnCancelGuideModal) btnCancelGuideModal.addEventListener('click', closeGuideDrawer);
+
+    if (btnSaveGuideModal) {
+      btnSaveGuideModal.addEventListener('click', () => {
+        if (!currentEditingSurface) return;
+
+        const stage = document.getElementById('guide-stage-container');
+        const box = document.getElementById('guide-overlay-box');
+
+        const stageRect = stage.getBoundingClientRect();
+        const boxRect = box.getBoundingClientRect();
+
+        const widthPct = (boxRect.width / stageRect.width) * 100;
+        const heightPct = (boxRect.height / stageRect.height) * 100;
+        const leftPct = ((boxRect.left - stageRect.left) / stageRect.width) * 100;
+        const topPct = ((boxRect.top - stageRect.top) / stageRect.height) * 100;
+
+        const calcW = Math.round(parseFloat(document.getElementById('drawer-calc-w').value) || 30);
+        const calcH = Math.round(parseFloat(document.getElementById('drawer-calc-h').value) || 50);
+
+        currentEditingSurface.printWidthCm = calcW;
+        currentEditingSurface.printHeightCm = calcH;
+        currentEditingSurface.printTopPct = topPct;
+        currentEditingSurface.printLeftPct = leftPct;
+        currentEditingSurface.printWidthPct = widthPct;
+        currentEditingSurface.printHeightPct = heightPct;
+
+        renderSurfaceCards();
+        closeGuideDrawer();
+      });
+    }
+
+    initProductDetail();
+  </script>
+</body>
+</html>

@@ -279,6 +279,30 @@
   touch-action: none;
 }
 
+/* CANVAS MOCKUP STAGE BACKGROUND FIT */
+.canvas-mockup-stage,
+#canvas-mockup-wrapper {
+  position: relative;
+  width: 500px;
+  height: 590px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: contain !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  touch-action: none;
+}
+
+/* FABRIC CANVAS TRANSPARENT OVERLAY (NO WHITE BOX BEHIND GARMENT) */
+.canvas-container,
+#customizer-canvas,
+.upper-canvas,
+.lower-canvas {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
 /* WARNING BANNER */
 .stage-warning-banner {
   position: absolute;
@@ -540,7 +564,7 @@
 .floating-layer-card {
   position: absolute;
   left: 0;
-  top: 74px;
+  top: 6px;
   width: 180px;
   background: #ffffff;
   border-radius: 18px;

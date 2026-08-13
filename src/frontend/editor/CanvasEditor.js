@@ -45,7 +45,7 @@ export class CanvasEditor {
       cornerSize: 10,
       cornerStyle: 'circle',
       transparentCorners: false,
-      padding: 6,
+      padding: 0,
       rotatingPointOffset: 25,
       controlsAboveOverlay: true
     });
@@ -124,7 +124,7 @@ export class CanvasEditor {
 
   updatePrintBounds(newBounds) {
     this.dimensionMapper.updateConfig(newBounds);
-    this.printBox = this.dimensionMapper.getPrintAreaPx();
+    this.printBox = this.dimensionMapper.getPrintAreaPx(newBounds);
 
     if (this.guidelineBox) {
       this.guidelineBox.set({
@@ -306,13 +306,14 @@ export class CanvasEditor {
     const g = this.printBox;
     if (!g) return;
 
+    const tolerance = 0.5; // Allow 0.5px subpixel tolerance to prevent false warnings when touching guide lines
     const outObjects = objects.filter(obj => {
-      const bound = obj.getBoundingRect();
+      const bound = obj.getBoundingRect(true, true);
       return (
-        bound.left < g.left ||
-        bound.top < g.top ||
-        (bound.left + bound.width) > (g.left + g.width) ||
-        (bound.top + bound.height) > (g.top + g.height)
+        bound.left < (g.left - tolerance) ||
+        bound.top < (g.top - tolerance) ||
+        (bound.left + bound.width) > (g.left + g.width + tolerance) ||
+        (bound.top + bound.height) > (g.top + g.height + tolerance)
       );
     });
 
@@ -594,13 +595,13 @@ export class CanvasEditor {
         strokeWidth: strokeWidth
       });
     } else if (type === 'triangle') {
-      shapeObj = new fabric.Triangle({
-        width: 100,
-        height: 88,
+      const points = [{ x: 50, y: 0 }, { x: 100, y: 88 }, { x: 0, y: 88 }];
+      shapeObj = new fabric.Polygon(points, {
         fill: fillColor,
         stroke: strokeColor,
         strokeWidth: strokeWidth
       });
+      shapeObj.originalPoints = points;
     } else if (type === 'heart') {
       const heartPath = 'M 12 21.35 l -1.45 -1.32 C 5.4 15.36 2 12.28 2 8.5 C 2 5.42 4.42 3 7.5 3 c 1.74 0 3.41 0.81 4.5 2.09 C 13.09 3.81 14.76 3 16.5 3 C 19.58 3 22 5.42 22 8.5 c 0 3.78 -3.4 6.86 -8.55 11.54 L 12 21.35 Z';
       shapeObj = new fabric.Path(heartPath, {
@@ -630,6 +631,7 @@ export class CanvasEditor {
         scaleX: 0.9,
         scaleY: 0.9
       });
+      shapeObj.originalPoints = points;
     } else if (type === 'pentagon') {
       const points = [];
       for (let i = 0; i < 5; i++) {
@@ -644,6 +646,7 @@ export class CanvasEditor {
         stroke: strokeColor,
         strokeWidth: strokeWidth
       });
+      shapeObj.originalPoints = points;
     } else {
       shapeObj = new fabric.Rect({
         width: 100,
@@ -671,6 +674,141 @@ export class CanvasEditor {
     this.canvas.renderAll();
     this.handleSelection({ target: shapeObj, selected: [shapeObj] });
     return shapeObj;
+  }
+
+  /**
+   * Helper to build SVG path command with rounded corners for polygon vertices
+   */
+  buildRoundedPolygonPath(points, r) {
+    if (!points || points.length < 3) return '';
+    if (r <= 0) {
+      return points.reduce((d, p, i) => d + (i === 0 ? `M ${p.x} ${p.y}` : ` L ${p.x} ${p.y}`), '') + ' Z';
+    }
+
+    const n = points.length;
+    const pathCommands = [];
+
+    for (let i = 0; i < n; i++) {
+      const pPrev = points[(i - 1 + n) % n];
+      const pCurr = points[i];
+      const pNext = points[(i + 1) % n];
+
+      const v1 = { x: pPrev.x - pCurr.x, y: pPrev.y - pCurr.y };
+      const len1 = Math.hypot(v1.x, v1.y) || 1;
+      const u1 = { x: v1.x / len1, y: v1.y / len1 };
+
+      const v2 = { x: pNext.x - pCurr.x, y: pNext.y - pCurr.y };
+      const len2 = Math.hypot(v2.x, v2.y) || 1;
+      const u2 = { x: v2.x / len2, y: v2.y / len2 };
+
+      const maxDist = Math.min(len1 / 2, len2 / 2);
+      const actualR = Math.min(r, maxDist);
+
+      const startX = pCurr.x + u1.x * actualR;
+      const startY = pCurr.y + u1.y * actualR;
+      const endX = pCurr.x + u2.x * actualR;
+      const endY = pCurr.y + u2.y * actualR;
+
+      if (i === 0) {
+        pathCommands.push(`M ${startX} ${startY}`);
+      } else {
+        pathCommands.push(`L ${startX} ${startY}`);
+      }
+      pathCommands.push(`Q ${pCurr.x} ${pCurr.y} ${endX} ${endY}`);
+    }
+
+    pathCommands.push('Z');
+    return pathCommands.join(' ');
+  }
+
+  /**
+   * Apply Corner Radius rounding to eligible shapes (Triangle, Rect/Square, Pentagon, Star)
+   */
+  setCornerRadius(radius = 0) {
+    const active = this.canvas.getActiveObject();
+    if (!active || active.isGuideline) return;
+
+    const r = Math.max(0, Number(radius) || 0);
+
+    // 1. Rect / Square
+    if (active.type === 'rect') {
+      active.set({ rx: r, ry: r });
+      active.setCoords();
+      this.canvas.renderAll();
+      this.historyManager.saveState();
+      return;
+    }
+
+    // 2. Polygon or Path shapes (triangle, pentagon, star)
+    let shapeType = active.shapeType;
+    if (!shapeType) {
+      if (active.type === 'triangle') shapeType = 'triangle';
+      else if (active.originalPoints?.length === 5) shapeType = 'pentagon';
+      else if (active.originalPoints?.length === 10) shapeType = 'star';
+    }
+
+    if (['triangle', 'pentagon', 'star', 'polygon'].includes(shapeType) || active.originalPoints) {
+      active.cornerRadius = r;
+
+      let basePoints = active.originalPoints;
+      if (!basePoints) {
+        if (shapeType === 'triangle') {
+          basePoints = [{ x: 50, y: 0 }, { x: 100, y: 88 }, { x: 0, y: 88 }];
+        } else if (shapeType === 'pentagon') {
+          basePoints = [];
+          for (let i = 0; i < 5; i++) {
+            const a = (i * 2 * Math.PI / 5) - (Math.PI / 2);
+            basePoints.push({ x: 50 + 45 * Math.cos(a), y: 50 + 45 * Math.sin(a) });
+          }
+        } else if (shapeType === 'star') {
+          basePoints = [
+            { x: 50, y: 0 }, { x: 63, y: 38 }, { x: 100, y: 38 }, { x: 69, y: 59 },
+            { x: 82, y: 100 }, { x: 50, y: 75 }, { x: 18, y: 100 }, { x: 31, y: 59 },
+            { x: 0, y: 38 }, { x: 37, y: 38 }
+          ];
+        }
+        active.originalPoints = basePoints;
+      }
+
+      if (basePoints) {
+        const pathStr = this.buildRoundedPolygonPath(basePoints, r);
+        const left = active.left;
+        const top = active.top;
+        const scaleX = active.scaleX || 1;
+        const scaleY = active.scaleY || 1;
+        const angle = active.angle || 0;
+        const fill = active.fill;
+        const stroke = active.stroke;
+        const strokeWidth = active.strokeWidth || 0;
+
+        const newPath = new fabric.Path(pathStr, {
+          left: left,
+          top: top,
+          scaleX: scaleX,
+          scaleY: scaleY,
+          angle: angle,
+          fill: fill,
+          stroke: stroke,
+          strokeWidth: strokeWidth,
+          originX: 'center',
+          originY: 'center',
+          isShape: true,
+          shapeType: shapeType,
+          originalPoints: basePoints,
+          cornerRadius: r,
+          cornerColor: '#f97316',
+          cornerSize: 12,
+          transparentCorners: false
+        });
+
+        this.canvas.remove(active);
+        this.canvas.add(newPath);
+        this.canvas.setActiveObject(newPath);
+        this.canvas.renderAll();
+        this.historyManager.saveState();
+        this.handleSelection({ target: newPath, selected: [newPath] });
+      }
+    }
   }
 
   updateActiveObject(props = {}) {
@@ -767,7 +905,12 @@ export class CanvasEditor {
     this.historyManager.saveState();
   }
 
-  toDataURL(multiplier = 2) {
+  /**
+   * Export canvas as PNG.
+   * @param {number} multiplier Resolution scaling factor (default 4 for 300 DPI high quality)
+   * @param {boolean} cropToPrintBox If true, crop PNG exactly 1:1 to printBox (print guide area)
+   */
+  toDataURL(multiplier = 4, cropToPrintBox = true) {
     const wasVisible = this.isGuideVisible !== false;
     // Temporarily hide guidelines and discard active selection so exported artwork is clean without guide lines
     if (this.guidelineBox) this.guidelineBox.set('visible', false);
@@ -778,11 +921,20 @@ export class CanvasEditor {
     this.canvas.discardActiveObject();
     this.canvas.renderAll();
 
-    const dataUrl = this.canvas.toDataURL({
+    const options = {
       format: 'png',
       multiplier: multiplier,
       quality: 1.0
-    });
+    };
+
+    if (cropToPrintBox && this.printBox && this.printBox.width > 0 && this.printBox.height > 0) {
+      options.left = this.printBox.left;
+      options.top = this.printBox.top;
+      options.width = this.printBox.width;
+      options.height = this.printBox.height;
+    }
+
+    const dataUrl = this.canvas.toDataURL(options);
 
     // Restore guidelines and selection
     if (this.guidelineBox) this.guidelineBox.set('visible', wasVisible);
@@ -790,6 +942,132 @@ export class CanvasEditor {
     this.canvas.renderAll();
 
     return dataUrl;
+  }
+
+  toPrintAreaPNG(multiplier = 4) {
+    return this.toDataURL(multiplier, true);
+  }
+
+  toFullCanvasPNG(multiplier = 2) {
+    return this.toDataURL(multiplier, false);
+  }
+
+  /**
+   * Generates pure 100% artwork PNG cropped exactly to the print area guide box (no text headers, no guide lines, no margins)
+   */
+  async toPrintGuideThumbnail(scale = 4) {
+    return this.toPrintAreaPNG(scale);
+  }
+
+  async toCompositeMockupDataUrl(bgUrl) {
+    const scale = 2;
+    const stageW = 500 * scale;
+    const stageH = 590 * scale;
+
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = stageW;
+    tempCanvas.height = stageH;
+    const ctx = tempCanvas.getContext('2d');
+
+    // Fill white background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, stageW, stageH);
+
+    // 1. Draw Garment Background Image
+    let targetBg = bgUrl;
+    if (!targetBg) {
+      const domEl = document.getElementById('garment-bg-layer');
+      if (domEl && domEl.style.backgroundImage) {
+        targetBg = domEl.style.backgroundImage.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
+      }
+    }
+
+    if (targetBg) {
+      try {
+        let base64Bg = targetBg;
+        if (!targetBg.startsWith('data:image/')) {
+          try {
+            const res = await fetch(targetBg);
+            const blob = await res.blob();
+            base64Bg = await new Promise((resolve) => {
+              const reader = new FileReader();
+              reader.onloadend = () => resolve(reader.result);
+              reader.onerror = () => resolve(targetBg);
+              reader.readAsDataURL(blob);
+            });
+          } catch (e) {
+            console.warn('Could not fetch bgUrl as blob, trying direct src:', e);
+          }
+        }
+
+        const bgImg = new Image();
+        await new Promise((resolve) => {
+          bgImg.onload = resolve;
+          bgImg.onerror = resolve;
+          bgImg.src = base64Bg;
+        });
+
+        if (bgImg.complete && bgImg.naturalWidth > 0) {
+          const imgRatio = bgImg.naturalWidth / bgImg.naturalHeight;
+          const stageRatio = stageW / stageH;
+          let drawW = stageW;
+          let drawH = stageH;
+          let drawX = 0;
+          let drawY = 0;
+
+          if (imgRatio > stageRatio) {
+            drawH = stageW / imgRatio;
+            drawY = (stageH - drawH) / 2;
+          } else {
+            drawW = stageH * imgRatio;
+            drawX = (stageW - drawW) / 2;
+          }
+          ctx.drawImage(bgImg, drawX, drawY, drawW, drawH);
+        }
+      } catch (err) {
+        console.warn('Could not render garment background onto composite mockup:', err);
+      }
+    }
+
+    // 2. Draw Dashed Print Area Guide Line Box (Skipped: no dashed guide lines on mockups)
+    // Guideline box drawing omitted for clean garment mockup output
+
+    // 3. Draw Artwork Canvas
+    try {
+      const wasVisible = this.isGuideVisible !== false;
+      if (this.guidelineBox) this.guidelineBox.set('visible', false);
+      if (this.snapLineX) this.snapLineX.set('visible', false);
+      if (this.snapLineY) this.snapLineY.set('visible', false);
+
+      const activeObj = this.canvas.getActiveObject();
+      this.canvas.discardActiveObject();
+      this.canvas.renderAll();
+
+      const artworkDataUrl = this.canvas.toDataURL({ format: 'png', multiplier: scale });
+
+      if (this.guidelineBox) this.guidelineBox.set('visible', wasVisible);
+      if (activeObj) this.canvas.setActiveObject(activeObj);
+      this.canvas.renderAll();
+
+      const artImg = new Image();
+      await new Promise((resolve) => {
+        artImg.onload = resolve;
+        artImg.onerror = resolve;
+        artImg.src = artworkDataUrl;
+      });
+
+      if (artImg.complete && artImg.naturalWidth > 0) {
+        const canvasX = 60 * scale;
+        const canvasY = 55 * scale;
+        const canvasW = this.canvasWidth * scale;
+        const canvasH = this.canvasHeight * scale;
+        ctx.drawImage(artImg, canvasX, canvasY, canvasW, canvasH);
+      }
+    } catch (err) {
+      console.warn('Could not render artwork canvas onto composite mockup:', err);
+    }
+
+    return tempCanvas.toDataURL('image/png');
   }
 
   toSVG() {
@@ -826,7 +1104,7 @@ export class CanvasEditor {
   }
 
   getCanvasJson() {
-    return this.canvas.toJSON(['fontFamily', 'fill', 'angle', 'fontWeight', 'fontStyle', 'underline', 'linethrough', 'charSpacing', 'lineHeight', 'textAlign', 'isGuideline']);
+    return this.canvas.toJSON(['fontFamily', 'fill', 'angle', 'fontWeight', 'fontStyle', 'underline', 'linethrough', 'charSpacing', 'lineHeight', 'textAlign', 'isGuideline', 'shapeType', 'rx', 'ry', 'cornerRadius', 'stroke', 'strokeWidth', 'scaleX', 'scaleY']);
   }
 
   loadCanvasJson(json, callback) {
@@ -853,11 +1131,11 @@ export class CanvasEditor {
     this.canvas.renderAll();
   }
 
-  getSurfacePhysicalMeta(surfaceName, canvasJson) {
+  getSurfacePhysicalMeta(surfaceName, canvasJson, surfaceConfig) {
     if (!canvasJson || !canvasJson.objects) return [];
     
     return canvasJson.objects
       .filter(o => !o.isGuideline)
-      .map(obj => this.dimensionMapper.getObjectPhysicalMeta(obj, surfaceName));
+      .map(obj => this.dimensionMapper.getObjectPhysicalMeta(obj, surfaceName, surfaceConfig));
   }
 }

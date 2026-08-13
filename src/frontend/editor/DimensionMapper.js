@@ -20,6 +20,11 @@ export class DimensionMapper {
     if (config.shirtHeightCm) this.shirtHeightCm = config.shirtHeightCm;
     if (config.printAreaWidthCm) this.printAreaWidthCm = config.printAreaWidthCm;
     if (config.printAreaHeightCm) this.printAreaHeightCm = config.printAreaHeightCm;
+
+    this.printTopPct = config.printTopPct !== undefined ? config.printTopPct : this.printTopPct;
+    this.printLeftPct = config.printLeftPct !== undefined ? config.printLeftPct : this.printLeftPct;
+    this.printWidthPct = config.printWidthPct !== undefined ? config.printWidthPct : this.printWidthPct;
+    this.printHeightPct = config.printHeightPct !== undefined ? config.printHeightPct : this.printHeightPct;
   }
 
   getPxPerCmX() {
@@ -46,11 +51,33 @@ export class DimensionMapper {
     return Math.round((px / this.getPxPerCmY()) * 10) / 10;
   }
 
-  getPrintAreaPx() {
-    const width = this.cmToPxX(this.printAreaWidthCm);
-    const height = this.cmToPxY(this.printAreaHeightCm);
-    const left = (this.canvasPixelWidth - width) / 2;
-    const top = (this.canvasPixelHeight - height) / 2;
+  getPrintAreaPx(surfaceConfig = {}) {
+    let width, height, left, top;
+
+    const topPct = surfaceConfig.printTopPct !== undefined ? surfaceConfig.printTopPct : this.printTopPct;
+    const leftPct = surfaceConfig.printLeftPct !== undefined ? surfaceConfig.printLeftPct : this.printLeftPct;
+    const widthPct = surfaceConfig.printWidthPct !== undefined ? surfaceConfig.printWidthPct : this.printWidthPct;
+    const heightPct = surfaceConfig.printHeightPct !== undefined ? surfaceConfig.printHeightPct : this.printHeightPct;
+
+    if (topPct !== undefined && leftPct !== undefined && widthPct !== undefined && heightPct !== undefined) {
+      const stageW = 500;
+      const stageH = 590;
+      const stageLeft = (stageW * leftPct) / 100;
+      const stageTop = (stageH * topPct) / 100;
+      width = (stageW * widthPct) / 100;
+      height = (stageH * heightPct) / 100;
+
+      const offsetX = (stageW - this.canvasPixelWidth) / 2; // (500 - 380) / 2 = 60px
+      const offsetY = (stageH - this.canvasPixelHeight) / 2; // (590 - 480) / 2 = 55px
+
+      left = stageLeft - offsetX;
+      top = stageTop - offsetY;
+    } else {
+      width = this.cmToPxX(this.printAreaWidthCm);
+      height = this.cmToPxY(this.printAreaHeightCm);
+      left = (this.canvasPixelWidth - width) / 2;
+      top = (this.canvasPixelHeight - height) / 2;
+    }
 
     return {
       left: Math.max(0, left),
@@ -67,10 +94,10 @@ export class DimensionMapper {
   /**
    * Extracts detailed physical metadata for a Fabric.js object relative to the print guide box
    */
-  getObjectPhysicalMeta(fabricObject, surfaceName = 'front') {
+  getObjectPhysicalMeta(fabricObject, surfaceName = 'front', surfaceConfig = {}) {
     if (!fabricObject) return null;
 
-    const printBox = this.getPrintAreaPx();
+    const printBox = this.getPrintAreaPx(surfaceConfig);
 
     const scaleX = fabricObject.scaleX || 1;
     const scaleY = fabricObject.scaleY || 1;
@@ -84,17 +111,36 @@ export class DimensionMapper {
 
     const rotationDeg = Math.round(fabricObject.angle || 0);
 
-    const widthCm = this.pxToCmX(widthPx);
-    const heightCm = this.pxToCmY(heightPx);
+    // Calculate px-per-cm scale accurately relative to the print guide box
+    const pxPerCmX = (printBox.width > 0 && printBox.printWidthCm > 0)
+      ? (printBox.width / printBox.printWidthCm)
+      : this.getPxPerCmX();
 
-    const offsetLeftCm = this.pxToCmX(relLeftPx);
-    const offsetTopCm = this.pxToCmY(relTopPx);
+    const pxPerCmY = (printBox.height > 0 && printBox.printHeightCm > 0)
+      ? (printBox.height / printBox.printHeightCm)
+      : this.getPxPerCmY();
+
+    const widthCm = Math.round((widthPx / pxPerCmX) * 10) / 10;
+    const heightCm = Math.round((heightPx / pxPerCmY) * 10) / 10;
+
+    const offsetLeftCm = Math.round((relLeftPx / pxPerCmX) * 10) / 10;
+    const offsetTopCm = Math.round((relTopPx / pxPerCmY) * 10) / 10;
 
     let type = fabricObject.type;
+    let shapeType = fabricObject.shapeType || '';
     let textContent = '';
     let fontFamily = '';
     let fillColor = '';
     let imageUrl = '';
+
+    let fontWeight = fabricObject.fontWeight || 'normal';
+    let fontStyle = fabricObject.fontStyle || 'normal';
+    let underline = Boolean(fabricObject.underline);
+    let linethrough = Boolean(fabricObject.linethrough);
+    let charSpacing = fabricObject.charSpacing !== undefined ? fabricObject.charSpacing : 0;
+    let lineHeight = fabricObject.lineHeight !== undefined ? fabricObject.lineHeight : 1.16;
+    let textAlign = fabricObject.textAlign || 'left';
+    let jangpyeongPct = Math.round((scaleX / (scaleY || 1)) * 100);
 
     if (type === 'i-text' || type === 'text' || type === 'textbox') {
       type = 'text';
@@ -104,14 +150,41 @@ export class DimensionMapper {
     } else if (type === 'image') {
       type = 'image';
       imageUrl = fabricObject.getSrc ? fabricObject.getSrc() : '';
+    } else {
+      if (!shapeType) {
+        if (type === 'rect') {
+          const w = (fabricObject.width || 0) * scaleX;
+          const h = (fabricObject.height || 0) * scaleY;
+          shapeType = (Math.abs(w - h) < 2) ? 'square' : 'rect';
+        } else if (type === 'circle') shapeType = 'circle';
+        else if (type === 'triangle') shapeType = 'triangle';
+        else if (fabricObject.originalPoints?.length === 5) shapeType = 'pentagon';
+        else if (fabricObject.originalPoints?.length === 10) shapeType = 'star';
+      }
     }
+
+    const strokeColor = fabricObject.stroke || '';
+    const strokeWidth = fabricObject.strokeWidth || 0;
+    const cornerRadius = fabricObject.rx || fabricObject.cornerRadius || 0;
 
     return {
       surface: surfaceName,
       type,
+      shapeType,
+      strokeColor,
+      strokeWidth,
+      cornerRadius,
       text: textContent,
       fontFamily,
       fillColor,
+      fontWeight,
+      fontStyle,
+      underline,
+      linethrough,
+      charSpacing,
+      lineHeight,
+      textAlign,
+      jangpyeongPct,
       imageUrl,
       rotationDeg,
       posPx: { left: Math.round(relLeftPx), top: Math.round(relTopPx), width: Math.round(widthPx), height: Math.round(heightPx) },

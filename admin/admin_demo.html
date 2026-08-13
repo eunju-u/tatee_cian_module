@@ -402,7 +402,12 @@
         </div>
 
         <nav class="nav-list">
-          <button type="button" class="nav-item active" data-tab="tab-products">
+          <button type="button" class="nav-item active" data-tab="tab-dashboard">
+            <span>📊</span>
+            <span>대시보드</span>
+          </button>
+
+          <button type="button" class="nav-item" data-tab="tab-products">
             <span>📦</span>
             <span>상품 목록</span>
           </button>
@@ -415,6 +420,11 @@
           <button type="button" class="nav-item" data-tab="tab-orders">
             <span>📄</span>
             <span>주문 & 지시서</span>
+          </button>
+
+          <button type="button" class="nav-item" data-tab="tab-patterns">
+            <span>🎨</span>
+            <span>스티커/패턴 관리</span>
           </button>
         </nav>
       </div>
@@ -477,8 +487,34 @@
         </div>
       </header>
 
+      <!-- TAB 0: DASHBOARD -->
+      <div class="tab-pane active" id="tab-dashboard">
+        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:16px; margin-bottom:24px;">
+          <!-- KPI 1: 상품 갯수 -->
+          <div style="background:#ffffff; border:1px solid var(--slate-200); border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow-card);">
+            <span style="font-size:13px; font-weight:700; color:var(--slate-500);">📦 등록된 상품 갯수</span>
+            <span id="stat-count-products" style="font-size:28px; font-weight:900; color:var(--slate-900);">0개</span>
+          </div>
+          <!-- KPI 2: 폰트 갯수 -->
+          <div style="background:#ffffff; border:1px solid var(--slate-200); border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow-card);">
+            <span style="font-size:13px; font-weight:700; color:var(--slate-500);">🔤 사용 가능한 폰트 갯수</span>
+            <span id="stat-count-fonts" style="font-size:28px; font-weight:900; color:var(--slate-900);">0개</span>
+          </div>
+          <!-- KPI 3: 지시서 갯수 -->
+          <div style="background:#ffffff; border:1px solid var(--slate-200); border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow-card);">
+            <span style="font-size:13px; font-weight:700; color:var(--slate-500);">📄 접수된 작업지시서 갯수</span>
+            <span id="stat-count-orders" style="font-size:28px; font-weight:900; color:var(--slate-900);">0개</span>
+          </div>
+          <!-- KPI 4: 스티커/패턴 갯수 -->
+          <div style="background:#ffffff; border:1px solid var(--slate-200); border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow-card);">
+            <span style="font-size:13px; font-weight:700; color:var(--slate-500);">🎨 스티커/패턴 갯수</span>
+            <span id="stat-count-patterns" style="font-size:28px; font-weight:900; color:var(--slate-900);">0개</span>
+          </div>
+        </div>
+      </div>
+
       <!-- TAB 1: PRODUCTS (ONLY PRODUCT LIST: PRODUCT NO & TITLE) -->
-      <div class="tab-pane active" id="tab-products">
+      <div class="tab-pane" id="tab-products">
         <table class="data-table" style="background:#ffffff; border:1px solid var(--slate-200); border-radius:var(--radius-xl); overflow:hidden; border-spacing:0; box-shadow:var(--shadow-card);">
           <thead>
             <tr>
@@ -513,6 +549,113 @@
       <!-- TAB 3: ORDERS -->
       <div class="tab-pane" id="tab-orders">
         <div id="admin-orders-list-table"></div>
+      </div>
+
+      <!-- TAB 4: STICKER & PATTERN LIBRARY -->
+      <div class="tab-pane" id="tab-patterns">
+        <div style="display:grid; grid-template-columns:360px 1fr; gap:24px;">
+          <!-- LEFT: PATTERN BUILDER FORM -->
+          <div style="background:#ffffff; border:1px solid var(--slate-200); border-radius:var(--radius-xl); padding:20px; box-shadow:var(--shadow-card); display:flex; flex-direction:column; gap:16px;">
+            <div style="font-size:16px; font-weight:800; color:var(--slate-900); display:flex; align-items:center; gap:8px;">
+              <span>✨</span> <span>신규 스티커/패턴 생성</span>
+            </div>
+
+            <form id="form-pattern-builder" style="display:flex; flex-direction:column; gap:14px;">
+              <div class="form-group">
+                <label class="form-label">패턴 명칭</label>
+                <input type="text" id="builder-pattern-title" class="form-input" value="트렌디 패턴" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">패턴 스타일 종류</label>
+                <select id="builder-pattern-shape" class="form-input" style="cursor:pointer;">
+                  <option value="sparkle_y2k">💫 Y2K 글리터 스파클</option>
+                  <option value="terrazzo_modern">🎨 세이지 모던 테라조</option>
+                  <option value="flower_daisy">🌸 감성 파스텔 데이지</option>
+                  <option value="wavy_checker">🏁 웨이브 체커</option>
+                  <option value="leopard_chic">🐆 쉬크 모카 레오파드</option>
+                  <option value="memphis_abstract">📐 멤피스 팝아트</option>
+                  <option value="heart_pastel">💖 파스텔 러블리 하트</option>
+                  <option value="cherry_retro">🍒 레트로 체리</option>
+                  <option value="grid">📐 체크 선 패턴</option>
+                  <option value="checkerboard">🏁 클래식 체커보드</option>
+                  <option value="stripe">💈 클래식 스트라이프</option>
+                  <option value="dot_aesthetic">⚪ 포카 도트</option>
+                </select>
+              </div>
+
+              <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+                <div class="form-group">
+                  <label class="form-label" style="font-size:11px;">도형 색상</label>
+                  <input type="color" id="builder-color-fg" value="#f472b6" style="width:100%; height:36px; border-radius:8px; border:1px solid var(--slate-300); cursor:pointer; padding:0; background:none;">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" style="font-size:11px;">포인트 색상</label>
+                  <input type="color" id="builder-color-accent" value="#f59e0b" style="width:100%; height:36px; border-radius:8px; border:1px solid var(--slate-300); cursor:pointer; padding:0; background:none;">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" style="font-size:11px;">배경 색상</label>
+                  <input type="color" id="builder-color-bg" value="#fff0f5" style="width:100%; height:36px; border-radius:8px; border:1px solid var(--slate-300); cursor:pointer; padding:0; background:none;">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" style="display:flex; justify-content:space-between;">
+                  <span>패턴 밀도/크기 (Scale)</span>
+                  <span id="label-builder-scale" style="color:var(--primary); font-weight:800;">1.0x</span>
+                </label>
+                <input type="range" id="builder-slider-scale" min="0.5" max="3.0" step="0.1" value="1.0" style="width:100%; cursor:pointer;">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">회전 각도</label>
+                <select id="builder-pattern-angle" class="form-input" style="cursor:pointer;">
+                  <option value="0">0° (정방향)</option>
+                  <option value="15">15° (살짝 기움)</option>
+                  <option value="30">30°</option>
+                  <option value="45">45° (사선 각도)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">투명도</label>
+                <select id="builder-pattern-opacity" class="form-input" style="cursor:pointer;">
+                  <option value="1.0">100% (선명함)</option>
+                  <option value="0.85" selected>85% (자연스러움)</option>
+                  <option value="0.6">60% (은은함)</option>
+                  <option value="0.35">35% (파스텔 은은)</option>
+                </select>
+              </div>
+
+              <!-- PREVIEW BOX -->
+              <div class="form-group">
+                <label class="form-label">실시간 패턴 미리보기</label>
+                <div id="builder-pattern-preview-box" style="width:100%; height:160px; border-radius:12px; border:1px solid var(--slate-300); overflow:hidden; display:flex; align-items:center; justify-content:center; background:#fafafa;">
+                </div>
+              </div>
+
+              <button type="submit" class="btn-primary" style="width:100%; padding:12px; font-size:14px; font-weight:800; border-radius:10px;">
+                ✨ 이 패턴 라이브러리에 저장하기
+              </button>
+            </form>
+          </div>
+
+          <!-- RIGHT: PATTERN LIBRARY GRID -->
+          <div style="background:#ffffff; border:1px solid var(--slate-200); border-radius:var(--radius-xl); padding:20px; box-shadow:var(--shadow-card); display:flex; flex-direction:column; gap:16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div style="font-size:16px; font-weight:800; color:var(--slate-900); display:flex; align-items:center; gap:8px;">
+                <span>🖼️</span> <span>등록된 스티커 & 패턴 라이브러리</span>
+              </div>
+              <span id="pattern-count-badge" style="font-size:12px; font-weight:700; color:var(--slate-500); background:var(--slate-100); padding:4px 10px; border-radius:20px;">총 0개 등록됨</span>
+            </div>
+
+            <div id="pattern-library-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:16px; max-height:620px; overflow-y:auto; padding-right:4px;">
+              <div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--slate-400); font-size:13px;">
+                등록된 패턴/스티커가 없습니다. Left 폼에서 패턴을 생성 후 저장하세요.
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
     </main>
@@ -617,23 +760,38 @@
 
           const pageTitle = document.getElementById('page-main-title');
           const pageSubtitle = document.getElementById('page-main-subtitle');
-          const headerActionArea = document.getElementById('header-action-area');
+          const actProd = document.getElementById('header-action-products');
+          const actFont = document.getElementById('header-action-fonts');
+          const actOrder = document.getElementById('header-action-orders');
+
+          if (actProd) actProd.style.display = 'none';
+          if (actFont) actFont.style.display = 'none';
+          if (actOrder) actOrder.style.display = 'none';
+
           if (pageTitle && pageSubtitle) {
-            if (targetTabId === 'tab-products') {
+            if (targetTabId === 'tab-dashboard') {
+              pageTitle.textContent = '대시보드';
+              pageSubtitle.textContent = 'TATEE 커스텀 시스템 종합 대시보드';
+              pageSubtitle.style.display = 'block';
+            } else if (targetTabId === 'tab-products') {
               pageTitle.textContent = '상품 목록';
               pageSubtitle.textContent = '';
               pageSubtitle.style.display = 'none';
-              if (headerActionArea) headerActionArea.style.display = 'block';
+              if (actProd) actProd.style.display = 'block';
             } else if (targetTabId === 'tab-fonts') {
               pageTitle.textContent = '웹폰트 관리';
               pageSubtitle.textContent = '고객 에디터에서 사용 가능한 상업용 무료 웹폰트 목록입니다.';
               pageSubtitle.style.display = 'block';
-              if (headerActionArea) headerActionArea.style.display = 'none';
+              if (actFont) actFont.style.display = 'block';
             } else if (targetTabId === 'tab-orders') {
               pageTitle.textContent = '작업지시서';
               pageSubtitle.textContent = '';
               pageSubtitle.style.display = 'none';
-              if (headerActionArea) headerActionArea.style.display = 'none';
+              if (actOrder) actOrder.style.display = 'block';
+            } else if (targetTabId === 'tab-patterns') {
+              pageTitle.textContent = '스티커 & 패턴 관리';
+              pageSubtitle.textContent = '고객 에디터에서 사용할 수 있는 그래픽 스티커 및 패턴 소재를 생성하고 관리합니다.';
+              pageSubtitle.style.display = 'block';
             }
           }
         });
@@ -644,6 +802,10 @@
       try {
         const res = await fetch('/api/admin/products');
         const data = await res.json();
+
+        const statProd = document.getElementById('stat-count-products');
+        if (statProd) statProd.textContent = `${(data.products || []).length}개`;
+
         const tbody = document.getElementById('registered-products-list');
         if (!tbody) return;
 
@@ -767,6 +929,9 @@
           ];
         }
       }
+
+      const statFont = document.getElementById('stat-count-fonts');
+      if (statFont) statFont.textContent = `${globalLoadedFonts.length}개`;
       renderFontTableHeader();
       renderFontsTableBody();
     }
@@ -926,6 +1091,9 @@
         }
         const data = await res.json();
 
+        const statOrd = document.getElementById('stat-count-orders');
+        if (statOrd) statOrd.textContent = `${(data.orders || []).length}개`;
+
         if (!data.orders || data.orders.length === 0) {
           container.innerHTML = `
             <div style="text-align:center; padding:30px; color:var(--slate-400);">
@@ -1066,9 +1234,247 @@
       });
     }
 
+    function generatePatternSvgCode(shape, fgColor, accentColor, bgColor, scale, angle, opacity) {
+      const baseSize = 60;
+      const p = Math.round(baseSize * scale);
+      let patternContent = '';
+
+      if (shape === 'sparkle_y2k') {
+        patternContent = `
+          <rect width="${p}" height="${p}" fill="${bgColor}"/>
+          <g opacity="${opacity}">
+            <path d="M ${p*0.5} ${p*0.1} Q ${p*0.5} ${p*0.5}, ${p*0.9} ${p*0.5} Q ${p*0.5} ${p*0.5}, ${p*0.5} ${p*0.9} Q ${p*0.5} ${p*0.5}, ${p*0.1} ${p*0.5} Q ${p*0.5} ${p*0.5}, ${p*0.5} ${p*0.1} Z" fill="${fgColor}"/>
+            <circle cx="${p*0.8}" cy="${p*0.2}" r="${p*0.06}" fill="${accentColor || fgColor}"/>
+            <circle cx="${p*0.2}" cy="${p*0.8}" r="${p*0.05}" fill="${accentColor || fgColor}"/>
+          </g>
+        `;
+      } else if (shape === 'terrazzo_modern') {
+        patternContent = `
+          <rect width="${p}" height="${p}" fill="${bgColor}"/>
+          <g opacity="${opacity}">
+            <path d="M ${p*0.1} ${p*0.2} L ${p*0.35} ${p*0.1} L ${p*0.25} ${p*0.4} Z" fill="${fgColor}"/>
+            <path d="M ${p*0.6} ${p*0.6} L ${p*0.85} ${p*0.5} L ${p*0.75} ${p*0.85} Z" fill="${accentColor || fgColor}"/>
+            <circle cx="${p*0.8}" cy="${p*0.2}" r="${p*0.08}" fill="${fgColor}"/>
+            <rect x="${p*0.2}" y="${p*0.7}" width="${p*0.15}" height="${p*0.15}" rx="3" fill="${accentColor || fgColor}" transform="rotate(20 ${p*0.2} ${p*0.7})"/>
+          </g>
+        `;
+      } else if (shape === 'flower_daisy') {
+        patternContent = `
+          <rect width="${p}" height="${p}" fill="${bgColor}"/>
+          <g opacity="${opacity}">
+            <circle cx="${p*0.5}" cy="${p*0.5}" r="${p*0.12}" fill="${accentColor || '#f59e0b'}"/>
+            <circle cx="${p*0.5}" cy="${p*0.22}" r="${p*0.12}" fill="${fgColor}"/>
+            <circle cx="${p*0.5}" cy="${p*0.78}" r="${p*0.12}" fill="${fgColor}"/>
+            <circle cx="${p*0.22}" cy="${p*0.5}" r="${p*0.12}" fill="${fgColor}"/>
+            <circle cx="${p*0.78}" cy="${p*0.5}" r="${p*0.12}" fill="${fgColor}"/>
+            <circle cx="${p*0.3}" cy="${p*0.3}" r="${p*0.11}" fill="${fgColor}"/>
+            <circle cx="${p*0.7}" cy="${p*0.3}" r="${p*0.11}" fill="${fgColor}"/>
+            <circle cx="${p*0.3}" cy="${p*0.7}" r="${p*0.11}" fill="${fgColor}"/>
+            <circle cx="${p*0.7}" cy="${p*0.7}" r="${p*0.11}" fill="${fgColor}"/>
+          </g>
+        `;
+      } else if (shape === 'wavy_checker') {
+        patternContent = `
+          <rect width="${p}" height="${p}" fill="${bgColor}"/>
+          <path d="M 0 0 C ${p*0.25} ${p*0.1}, ${p*0.25} ${p*0.4}, 0 ${p*0.5} L 0 ${p} L ${p*0.5} ${p} C ${p*0.4} ${p*0.75}, ${p*0.1} ${p*0.75} 0 ${p*0.5} Z" fill="${fgColor}" opacity="${opacity}"/>
+          <path d="M ${p*0.5} 0 C ${p*0.75} ${p*0.1}, ${p*0.75} ${p*0.4}, ${p*0.5} ${p*0.5} C ${p*0.75} ${p*0.6}, ${p*0.75} ${p*0.9}, ${p*0.5} ${p} L ${p} ${p} L ${p} 0 Z" fill="${fgColor}" opacity="${opacity}"/>
+        `;
+      } else if (shape === 'leopard_chic') {
+        patternContent = `
+          <rect width="${p}" height="${p}" fill="${bgColor}"/>
+          <g opacity="${opacity}">
+            <path d="M ${p*0.2} ${p*0.3} C ${p*0.1} ${p*0.1}, ${p*0.4} ${p*0.1}, ${p*0.45} ${p*0.3} C ${p*0.5} ${p*0.45}, ${p*0.25} ${p*0.5}, ${p*0.2} ${p*0.3} Z" fill="${accentColor || fgColor}"/>
+            <path d="M ${p*0.15} ${p*0.25} C ${p*0.1} ${p*0.4}, ${p*0.3} ${p*0.55}, ${p*0.45} ${p*0.45}" stroke="${fgColor}" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <circle cx="${p*0.75}" cy="${p*0.75}" r="${p*0.1}" fill="${fgColor}"/>
+          </g>
+        `;
+      } else if (shape === 'memphis_abstract') {
+        patternContent = `
+          <rect width="${p}" height="${p}" fill="${bgColor}"/>
+          <g opacity="${opacity}">
+            <circle cx="${p*0.3}" cy="${p*0.3}" r="${p*0.15}" stroke="${fgColor}" stroke-width="2.5" fill="none"/>
+            <path d="M ${p*0.6} ${p*0.2} L ${p*0.8} ${p*0.4}" stroke="${accentColor || fgColor}" stroke-width="3" stroke-linecap="round"/>
+            <polygon points="${p*0.7},${p*0.7} ${p*0.85},${p*0.9} ${p*0.55},${p*0.9}" fill="${fgColor}"/>
+          </g>
+        `;
+      } else if (shape === 'heart_pastel') {
+        patternContent = `
+          <rect width="${p}" height="${p}" fill="${bgColor}"/>
+          <g opacity="${opacity}">
+            <path d="M ${p*0.3} ${p*0.3} C ${p*0.3} ${p*0.15}, ${p*0.1} ${p*0.15}, ${p*0.1} ${p*0.35} C ${p*0.1} ${p*0.55}, ${p*0.3} ${p*0.7}, ${p*0.3} ${p*0.75} C ${p*0.3} ${p*0.7}, ${p*0.5} ${p*0.55}, ${p*0.5} ${p*0.35} C ${p*0.5} ${p*0.15}, ${p*0.3} ${p*0.15}, ${p*0.3} ${p*0.3} Z" fill="${fgColor}"/>
+            <path d="M ${p*0.75} ${p*0.7} C ${p*0.75} ${p*0.6}, ${p*0.6} ${p*0.6}, ${p*0.6} ${p*0.73} C ${p*0.6} ${p*0.85}, ${p*0.75} ${p*0.95}, ${p*0.75} ${p*0.98} C ${p*0.75} ${p*0.95}, ${p*0.9} ${p*0.85}, ${p*0.9} ${p*0.73} C ${p*0.9} ${p*0.6}, ${p*0.75} ${p*0.6}, ${p*0.75} ${p*0.7} Z" fill="${accentColor || fgColor}"/>
+          </g>
+        `;
+      } else if (shape === 'cherry_retro') {
+        patternContent = `
+          <rect width="${p}" height="${p}" fill="${bgColor}"/>
+          <g opacity="${opacity}">
+            <circle cx="${p*0.35}" cy="${p*0.65}" r="${p*0.12}" fill="${fgColor}"/>
+            <circle cx="${p*0.65}" cy="${p*0.65}" r="${p*0.12}" fill="${fgColor}"/>
+            <path d="M ${p*0.35} ${p*0.55} C ${p*0.4} ${p*0.3}, ${p*0.48} ${p*0.2}, ${p*0.5} ${p*0.15}" stroke="#15803d" stroke-width="2.5" fill="none"/>
+            <path d="M ${p*0.65} ${p*0.55} C ${p*0.6} ${p*0.3}, ${p*0.52} ${p*0.2}, ${p*0.5} ${p*0.15}" stroke="#15803d" stroke-width="2.5" fill="none"/>
+            <path d="M ${p*0.5} ${p*0.15} Q ${p*0.65} ${p*0.08}, ${p*0.62} ${p*0.22} Z" fill="${accentColor || '#22c55e'}"/>
+          </g>
+        `;
+      } else if (shape === 'checkerboard') {
+        const h = p / 2;
+        patternContent = `
+          <rect width="${p}" height="${p}" fill="${bgColor}"/>
+          <rect width="${h}" height="${h}" fill="${fgColor}" opacity="${opacity}"/>
+          <rect x="${h}" y="${h}" width="${h}" height="${h}" fill="${fgColor}" opacity="${opacity}"/>
+        `;
+      } else if (shape === 'stripe') {
+        const w = p / 2;
+        patternContent = `
+          <rect width="${p}" height="${p}" fill="${bgColor}"/>
+          <rect width="${w}" height="${p}" fill="${fgColor}" opacity="${opacity}"/>
+        `;
+      } else if (shape === 'grid') {
+        patternContent = `
+          <rect width="${p}" height="${p}" fill="${bgColor}"/>
+          <path d="M 0 0 L ${p} 0 M 0 0 L 0 ${p}" stroke="${fgColor}" stroke-width="2.5" opacity="${opacity}"/>
+          <path d="M 0 ${p*0.5} L ${p} ${p*0.5} M ${p*0.5} 0 L ${p*0.5} ${p}" stroke="${accentColor || fgColor}" stroke-width="1.5" stroke-dasharray="4,3" opacity="${opacity}"/>
+        `;
+      } else {
+        patternContent = `
+          <rect width="${p}" height="${p}" fill="${bgColor}"/>
+          <circle cx="${p*0.5}" cy="${p*0.5}" r="${p*0.2}" fill="${fgColor}" opacity="${opacity}"/>
+        `;
+      }
+
+      const transformAttr = angle > 0 ? `patternTransform="rotate(${angle})"` : '';
+      return `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="160"><defs><pattern id="pat_preview" width="${p}" height="${p}" patternUnits="userSpaceOnUse" ${transformAttr}>${patternContent}</pattern></defs><rect width="100%" height="100%" fill="url(#pat_preview)"/></svg>`;
+    }
+
+    function updatePatternPreview() {
+      const shape = document.getElementById('builder-pattern-shape')?.value || 'sparkle_y2k';
+      const fg = document.getElementById('builder-color-fg')?.value || '#f472b6';
+      const accent = document.getElementById('builder-color-accent')?.value || '#f59e0b';
+      const bg = document.getElementById('builder-color-bg')?.value || '#fff0f5';
+      const scale = parseFloat(document.getElementById('builder-slider-scale')?.value || '1.0');
+      const angle = parseInt(document.getElementById('builder-pattern-angle')?.value || '0', 10);
+      const opacity = parseFloat(document.getElementById('builder-pattern-opacity')?.value || '0.85');
+
+      const labelScale = document.getElementById('label-builder-scale');
+      if (labelScale) labelScale.textContent = `${scale.toFixed(1)}x`;
+
+      const previewBox = document.getElementById('builder-pattern-preview-box');
+      if (previewBox) {
+        previewBox.innerHTML = generatePatternSvgCode(shape, fg, accent, bg, scale, angle, opacity);
+      }
+    }
+
+    // Pattern Form Submit
+    const patternForm = document.getElementById('form-pattern-builder');
+    if (patternForm) {
+      patternForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const shape = document.getElementById('builder-pattern-shape').value;
+        const title = document.getElementById('builder-pattern-title').value;
+        const fg = document.getElementById('builder-color-fg').value;
+        const accent = document.getElementById('builder-color-accent').value;
+        const bg = document.getElementById('builder-color-bg').value;
+        const scale = parseFloat(document.getElementById('builder-slider-scale').value);
+        const angle = parseInt(document.getElementById('builder-pattern-angle').value, 10);
+        const opacity = parseFloat(document.getElementById('builder-pattern-opacity').value);
+
+        const svgCode = generatePatternSvgCode(shape, fg, accent, bg, scale, angle, opacity);
+
+        try {
+          const res = await fetch('/api/admin/artworks', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              title,
+              category: 'pattern',
+              isVector: true,
+              svgContent: svgCode
+            })
+          });
+          const result = await res.json();
+          if (result.success) {
+            alert('✅ 성공적으로 스티커/패턴이 라이브러리에 저장되었습니다!');
+            loadArtworksLibrary();
+          } else {
+            alert('패턴 저장에 실패했습니다.');
+          }
+        } catch (err) {
+          console.error('Error saving pattern:', err);
+          alert('패턴 저장 중 오류가 발생했습니다.');
+        }
+      });
+    }
+
+    // Attach builder listeners
+    ['builder-pattern-shape', 'builder-color-fg', 'builder-color-accent', 'builder-color-bg', 'builder-pattern-angle', 'builder-pattern-opacity', 'builder-slider-scale'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', updatePatternPreview);
+      if (el) el.addEventListener('change', updatePatternPreview);
+    });
+
+    async function loadArtworksLibrary() {
+      try {
+        const res = await fetch('/api/admin/artworks');
+        const data = await res.json();
+
+        const statEl = document.getElementById('stat-count-patterns');
+        if (statEl) statEl.textContent = `${(data.artworks || []).length}개`;
+
+        const grid = document.getElementById('pattern-library-grid');
+        const badge = document.getElementById('pattern-count-badge');
+        if (!grid) return;
+
+        grid.innerHTML = '';
+        if (badge) badge.textContent = `총 ${(data.artworks || []).length}개 등록됨`;
+
+        if (!data.artworks || data.artworks.length === 0) {
+          grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--slate-400); font-size:13px;">등록된 패턴/스티커가 없습니다.</div>';
+          return;
+        }
+
+        data.artworks.forEach(art => {
+          const card = document.createElement('div');
+          card.style.cssText = 'background:#ffffff; border:1px solid var(--slate-200); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:10px; position:relative; box-shadow:0 2px 4px rgba(0,0,0,0.02); transition:all 0.2s ease;';
+
+          let previewContent = '';
+          if (art.svgContent) {
+            previewContent = `<div style="width:100%; height:120px; border-radius:8px; border:1px solid #e2e8f0; overflow:hidden; display:flex; align-items:center; justify-content:center; background:#fafafa;">${art.svgContent}</div>`;
+          } else {
+            previewContent = `<img src="${art.url}" style="width:100%; height:120px; object-fit:contain; border-radius:8px; border:1px solid #e2e8f0;" alt="${art.title}">`;
+          }
+
+          card.innerHTML = `
+            ${previewContent}
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:12px; font-weight:800; color:var(--slate-800); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:120px;">${art.title}</span>
+              <button type="button" class="btn-delete-art" data-id="${art.id}" style="background:#fef2f2; color:#ef4444; border:1px solid #fecaca; border-radius:6px; padding:3px 8px; font-size:11px; font-weight:700; cursor:pointer;">🗑️ 삭제</button>
+            </div>
+          `;
+
+          grid.appendChild(card);
+        });
+
+        // Delete button listener
+        document.querySelectorAll('.btn-delete-art').forEach(btn => {
+          btn.addEventListener('click', async (e) => {
+            const id = e.currentTarget.dataset.id;
+            if (confirm('해당 패턴/스티커를 라이브러리에서 삭제하시겠습니까?')) {
+              await fetch(`/api/admin/artworks/${encodeURIComponent(id)}`, { method: 'DELETE' });
+              loadArtworksLibrary();
+            }
+          });
+        });
+
+      } catch (err) {
+        console.error('Error loading artworks library:', err);
+      }
+    }
+
     loadProducts();
     loadFonts();
     loadAdminOrders();
+    updatePatternPreview();
+    loadArtworksLibrary();
   </script>
 </body>
 </html>

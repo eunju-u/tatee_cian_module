@@ -1,0 +1,78 @@
+[
+  {
+    "id": "pat_checker",
+    "category": "pattern",
+    "title": "체커보드 패턴",
+    "isVector": true,
+    "svgContent": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"300\" height=\"300\" viewBox=\"0 0 300 300\"><rect x=\"0\" y=\"0\" width=\"150\" height=\"150\" fill=\"#0f172a\"/><rect x=\"150\" y=\"0\" width=\"150\" height=\"150\" fill=\"#ffffff\"/><rect x=\"0\" y=\"150\" width=\"150\" height=\"150\" fill=\"#ffffff\"/><rect x=\"150\" y=\"150\" width=\"150\" height=\"150\" fill=\"#0f172a\"/><rect x=\"30\" y=\"30\" width=\"90\" height=\"90\" fill=\"#ffffff\"/><rect x=\"180\" y=\"30\" width=\"90\" height=\"90\" fill=\"#0f172a\"/><rect x=\"30\" y=\"180\" width=\"90\" height=\"90\" fill=\"#0f172a\"/><rect x=\"180\" y=\"180\" width=\"90\" height=\"90\" fill=\"#ffffff\"/></svg>"
+  },
+  {
+    "id": "pat_dot",
+    "category": "pattern",
+    "title": "폴카 도트 패턴",
+    "isVector": true,
+    "svgContent": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"300\" height=\"300\" viewBox=\"0 0 300 300\"><circle cx=\"50\" cy=\"50\" r=\"25\" fill=\"#0f172a\"/><circle cx=\"150\" cy=\"50\" r=\"25\" fill=\"#0f172a\"/><circle cx=\"250\" cy=\"50\" r=\"25\" fill=\"#0f172a\"/><circle cx=\"100\" cy=\"120\" r=\"25\" fill=\"#0f172a\"/><circle cx=\"200\" cy=\"120\" r=\"25\" fill=\"#0f172a\"/><circle cx=\"50\" cy=\"190\" r=\"25\" fill=\"#0f172a\"/><circle cx=\"150\" cy=\"190\" r=\"25\" fill=\"#0f172a\"/><circle cx=\"250\" cy=\"190\" r=\"25\" fill=\"#0f172a\"/><circle cx=\"100\" cy=\"260\" r=\"25\" fill=\"#0f172a\"/><circle cx=\"200\" cy=\"260\" r=\"25\" fill=\"#0f172a\"/></svg>"
+  },
+  {
+    "id": "pat_star",
+    "category": "pattern",
+    "title": "별별 그래픽 패턴",
+    "isVector": true,
+    "svgContent": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"300\" height=\"300\" viewBox=\"0 0 300 300\"><path d=\"M 60 20 L 72 50 L 105 50 L 78 70 L 88 100 L 60 80 L 32 100 L 42 70 L 15 50 L 48 50 Z\" fill=\"#ff7828\"/><path d=\"M 220 20 L 232 50 L 265 50 L 238 70 L 248 100 L 220 80 L 192 100 L 202 70 L 175 50 L 208 50 Z\" fill=\"#ff7828\"/><path d=\"M 140 120 L 152 150 L 185 150 L 158 170 L 168 200 L 140 180 L 112 200 L 122 170 L 95 150 L 128 150 Z\" fill=\"#0f172a\"/><path d=\"M 60 210 L 72 240 L 105 240 L 78 260 L 88 290 L 60 270 L 32 290 L 42 260 L 15 240 L 48 240 Z\" fill=\"#ff7828\"/><path d=\"M 220 210 L 232 240 L 265 240 L 238 260 L 248 290 L 220 270 L 192 290 L 202 260 L 175 240 L 208 240 Z\" fill=\"#ff7828\"/></svg>"
+  },
+  {
+    "id": "pat_geo",
+    "category": "pattern",
+    "title": "기하학 헥사곤 패턴",
+    "isVector": true,
+    "svgContent": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"300\" height=\"300\" viewBox=\"0 0 300 300\"><polygon points=\"150,20 230,65 230,155 150,200 70,155 70,65\" fill=\"none\" stroke=\"#0f172a\" stroke-width=\"12\"/><polygon points=\"150,50 200,80 200,140 150,170 100,140 100,80\" fill=\"#ff7828\"/><polygon points=\"150,80 170,100 170,120 150,140 130,120 130,100\" fill=\"#ffffff\"/></svg>"
+  },
+  {
+    "id": "art_badge_1",
+    "category": "graphic",
+    "title": "빈티지 아웃도어 뱃지",
+    "isVector": true,
+    "svgContent": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"280\" height=\"280\" viewBox=\"0 0 280 280\"><circle cx=\"140\" cy=\"140\" r=\"130\" fill=\"#0f172a\" stroke=\"#ff7828\" stroke-width=\"8\"/><circle cx=\"140\" cy=\"140\" r=\"110\" fill=\"none\" stroke=\"#ffffff\" stroke-width=\"3\" stroke-dasharray=\"6,4\"/><polygon points=\"140,40 165,110 240,110 180,155 200,225 140,180 80,225 100,155 40,110 115,110\" fill=\"#ff7828\"/><text x=\"140\" y=\"160\" font-family=\"sans-serif\" font-size=\"22\" font-weight=\"bold\" fill=\"#ffffff\" text-anchor=\"middle\">ORIGINAL</text></svg>"
+  },
+  {
+    "id": "art_label_1",
+    "category": "label",
+    "title": "스트릿 케어 라벨",
+    "isVector": true,
+    "svgContent": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"240\" height=\"320\" viewBox=\"0 0 240 320\"><rect x=\"10\" y=\"10\" width=\"220\" height=\"300\" rx=\"12\" fill=\"#ffffff\" stroke=\"#0f172a\" stroke-width=\"5\"/><line x1=\"10\" y1=\"70\" x2=\"230\" y2=\"70\" stroke=\"#0f172a\" stroke-width=\"4\"/><text x=\"120\" y=\"50\" font-family=\"monospace\" font-size=\"20\" font-weight=\"900\" fill=\"#0f172a\" text-anchor=\"middle\">TATEE STUDIO</text><text x=\"120\" y=\"110\" font-family=\"sans-serif\" font-size=\"14\" font-weight=\"bold\" fill=\"#ff7828\" text-anchor=\"middle\">100% COTTON</text><circle cx=\"60\" cy=\"170\" r=\"20\" fill=\"none\" stroke=\"#0f172a\" stroke-width=\"3\"/><circle cx=\"120\" cy=\"170\" r=\"20\" fill=\"none\" stroke=\"#0f172a\" stroke-width=\"3\"/><circle cx=\"180\" cy=\"170\" r=\"20\" fill=\"none\" stroke=\"#0f172a\" stroke-width=\"3\"/><path d=\"M 50 170 L 70 170\" stroke=\"#0f172a\" stroke-width=\"3\"/><line x1=\"10\" y1=\"230\" x2=\"230\" y2=\"230\" stroke=\"#0f172a\" stroke-width=\"2\" stroke-dasharray=\"4,4\"/><text x=\"120\" y=\"270\" font-family=\"sans-serif\" font-size=\"12\" fill=\"#64748b\" text-anchor=\"middle\">MADE IN KOREA</text></svg>"
+  },
+  {
+    "id": "art_1",
+    "category": "graphic",
+    "title": "로봇 스티커 1",
+    "url": "https://api.dicebear.com/7.x/bottts/svg?seed=tatee1"
+  },
+  {
+    "id": "art_2",
+    "category": "graphic",
+    "title": "로봇 스티커 2",
+    "url": "https://api.dicebear.com/7.x/bottts/svg?seed=tatee2"
+  },
+  {
+    "id": "art_3",
+    "category": "graphic",
+    "title": "로봇 스티커 3",
+    "url": "https://api.dicebear.com/7.x/bottts/svg?seed=tatee3"
+  },
+  {
+    "id": "art_1786588178970",
+    "title": "🌸 파스텔 데이지 패턴",
+    "category": "pattern",
+    "isVector": true,
+    "svgContent": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"300\" height=\"300\"><defs><pattern id=\"pat1\" width=\"80\" height=\"80\" patternUnits=\"userSpaceOnUse\"><rect width=\"80\" height=\"80\" fill=\"#fff0f5\"/><circle cx=\"40\" cy=\"40\" r=\"15\" fill=\"#f472b6\"/></pattern></defs><rect width=\"100%\" height=\"100%\" fill=\"url(#pat1)\"/></svg>",
+    "url": null
+  },
+  {
+    "id": "art_1786588422206",
+    "title": "💫 Y2K 핑크 글리터 스파클",
+    "category": "pattern",
+    "isVector": true,
+    "svgContent": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"300\" height=\"300\"><defs><pattern id=\"pat_sparkle\" width=\"90\" height=\"90\" patternUnits=\"userSpaceOnUse\"><rect width=\"90\" height=\"90\" fill=\"#fff0f5\"/><g opacity=\"0.85\"><path d=\"M 27 9 Q 27 27, 45 27 Q 27 27, 27 45 Q 27 27, 9 27 Q 27 27, 27 9 Z\" fill=\"#f472b6\"/><path d=\"M 67.5 54 Q 67.5 64.8, 78.3 64.8 Q 67.5 64.8, 67.5 75.6 Q 67.5 64.8, 56.7 64.8 Q 67.5 64.8, 67.5 54 Z\" fill=\"#f59e0b\"/></g></pattern></defs><rect width=\"100%\" height=\"100%\" fill=\"url(#pat_sparkle)\"/></svg>",
+    "url": null
+  }
+]

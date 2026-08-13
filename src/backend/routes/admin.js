@@ -335,6 +335,33 @@ router.delete('/fonts/:index', (req, res) => {
   res.status(400).json({ error: 'Invalid font index.' });
 });
 
+const ARTWORKS_JSON_PATH = path.resolve(process.cwd(), 'src/backend/public/artworks.json');
+
+function loadArtworksFromDisk() {
+  try {
+    if (fs.existsSync(ARTWORKS_JSON_PATH)) {
+      const raw = fs.readFileSync(ARTWORKS_JSON_PATH, 'utf-8');
+      return JSON.parse(raw);
+    }
+  } catch (err) {
+    console.warn('⚠️ Could not load artworks.json, using defaults:', err);
+  }
+  return [
+    { id: 'art_1', title: '로봇 스티커 1', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=tatee1' },
+    { id: 'art_2', title: '로봇 스티커 2', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=tatee2' }
+  ];
+}
+
+function saveArtworksToDisk(artworksArr) {
+  try {
+    fs.writeFileSync(ARTWORKS_JSON_PATH, JSON.stringify(artworksArr, null, 2), 'utf-8');
+  } catch (err) {
+    console.error('Failed to save artworks.json:', err);
+  }
+}
+
+export const artworksDb = loadArtworksFromDisk();
+
 /**
  * GET /api/admin/artworks
  */
@@ -349,19 +376,37 @@ router.get('/artworks', (req, res) => {
  * POST /api/admin/artworks
  */
 router.post('/artworks', (req, res) => {
-  const { title, url } = req.body;
-  if (!url) {
-    return res.status(400).json({ error: 'Artwork URL is required.' });
+  const { title, url, svgContent, category, isVector } = req.body;
+  if (!url && !svgContent) {
+    return res.status(400).json({ error: 'Artwork URL or svgContent is required.' });
   }
 
   const newArt = {
     id: `art_${Date.now()}`,
-    title: title || '새 스티커',
-    url
+    title: title || '새 스티커/패턴',
+    url: url || '',
+    svgContent: svgContent || null,
+    category: category || 'sticker',
+    isVector: !!isVector
   };
 
   artworksDb.push(newArt);
-  res.json({ success: true, artwork: newArt });
+  saveArtworksToDisk(artworksDb);
+  res.json({ success: true, artwork: newArt, artworks: artworksDb });
+});
+
+/**
+ * DELETE /api/admin/artworks/:id
+ */
+router.delete('/artworks/:id', (req, res) => {
+  const id = req.params.id;
+  const idx = artworksDb.findIndex(a => a.id === id);
+  if (idx !== -1) {
+    artworksDb.splice(idx, 1);
+    saveArtworksToDisk(artworksDb);
+    return res.json({ success: true, artworks: artworksDb });
+  }
+  res.status(404).json({ error: 'Artwork not found.' });
 });
 
 export default router;

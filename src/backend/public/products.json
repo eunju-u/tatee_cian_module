@@ -107,12 +107,12 @@
       "front": {
         "url": "http://localhost:4000/uploads/surf_화이트_0_1786496110304_334.png",
         "name": "앞면",
-        "printWidthCm": 10,
-        "printHeightCm": 11,
-        "printTopPct": 23.955829326923077,
-        "printLeftPct": 54.481534090909086,
-        "printWidthPct": 19.86328125,
-        "printHeightPct": 15.623497596153847
+        "printWidthCm": 25,
+        "printHeightCm": 44,
+        "printTopPct": 23.42247596153846,
+        "printLeftPct": 24.4921875,
+        "printWidthPct": 50.78657670454545,
+        "printHeightPct": 62.90414663461539
       },
       "back": {
         "url": "http://localhost:4000/uploads/back_1785807283154_707.png",
@@ -160,12 +160,12 @@
         "front": {
           "url": "http://localhost:4000/uploads/surf_화이트_0_1786496110304_334.png",
           "name": "앞면",
-          "printWidthCm": 10,
-          "printHeightCm": 11,
-          "printTopPct": 23.955829326923077,
-          "printLeftPct": 54.481534090909086,
-          "printWidthPct": 19.86328125,
-          "printHeightPct": 15.623497596153847
+          "printWidthCm": 25,
+          "printHeightCm": 44,
+          "printTopPct": 23.42247596153846,
+          "printLeftPct": 24.4921875,
+          "printWidthPct": 50.78657670454545,
+          "printHeightPct": 62.90414663461539
         },
         "back": {
           "url": "http://localhost:4000/uploads/back_1785807283154_707.png",

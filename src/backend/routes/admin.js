@@ -95,12 +95,7 @@ function saveFontsToDisk(fontsArr) {
 export const productsDb = loadProductsFromDisk();
 export const fontsDb = loadFontsFromDisk();
 
-const artworksDb = [
-  { id: 'art_1', title: '로봇 스티커 1', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=tatee1' },
-  { id: 'art_2', title: '로봇 스티커 2', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=tatee2' },
-  { id: 'art_3', title: '로봇 스티커 3', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=tatee3' },
-  { id: 'art_4', title: '로봇 스티커 4', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=tatee4' }
-];
+
 
 /**
  * POST /api/admin/upload

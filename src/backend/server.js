@@ -6,7 +6,7 @@ import customizerRoutes from './routes/customizer.js';
 import adminRoutes from './routes/admin.js';
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = parseInt(process.env.PORT || '3000', 10);
 
 // Middleware
 app.use(cors());
@@ -40,13 +40,26 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', time: new Date().toISOString() });
 });
 
-app.listen(PORT, () => {
-  console.log(`=======================================================`);
-  console.log(`🚀 TATEE Customizer Backend API running at:`);
-  console.log(`   http://localhost:${PORT}`);
-  console.log(`   Customer Demo:   http://localhost:${PORT}/demo/detail_demo.html`);
-  console.log(`   Admin Dashboard: http://localhost:${PORT}/admin/admin_demo.html`);
-  console.log(`   Uploads:         http://localhost:${PORT}/uploads/`);
-  console.log(`   PDFs:            http://localhost:${PORT}/pdfs/`);
-  console.log(`=======================================================`);
-});
+const startServer = (port) => {
+  const server = app.listen(port, '127.0.0.1', () => {
+    console.log(`=======================================================`);
+    console.log(`🚀 TATEE Customizer Backend API running at:`);
+    console.log(`   http://localhost:${port}`);
+    console.log(`   Customer Demo:   http://localhost:${port}/demo/detail_demo.html`);
+    console.log(`   Admin Dashboard: http://localhost:${port}/admin/admin_demo.html`);
+    console.log(`   Uploads:         http://localhost:${port}/uploads/`);
+    console.log(`   PDFs:            http://localhost:${port}/pdfs/`);
+    console.log(`=======================================================`);
+  });
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE' || err.code === 'EPERM') {
+      console.warn(`Port ${port} unavailable (${err.code}), trying port ${port + 1}...`);
+      startServer(port + 1);
+    } else {
+      console.error('Server error:', err);
+    }
+  });
+};
+
+startServer(PORT);

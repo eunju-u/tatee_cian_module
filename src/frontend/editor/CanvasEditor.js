@@ -345,7 +345,8 @@ export class CanvasEditor {
   }
 
   handleSelection(e) {
-    const selected = (e && e.selected && e.selected.length > 0) ? e.selected[0] : (e && e.target ? e.target : this.canvas.getActiveObject());
+    const activeObj = this.canvas.getActiveObject();
+    const selected = activeObj || (e && e.target ? e.target : (e && e.selected && e.selected.length > 0 ? e.selected[0] : null));
     if (selected && !selected.isGuideline && this.onSelectionChanged) {
       const meta = this.dimensionMapper.getObjectPhysicalMeta(selected);
       this.onSelectionChanged(meta, selected);
@@ -363,6 +364,7 @@ export class CanvasEditor {
   undo() {
     this.historyManager.undo(() => {
       this.canvas.renderAll();
+      if (this.layerManager) this.layerManager.updateLayerList();
       if (this.onCanvasModified) this.onCanvasModified();
     });
   }
@@ -370,6 +372,7 @@ export class CanvasEditor {
   redo() {
     this.historyManager.redo(() => {
       this.canvas.renderAll();
+      if (this.layerManager) this.layerManager.updateLayerList();
       if (this.onCanvasModified) this.onCanvasModified();
     });
   }
@@ -394,6 +397,33 @@ export class CanvasEditor {
       this.canvas.discardActiveObject();
       this.canvas.renderAll();
     }
+  }
+
+  duplicateActiveObject() {
+    const activeObj = this.canvas.getActiveObject();
+    if (!activeObj) return;
+
+    activeObj.clone((cloned) => {
+      this.canvas.discardActiveObject();
+      cloned.set({
+        left: cloned.left + 20,
+        top: cloned.top + 20,
+        evented: true
+      });
+      if (cloned.type === 'activeSelection') {
+        cloned.canvas = this.canvas;
+        cloned.forEachObject((obj) => {
+          this.canvas.add(obj);
+        });
+        cloned.setCoords();
+      } else {
+        this.canvas.add(cloned);
+      }
+      this.canvas.setActiveObject(cloned);
+      this.canvas.requestRenderAll();
+      this.triggerChange();
+      this.handleSelection({ target: cloned, selected: [cloned] });
+    });
   }
 
   bringForward() {
@@ -610,14 +640,36 @@ export class CanvasEditor {
       });
       shapeObj.originalPoints = points;
     } else if (type === 'heart') {
-      const heartPath = 'M 12 21.35 l -1.45 -1.32 C 5.4 15.36 2 12.28 2 8.5 C 2 5.42 4.42 3 7.5 3 c 1.74 0 3.41 0.81 4.5 2.09 C 13.09 3.81 14.76 3 16.5 3 C 19.58 3 22 5.42 22 8.5 c 0 3.78 -3.4 6.86 -8.55 11.54 L 12 21.35 Z';
-      shapeObj = new fabric.Path(heartPath, {
+      const points = [];
+      const numPoints = 120;
+      let minY = Infinity, maxY = -Infinity;
+      let minX = Infinity, maxX = -Infinity;
+      const rawPoints = [];
+
+      for (let i = 0; i < numPoints; i++) {
+        const t = (i / numPoints) * 2 * Math.PI;
+        const x = 16 * Math.pow(Math.sin(t), 3);
+        const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+        rawPoints.push({ x, y });
+      }
+
+      const cx = (minX + maxX) / 2;
+      const cy = (minY + maxY) / 2;
+
+      for (const p of rawPoints) {
+        points.push({ x: (p.x - cx) * 3, y: (p.y - cy) * 3 });
+      }
+
+      shapeObj = new fabric.Polygon(points, {
         fill: fillColor,
         stroke: strokeColor,
-        strokeWidth: strokeWidth,
-        scaleX: 4,
-        scaleY: 4
+        strokeWidth: strokeWidth
       });
+      shapeObj.originalPoints = points;
     } else if (type === 'star') {
       const points = [
         { x: 50, y: 0 },
@@ -857,14 +909,22 @@ export class CanvasEditor {
 
   addImageUrl(url) {
     fabric.Image.fromURL(url, (img) => {
-      img.scaleToWidth(150);
+      if (!img) return;
+      const centerX = this.printBox.left + (this.printBox.width / 2);
+      const centerY = this.printBox.top + (this.printBox.height / 2);
+
+      img.scaleToWidth(180);
       img.set({
-        left: this.printBox.left + (this.printBox.width / 2) - 75,
-        top: this.printBox.top + (this.printBox.height / 2) - 75,
+        left: centerX,
+        top: centerY,
+        originX: 'center',
+        originY: 'center',
         cornerColor: '#3b82f6',
         cornerSize: 12,
         transparentCorners: false
       });
+      img.setCoords();
+
       this.canvas.add(img);
       this.canvas.setActiveObject(img);
       this.canvas.renderAll();
@@ -1034,8 +1094,10 @@ export class CanvasEditor {
       const rect = new fabric.Rect({
         width: 220,
         height: 220,
-        left: this.printBox.left + (this.printBox.width / 2) - 110,
-        top: this.printBox.top + (this.printBox.height / 2) - 110,
+        left: this.printBox.left + (this.printBox.width / 2),
+        top: this.printBox.top + (this.printBox.height / 2),
+        originX: 'center',
+        originY: 'center',
         fill: pattern,
         cornerColor: '#3b82f6',
         cornerSize: 12,
@@ -1155,8 +1217,307 @@ export class CanvasEditor {
     this.triggerChange();
   }
 
+  openMaskingModal() {
+    const activeObj = this.canvas.getActiveObject();
+    if (!activeObj || activeObj.type !== 'activeSelection') {
+      alert('마스킹할 도형 레이어와 패턴/이미지 레이어를 화면에서 함께 선택(다중 선택)해주세요!');
+      return false;
+    }
+
+    const checkIsContent = (o) => Boolean(
+      o && (
+        o.isPattern ||
+        o.isArtwork ||
+        o.isSticker ||
+        o.isPatternLayer ||
+        o.type === 'image' ||
+        o.patternTitle !== undefined ||
+        (o.fill && typeof o.fill === 'object' && o.fill.type === 'pattern')
+      )
+    );
+
+    const checkIsShape = (o) => Boolean(
+      o && !checkIsContent(o) && !o.isGuideline && (
+        o.isShape ||
+        o.shapeType !== undefined ||
+        ['rect', 'circle', 'triangle', 'polygon', 'path'].includes(o.type?.toLowerCase())
+      )
+    );
+
+    const objects = activeObj.getObjects();
+    const contentObj = objects.find(o => checkIsContent(o));
+    const shapeObj = objects.find(o => o !== contentObj && checkIsShape(o));
+
+    if (!shapeObj || !contentObj) {
+      alert('마스킹할 도형 레이어와 패턴/이미지 레이어가 함께 선택되어야 합니다!');
+      return false;
+    }
+
+    this.canvas.discardActiveObject();
+
+    this.pendingShapeObj = shapeObj;
+    this.pendingContentObj = contentObj;
+
+    const modal = document.getElementById('modal-masking-editor');
+    if (modal) modal.style.display = 'flex';
+
+    this.initMaskingPreviewCanvas();
+    return true;
+  }
+
+  initMaskingPreviewCanvas() {
+    if (!this.pendingShapeObj || !this.pendingContentObj) return;
+
+    if (this.maskPreviewCanvas) {
+      this.maskPreviewCanvas.dispose();
+      this.maskPreviewCanvas = null;
+    }
+
+    this.maskPreviewCanvas = new fabric.Canvas('canvas-masking-preview', {
+      width: 300,
+      height: 300,
+      selection: false
+    });
+
+    this.pendingShapeObj.clone((clonedShape) => {
+      // 1. Determine raw dimensions of clonedShape
+      const shapeRect = clonedShape.getBoundingRect(true, true);
+      const rawWidth = shapeRect.width || 100;
+      const rawHeight = shapeRect.height || 100;
+
+      // Fit shape inside 135x135 box so there is a safe 82px margin on all 4 sides of the 300x300 canvas
+      const fitScale = Math.min(135 / rawWidth, 135 / rawHeight);
+      const targetScaleX = clonedShape.scaleX * fitScale;
+      const targetScaleY = clonedShape.scaleY * fitScale;
+
+      const centerY = 155; // Slightly shift down to guarantee ample top headroom
+
+      // 2. Create background guide shape (solid intact shape with original fill/stroke, NO dashed lines)
+      clonedShape.clone((guideShape) => {
+        const shapeFill = (clonedShape.fill && clonedShape.fill !== 'none') ? clonedShape.fill : '#17171a';
+        guideShape.set({
+          left: 150,
+          top: centerY,
+          originX: 'center',
+          originY: 'center',
+          scaleX: targetScaleX,
+          scaleY: targetScaleY,
+          fill: shapeFill,
+          stroke: clonedShape.stroke || 'none',
+          strokeWidth: clonedShape.strokeWidth || 0,
+          strokeDashArray: null,
+          selectable: false,
+          evented: false
+        });
+
+        // 3. Prepare absolute clipPath shape centered at (150, centerY)
+        clonedShape.set({
+          left: 150,
+          top: centerY,
+          originX: 'center',
+          originY: 'center',
+          scaleX: targetScaleX,
+          scaleY: targetScaleY,
+          absolutePositioned: true
+        });
+
+        this.previewShapeRef = clonedShape;
+        this.previewGuideRef = guideShape;
+
+        this.pendingContentObj.clone((clonedContent) => {
+          const contentRect = clonedContent.getBoundingRect(true, true);
+          const contentWidth = contentRect.width || 100;
+          const contentHeight = contentRect.height || 100;
+          // Scale content so it 100% covers the 180px shape container completely
+          const contentFitScale = Math.max(240 / contentWidth, 240 / contentHeight);
+
+          clonedContent.set({
+            scaleX: clonedContent.scaleX * contentFitScale,
+            scaleY: clonedContent.scaleY * contentFitScale,
+            left: 150,
+            top: 150,
+            originX: 'center',
+            originY: 'center',
+            clipPath: clonedShape,
+            selectable: true,
+            hasBorders: true,
+            hasControls: true,
+            cornerColor: '#2563eb',
+            cornerStyle: 'circle',
+            cornerSize: 10
+          });
+
+          this.previewContentRef = clonedContent;
+          this.basePreviewScaleX = clonedContent.scaleX;
+          this.basePreviewScaleY = clonedContent.scaleY;
+
+          // Add guide shape first, then content on top
+          this.maskPreviewCanvas.add(guideShape);
+          this.maskPreviewCanvas.add(clonedContent);
+          this.maskPreviewCanvas.setActiveObject(clonedContent);
+          this.maskPreviewCanvas.renderAll();
+
+          const sliderScale = document.getElementById('slider-mask-scale');
+          const sliderRot = document.getElementById('slider-mask-rotation');
+          const valScale = document.getElementById('val-mask-scale');
+          const valRot = document.getElementById('val-mask-rotation');
+
+          if (sliderScale) sliderScale.value = 100;
+          if (sliderRot) sliderRot.value = 0;
+          if (valScale) valScale.textContent = '100%';
+          if (valRot) valRot.textContent = '0°';
+
+          clonedContent.on('moving', () => this.maskPreviewCanvas.renderAll());
+          clonedContent.on('scaling', () => {
+            const ratio = Math.round((clonedContent.scaleX / this.basePreviewScaleX) * 100);
+            if (sliderScale) sliderScale.value = Math.min(300, Math.max(30, ratio));
+            if (valScale) valScale.textContent = `${ratio}%`;
+            this.maskPreviewCanvas.renderAll();
+          });
+          clonedContent.on('rotating', () => {
+            const deg = Math.round(clonedContent.angle % 360);
+            if (sliderRot) sliderRot.value = deg;
+            if (valRot) valRot.textContent = `${deg}°`;
+            this.maskPreviewCanvas.renderAll();
+          });
+        });
+      });
+    });
+  }
+
+  updateMaskPreviewScale(scalePercent) {
+    if (!this.previewContentRef || !this.basePreviewScaleX) return;
+    const factor = scalePercent / 100;
+    this.previewContentRef.set({
+      scaleX: this.basePreviewScaleX * factor,
+      scaleY: this.basePreviewScaleY * factor
+    });
+    this.previewContentRef.setCoords();
+    if (this.maskPreviewCanvas) this.maskPreviewCanvas.renderAll();
+  }
+
+  updateMaskPreviewRotation(angleDeg) {
+    if (!this.previewContentRef) return;
+    this.previewContentRef.set({ angle: angleDeg });
+    this.previewContentRef.setCoords();
+    if (this.maskPreviewCanvas) this.maskPreviewCanvas.renderAll();
+  }
+
+  centerMaskPreviewContent() {
+    if (!this.previewContentRef) return;
+    this.previewContentRef.set({
+      left: 150,
+      top: 150
+    });
+    this.previewContentRef.setCoords();
+    if (this.maskPreviewCanvas) this.maskPreviewCanvas.renderAll();
+  }
+
+  applyCustomMaskingWithOffset() {
+    if (!this.pendingShapeObj || !this.pendingContentObj || !this.previewContentRef || !this.previewShapeRef) {
+      alert('마스킹 처리할 미리보기가 준비되지 않았습니다.');
+      return false;
+    }
+
+    const shapeObj = this.pendingShapeObj;
+    const contentObj = this.pendingContentObj;
+
+    // Hide guide shape before exporting
+    if (this.previewGuideRef) {
+      this.previewGuideRef.set({ visible: false });
+    }
+
+    // Discard active selection on preview canvas so handles are omitted in output
+    this.maskPreviewCanvas.discardActiveObject();
+    this.previewContentRef.set({ hasBorders: false, hasControls: false });
+    this.maskPreviewCanvas.renderAll();
+
+    // Compute bounding box from shape mask
+    const bRect = this.previewShapeRef.getBoundingRect(true, true);
+    
+    // Add safe padding to ensure no sub-pixel border clipping occurs during PNG export
+    const padding = 8;
+    const exportLeft = Math.max(0, Math.floor(bRect.left - padding));
+    const exportTop = Math.max(0, Math.floor(bRect.top - padding));
+    const exportRight = Math.min(300, Math.ceil(bRect.left + bRect.width + padding));
+    const exportBottom = Math.min(300, Math.ceil(bRect.top + bRect.height + padding));
+    const exportWidth = Math.max(1, exportRight - exportLeft);
+    const exportHeight = Math.max(1, exportBottom - exportTop);
+
+    const dataUrl = this.maskPreviewCanvas.toDataURL({
+      format: 'png',
+      left: exportLeft,
+      top: exportTop,
+      width: exportWidth,
+      height: exportHeight,
+      multiplier: 3,
+      quality: 1.0
+    });
+
+    fabric.Image.fromURL(dataUrl, (maskedImg) => {
+      const targetWidth = (shapeObj.width * shapeObj.scaleX) || 200;
+      const targetHeight = (shapeObj.height * shapeObj.scaleY) || 200;
+
+      const exportWidthVal = maskedImg.width || 1;
+      const exportHeightVal = maskedImg.height || 1;
+
+      // Scale factor matches exact ratio including export padding
+      const scaleFactorX = (targetWidth / (bRect.width || 100)) * (bRect.width / exportWidthVal);
+      const scaleFactorY = (targetHeight / (bRect.height || 100)) * (bRect.height / exportHeightVal);
+
+      maskedImg.set({
+        left: shapeObj.left,
+        top: shapeObj.top,
+        scaleX: (targetWidth / bRect.width) * ( (bRect.width + padding * 2) / exportWidthVal ),
+        scaleY: (targetHeight / bRect.height) * ( (bRect.height + padding * 2) / exportHeightVal ),
+        angle: shapeObj.angle || 0,
+        originX: 'center',
+        originY: 'center',
+        isMaskedLayer: true,
+        isPattern: true,
+        patternTitle: shapeObj.patternTitle || contentObj.patternTitle || '마스킹 레이어'
+      });
+
+      maskedImg.setCoords();
+
+      // Remove both original separate shape and content objects from main canvas
+      this.canvas.remove(shapeObj);
+      this.canvas.remove(contentObj);
+
+      // Add single unified masked image layer
+      this.canvas.add(maskedImg);
+      this.canvas.setActiveObject(maskedImg);
+      this.canvas.renderAll();
+
+      this.historyManager.saveState();
+      if (this.layerManager) this.layerManager.updateLayerList();
+      if (this.onCanvasModified) this.onCanvasModified();
+
+      this.closeMaskingModal();
+    });
+
+    return true;
+  }
+
+  closeMaskingModal() {
+    const modal = document.getElementById('modal-masking-editor');
+    if (modal) modal.style.display = 'none';
+
+    if (this.maskPreviewCanvas) {
+      this.maskPreviewCanvas.dispose();
+      this.maskPreviewCanvas = null;
+    }
+    this.pendingShapeObj = null;
+    this.pendingContentObj = null;
+    this.previewContentRef = null;
+    this.previewShapeRef = null;
+  }
+
   addSvgString(svgString) {
     if (!svgString) return;
+
+    const centerX = this.printBox.left + (this.printBox.width / 2);
+    const centerY = this.printBox.top + (this.printBox.height / 2);
 
     // Check if SVG contains pattern/defs definitions that Fabric loadSVGFromString drops
     if (svgString.includes('<pattern') || svgString.includes('patternUnits')) {
@@ -1165,12 +1526,15 @@ export class CanvasEditor {
         if (!img) return;
         img.scaleToWidth(200);
         img.set({
-          left: this.printBox.left + (this.printBox.width / 2) - 100,
-          top: this.printBox.top + (this.printBox.height / 2) - 100,
+          left: centerX,
+          top: centerY,
+          originX: 'center',
+          originY: 'center',
           cornerColor: '#3b82f6',
           cornerSize: 12,
           transparentCorners: false
         });
+        img.setCoords();
         img.isPattern = true;
         img.patternScale = 1.0;
         img.patternAngle = 0;
@@ -1188,12 +1552,17 @@ export class CanvasEditor {
       if (!loadedObject) return;
       loadedObject.scaleToWidth(180);
       loadedObject.set({
-        left: this.printBox.left + (this.printBox.width / 2) - 90,
-        top: this.printBox.top + (this.printBox.height / 2) - 90,
+        left: centerX,
+        top: centerY,
+        originX: 'center',
+        originY: 'center',
         cornerColor: '#3b82f6',
         cornerSize: 12,
         transparentCorners: false
       });
+      loadedObject.setCoords();
+      loadedObject.isPattern = true;
+      loadedObject.isArtwork = true;
       this.canvas.add(loadedObject);
       this.canvas.setActiveObject(loadedObject);
       this.canvas.renderAll();
@@ -1440,7 +1809,14 @@ export class CanvasEditor {
   }
 
   getCanvasJson() {
-    return this.canvas.toJSON(['fontFamily', 'fill', 'angle', 'fontWeight', 'fontStyle', 'underline', 'linethrough', 'charSpacing', 'lineHeight', 'textAlign', 'isGuideline', 'shapeType', 'rx', 'ry', 'cornerRadius', 'stroke', 'strokeWidth', 'scaleX', 'scaleY']);
+    return this.canvas.toJSON([
+      'fontFamily', 'fill', 'angle', 'fontWeight', 'fontStyle', 'underline', 'linethrough',
+      'charSpacing', 'lineHeight', 'textAlign', 'isGuideline', 'shapeType', 'rx', 'ry',
+      'cornerRadius', 'stroke', 'strokeWidth', 'scaleX', 'scaleY', 'isPattern', 'isArtwork',
+      'isSticker', 'isShape', 'isClipped', 'rawSvgContent', 'patternBaseScale', 'patternScale',
+      'patternAngle', 'patternOpacity', 'patternColorMain', 'patternColorPoint', 'patternColorBg',
+      'hasPointColor', 'origColorMain', 'origColorPoint', 'origColorBg', 'patternTitle'
+    ]);
   }
 
   loadCanvasJson(json, callback) {
@@ -1457,32 +1833,72 @@ export class CanvasEditor {
         }
       });
 
-      // Re-inject authoritative fixed Admin guidelineBox with exact printBox dimensions
-      const isVisible = this.isGuideVisible !== false;
-      if (this.guidelineBox) {
-        if (this.printBox) {
-          this.guidelineBox.set({
-            left: this.printBox.left,
-            top: this.printBox.top,
-            width: this.printBox.width,
-            height: this.printBox.height
-          });
-        }
-        this.guidelineBox.set('visible', isVisible);
-        this.canvas.add(this.guidelineBox);
-        this.canvas.sendToBack(this.guidelineBox);
-      }
-      if (this.snapLineX) {
-        this.snapLineX.set('visible', false);
-        this.canvas.add(this.snapLineX);
-      }
-      if (this.snapLineY) {
-        this.snapLineY.set('visible', false);
-        this.canvas.add(this.snapLineY);
-      }
+      // Re-hydrate pattern objects so pattern fill renders perfectly on undo/redo
+      const patternObjects = this.canvas.getObjects().filter(o => o.isPattern);
+      let pendingPatterns = patternObjects.length;
 
-      this.canvas.renderAll();
-      if (callback) callback();
+      const finishLoad = () => {
+        // Re-inject authoritative fixed Admin guidelineBox with exact printBox dimensions
+        const isVisible = this.isGuideVisible !== false;
+        if (this.guidelineBox) {
+          if (this.printBox) {
+            this.guidelineBox.set({
+              left: this.printBox.left,
+              top: this.printBox.top,
+              width: this.printBox.width,
+              height: this.printBox.height
+            });
+          }
+          this.guidelineBox.set('visible', isVisible);
+          this.canvas.add(this.guidelineBox);
+          this.canvas.sendToBack(this.guidelineBox);
+        }
+        if (this.snapLineX) {
+          this.snapLineX.set('visible', false);
+          this.canvas.add(this.snapLineX);
+        }
+        if (this.snapLineY) {
+          this.snapLineY.set('visible', false);
+          this.canvas.add(this.snapLineY);
+        }
+
+        this.canvas.renderAll();
+        if (callback) callback();
+      };
+
+      if (pendingPatterns === 0) {
+        finishLoad();
+      } else {
+        patternObjects.forEach(obj => {
+          if (obj.rawSvgContent) {
+            const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(obj.rawSvgContent);
+            const imgEl = new Image();
+            imgEl.crossOrigin = 'anonymous';
+            imgEl.onload = () => {
+              const tileWidth = imgEl.width || 100;
+              const tileHeight = imgEl.height || 100;
+              const baseScale = obj.patternBaseScale || Math.min(80 / tileWidth, 80 / tileHeight) || 0.5;
+              const effScale = baseScale * (obj.patternScale || 1.0);
+              const pat = new fabric.Pattern({
+                source: imgEl,
+                repeat: 'repeat',
+                patternTransform: [effScale, 0, 0, effScale, 0, 0]
+              });
+              obj.set('fill', pat);
+              pendingPatterns--;
+              if (pendingPatterns === 0) finishLoad();
+            };
+            imgEl.onerror = () => {
+              pendingPatterns--;
+              if (pendingPatterns === 0) finishLoad();
+            };
+            imgEl.src = dataUrl;
+          } else {
+            pendingPatterns--;
+            if (pendingPatterns === 0) finishLoad();
+          }
+        });
+      }
     });
   }
 

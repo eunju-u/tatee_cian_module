@@ -7,7 +7,7 @@ export class HistoryManager {
     this.undoStack = [];
     this.redoStack = [];
     this.isStateProcessing = false;
-    this.maxHistory = 30;
+    this.maxHistory = 10; // Maximum 10 history states to prevent memory overload
   }
 
   saveState() {

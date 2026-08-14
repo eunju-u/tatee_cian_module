@@ -125,6 +125,13 @@ function getAppSkeletonHtml(productConfig) {
             </div>
 
             <div class="tb-group-pill">
+              <button class="tb-btn" id="tb-mask-clip" title="마스킹 (도형 안에 패턴/이미지 넣기)" disabled style="opacity:0.4; cursor:not-allowed;">
+                <div class="tb-btn-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/><path d="M12 8l4 4-4 4"/></svg></div>
+                <span class="tb-btn-label">마스킹</span>
+              </button>
+            </div>
+
+            <div class="tb-group-pill">
               <button class="tb-btn" id="tb-align-left" title="왼쪽"><div class="tb-btn-icon">${svg.al}</div><span class="tb-btn-label">왼쪽</span></button>
               <button class="tb-btn" id="tb-align-center-h" title="가운데"><div class="tb-btn-icon">${svg.ac}</div><span class="tb-btn-label">가운데</span></button>
               <button class="tb-btn" id="tb-align-right" title="오른쪽"><div class="tb-btn-icon">${svg.ar}</div><span class="tb-btn-label">오른쪽</span></button>
@@ -147,7 +154,27 @@ function getAppSkeletonHtml(productConfig) {
             </div>
 
             <!-- SIDE SWITCHER BADGE & POPOVER -->
-            <div class="side-switcher-container">
+            <div class="side-switcher-container" style="align-items:center;">
+              
+              <!-- FLOATING ZOOM CONTROLS (시안 확대/축소/리셋 - 면 선택 버튼 바로 앞 위치) -->
+              <div class="zoom-controls-floating" style="display:flex; align-items:center; background:#ffffff; border:1px solid #cbd5e1; border-radius:20px; padding:3px 6px; gap:2px; height:38px; box-shadow:0 2px 10px rgba(0,0,0,0.08); user-select:none; box-sizing:border-box;">
+                <!-- ZOOM OUT (-) -->
+                <button type="button" id="btn-zoom-out" style="width:28px; height:28px; border:none; background:#f8fafc; border-radius:50%; cursor:pointer; color:#475569; display:flex; align-items:center; justify-content:center; transition:all 0.15s ease;" title="축소 (Zoom Out)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+                
+                <!-- ZOOM LEVEL PERCENTAGE (%) / RESET -->
+                <button type="button" id="btn-zoom-reset" style="padding:0 4px; height:28px; border:none; background:transparent; cursor:pointer; font-size:11.5px; font-weight:800; color:#0f172a; min-width:44px; text-align:center;" title="100% 원본 크기 복원">
+                  <span id="zoom-level-label">100%</span>
+                </button>
+
+                <!-- ZOOM IN (+) -->
+                <button type="button" id="btn-zoom-in" style="width:28px; height:28px; border:none; background:#f8fafc; border-radius:50%; cursor:pointer; color:#475569; display:flex; align-items:center; justify-content:center; transition:all 0.15s ease;" title="확대 (Zoom In)">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                </button>
+              </div>
+
+              <!-- SIDE BADGE BUTTON -->
               <button type="button" class="side-badge-pill" id="btn-open-side-popover">
                 <span class="side-badge-label" id="badge-active-side-name">앞면</span>
                 <span class="side-badge-dots" id="badge-dots-btn">
@@ -687,6 +714,56 @@ function getAppSkeletonHtml(productConfig) {
         </div>
       </div>
 
+      <!-- INTERACTIVE MASKING ADJUSTMENT MODAL -->
+      <div id="modal-masking-editor" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(15,23,42,0.5); backdrop-filter:blur(6px); align-items:center; justify-content:center; padding:20px 16px; overflow-y:auto;">
+        <div style="background:#ffffff; width:100%; max-width:420px; max-height:calc(100vh - 40px); overflow-y:auto; border-radius:20px; padding:24px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.25); border:1px solid #e2e8f0; display:flex; flex-direction:column; gap:16px; margin:auto;">
+          
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #f1f5f9; padding-bottom:10px;">
+            <div style="font-size:15px; font-weight:800; color:#0f172a; display:flex; align-items:center; gap:8px;">
+              <span>✂️ 마스킹 위치 & 크기 조절</span>
+            </div>
+            <button type="button" id="btn-close-masking-modal" style="width:28px; height:28px; border:none; background:#f1f5f9; border-radius:8px; cursor:pointer; color:#64748b; font-size:13px; font-weight:700;">✕</button>
+          </div>
+
+          <div style="font-size:12px; color:#64748b; line-height:1.4; background:#f8fafc; padding:10px 12px; border-radius:10px; border:1px solid #e2e8f0;">
+            도형 모양 안에 맞출 패턴/이미지의 위치를 드래그하거나 아래 슬라이더로 조절하세요.
+          </div>
+
+          <div style="display:flex; justify-content:center; align-items:center; background:#f1f5f9; border-radius:16px; padding:12px; border:1px solid #cbd5e1;">
+            <canvas id="canvas-masking-preview" width="300" height="300" style="border-radius:12px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1); background:#ffffff;"></canvas>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:10px; background:#f8fafc; padding:12px; border-radius:14px; border:1px solid #e2e8f0;">
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              <div style="display:flex; justify-content:space-between; font-size:11.5px; font-weight:700; color:#334155;">
+                <span>🔍 패턴/이미지 크기</span>
+                <span id="val-mask-scale">100%</span>
+              </div>
+              <input type="range" id="slider-mask-scale" min="30" max="300" value="100" style="width:100%; accent-color:#2563eb; cursor:pointer;" />
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              <div style="display:flex; justify-content:space-between; font-size:11.5px; font-weight:700; color:#334155;">
+                <span>🔄 회전 각도</span>
+                <span id="val-mask-rotation">0°</span>
+              </div>
+              <input type="range" id="slider-mask-rotation" min="-180" max="180" value="0" style="width:100%; accent-color:#2563eb; cursor:pointer;" />
+            </div>
+
+            <div style="display:flex; justify-content:flex-end;">
+              <button type="button" id="btn-mask-center" style="padding:6px 12px; background:#ffffff; border:1px solid #cbd5e1; border-radius:8px; font-size:11.5px; font-weight:700; color:#334155; cursor:pointer;">
+                🎯 정중앙 맞춤
+              </button>
+            </div>
+          </div>
+
+          <div style="display:flex; items-center; justify-content:flex-end; gap:8px;">
+            <button type="button" id="btn-cancel-masking-modal" style="padding:8px 16px; background:#e2e8f0; border:none; border-radius:10px; font-size:12.5px; font-weight:700; color:#475569; cursor:pointer;">취소</button>
+            <button type="button" id="btn-apply-masking-modal" style="padding:8px 18px; background:#2563eb; border:none; border-radius:10px; font-size:12.5px; font-weight:800; color:#ffffff; cursor:pointer; box-shadow:0 4px 12px rgba(37,99,235,0.3);">확인 (마스킹 적용)</button>
+          </div>
+
+        </div>
+      </div>
     </div>
   `;
 }
@@ -727,13 +804,16 @@ export class TShirtCustomizerApp {
       if (el) el.addEventListener(event, fn);
     };
 
+    let layerManager = null;
+    let surfaceManager = null;
+
     // Initialize Canvas Editor
     const editor = new CanvasEditor('customizer-canvas', {
       printBoxRatio: { x: 0.22, y: 0.235, w: 0.56, h: 0.45 },
       onCanvasModified: () => {
-        if (typeof surfaceManager !== 'undefined') surfaceManager.saveCurrentSurfaceState();
+        if (surfaceManager) surfaceManager.saveCurrentSurfaceState();
         if (typeof renderSidePopoverGrid === 'function') renderSidePopoverGrid();
-        if (typeof updateLayersUI === 'function') updateLayersUI();
+        if (layerManager) layerManager.updateLayerList();
       },
       onWarningBoundary: (isOut, count, outNames) => {
         const warningBanner = document.getElementById('boundary-warning');
@@ -747,7 +827,8 @@ export class TShirtCustomizerApp {
       },
       onSelectionChanged: (meta, selectedObj) => {
         window.customizerEditor = editor;
-        const obj = selectedObj || meta;
+        const activeCanvasObj = (editor && editor.canvas) ? editor.canvas.getActiveObject() : null;
+        const obj = activeCanvasObj || selectedObj || meta;
 
         const secText = document.getElementById('section-text-controls');
         const secShape = document.getElementById('section-shape-controls');
@@ -757,16 +838,67 @@ export class TShirtCustomizerApp {
         const activeRailBtn = document.querySelector('.tool-rail-btn.active');
         const activeRailId = activeRailBtn ? activeRailBtn.id : '';
 
+        const btnMask = document.getElementById('tb-mask-clip');
+        if (btnMask) {
+          const allCanvasObjs = editor && editor.canvas ? editor.canvas.getObjects().filter(o => !o.isGuideline) : [];
+
+          const checkIsContent = (o) => Boolean(
+            o && (
+              o.isPattern ||
+              o.isArtwork ||
+              o.isSticker ||
+              o.isPatternLayer ||
+              o.type === 'image' ||
+              o.patternTitle !== undefined ||
+              (o.fill && typeof o.fill === 'object' && o.fill.type === 'pattern')
+            )
+          );
+
+          const checkIsShape = (o) => Boolean(
+            o && !checkIsContent(o) && !o.isGuideline && (
+              o.isShape ||
+              o.shapeType !== undefined ||
+              ['rect', 'circle', 'triangle', 'polygon', 'path'].includes(o.type?.toLowerCase())
+            )
+          );
+
+          let canMask = false;
+
+          if (obj && obj.type === 'activeSelection') {
+            const selObjs = obj.getObjects();
+            const hasShape = selObjs.some(o => checkIsShape(o));
+            const hasContent = selObjs.some(o => checkIsContent(o));
+            canMask = hasShape && hasContent;
+          } else {
+            canMask = false;
+          }
+
+          btnMask.disabled = !canMask;
+          btnMask.style.opacity = canMask ? '1' : '0.4';
+          btnMask.style.cursor = canMask ? 'pointer' : 'not-allowed';
+        }
+
+        const isPatternObj = Boolean(obj && (
+          obj.isPattern ||
+          obj.isArtwork ||
+          obj.isPatternLayer ||
+          (obj.rawObject && (obj.rawObject.isPattern || obj.rawObject.isArtwork || obj.rawObject.isPatternLayer)) ||
+          (obj.fill && typeof obj.fill === 'object' && obj.fill.type === 'pattern') ||
+          (obj.rawObject && obj.rawObject.fill && typeof obj.rawObject.fill === 'object' && obj.rawObject.fill.type === 'pattern') ||
+          (obj.patternTitle !== undefined) ||
+          (obj.rawObject && obj.rawObject.patternTitle !== undefined)
+        ));
+
         const isText = Boolean(obj && (
           (obj.type && String(obj.type).toLowerCase().includes('text')) ||
           obj.text !== undefined ||
           (obj.rawObject && obj.rawObject.type && String(obj.rawObject.type).toLowerCase().includes('text'))
         ));
 
-        const isBasicShape = Boolean(obj && (
+        const isBasicShape = Boolean(obj && !isPatternObj && !isText && (
           obj.isShape ||
-          obj.shapeType ||
-          ['rect', 'circle', 'triangle', 'polygon'].some(t => String(obj.type || '').toLowerCase() === t)
+          obj.shapeType !== undefined ||
+          (obj.rawObject && (obj.rawObject.isShape || obj.rawObject.shapeType !== undefined))
         ) && !obj.isGuideline && !obj.isSticker && !obj.isPattern && !obj.isArtwork);
 
         const isDesignArt = Boolean(obj && !isText && !isBasicShape && !obj.isGuideline);
@@ -890,7 +1022,7 @@ export class TShirtCustomizerApp {
               btn.classList.toggle('active', c === hexColor);
             });
           }
-        } else if (isBasicShape || activeRailId === 'rail-btn-shape' || (secShape && secShape.style.display === 'flex' && !obj)) {
+        } else if (isBasicShape) {
           if (secText) secText.style.display = 'none';
           if (secShape) secShape.style.display = 'flex';
           if (secDesign) secDesign.style.display = 'none';
@@ -1009,7 +1141,7 @@ export class TShirtCustomizerApp {
               }
             }
           }
-        } else if (isDesignArt || activeRailId === 'rail-btn-design' || (secDesign && secDesign.style.display === 'flex' && !obj)) {
+        } else if (isDesignArt || obj) {
           if (secText) secText.style.display = 'none';
           if (secShape) secShape.style.display = 'none';
           if (secDesign) secDesign.style.display = 'flex';
@@ -1020,6 +1152,10 @@ export class TShirtCustomizerApp {
           if (designRailBtn) designRailBtn.classList.add('active');
 
           if (obj) {
+            const isPatternType = Boolean(obj.isPattern || obj.isArtwork || !obj.isSticker);
+            if (window.switchToDesignSubtab) {
+              window.switchToDesignSubtab(isPatternType ? 'pattern' : 'sticker');
+            }
             const patScaleSld = document.getElementById('slider-pattern-scale');
             const patScaleLbl = document.getElementById('label-val-pattern-scale');
             const patAngleSld = document.getElementById('slider-pattern-angle');
@@ -1106,8 +1242,8 @@ export class TShirtCustomizerApp {
 
     window.tateeEditor = editor;
 
-    const layerManager = new LayerManager(editor, 'layer-list-container');
-    const surfaceManager = new SurfaceManager(editor);
+    layerManager = new LayerManager(editor, 'layer-list-container');
+    surfaceManager = new SurfaceManager(editor);
 
     // Fetch registered product configuration (surfaces 2D cutout mockups) from Admin API
     const fetchAdminProductConfig = async () => {
@@ -1421,7 +1557,23 @@ export class TShirtCustomizerApp {
     // Bind Tools Rail
     safeAddListener('rail-btn-text', 'click', (e) => {
       if (e) e.stopPropagation();
-      const textObj = editor.addText('SUMMER 2026', { fontSize: 28, fontFamily: "'Pretendard Variable',Pretendard,sans-serif" });
+      document.querySelectorAll('.tool-rail-btn').forEach(btn => btn.classList.remove('active'));
+      const btnText = document.getElementById('rail-btn-text');
+      if (btnText) btnText.classList.add('active');
+
+      const textSec = document.getElementById('section-text-controls');
+      const shapeSec = document.getElementById('section-shape-controls');
+      const designSec = document.getElementById('section-design-controls');
+      const productSec = document.getElementById('section-product-options');
+      if (textSec) textSec.style.display = 'flex';
+      if (shapeSec) shapeSec.style.display = 'none';
+      if (designSec) designSec.style.display = 'none';
+      if (productSec) productSec.style.display = 'none';
+
+      const active = editor && editor.canvas ? editor.canvas.getActiveObject() : null;
+      if (!active || !(active.type && String(active.type).toLowerCase().includes('text'))) {
+        const textObj = editor.addText('SUMMER 2026', { fontSize: 28, fontFamily: "'Pretendard Variable',Pretendard,sans-serif" });
+      }
       setTimeout(() => {
         const txtInp = document.getElementById('input-text-content');
         if (txtInp) {
@@ -1431,12 +1583,26 @@ export class TShirtCustomizerApp {
       }, 50);
     });
 
-    safeAddListener('rail-btn-image', 'click', () => {
+    safeAddListener('rail-btn-image', 'click', (e) => {
+      if (e) e.stopPropagation();
+      document.querySelectorAll('.tool-rail-btn').forEach(btn => btn.classList.remove('active'));
+      const btnImg = document.getElementById('rail-btn-image');
+      if (btnImg) btnImg.classList.add('active');
+
+      const textSec = document.getElementById('section-text-controls');
+      const shapeSec = document.getElementById('section-shape-controls');
+      const designSec = document.getElementById('section-design-controls');
+      const productSec = document.getElementById('section-product-options');
+      if (textSec) textSec.style.display = 'none';
+      if (shapeSec) shapeSec.style.display = 'none';
+      if (designSec) designSec.style.display = 'flex';
+      if (productSec) productSec.style.display = 'none';
+
       const fileInp = document.createElement('input');
       fileInp.type = 'file';
       fileInp.accept = 'image/*';
-      fileInp.onchange = (e) => {
-        const file = e.target.files[0];
+      fileInp.onchange = (ev) => {
+        const file = ev.target.files[0];
         if (file) {
           const reader = new FileReader();
           reader.onload = (f) => editor.addImageUrl(f.target.result);
@@ -1577,6 +1743,95 @@ export class TShirtCustomizerApp {
       editor.updatePatternColors({ colorBg: hex });
     });
 
+    // Zoom Stage Controls (Garment View Zoom In / Out / Reset)
+    let currentZoom = 1.0;
+    const minZoom = 0.5;
+    const maxZoom = 2.2;
+    const zoomStep = 0.15;
+
+    const updateZoomUI = () => {
+      const wrapper = document.getElementById('canvas-mockup-wrapper');
+      const label = document.getElementById('zoom-level-label');
+      const btnOut = document.getElementById('btn-zoom-out');
+      const btnIn = document.getElementById('btn-zoom-in');
+
+      if (wrapper) {
+        wrapper.style.transform = `scale(${currentZoom})`;
+        wrapper.style.transformOrigin = 'center center';
+        wrapper.style.transition = 'transform 0.18s cubic-bezier(0.16, 1, 0.3, 1)';
+      }
+
+      if (label) {
+        label.textContent = `${Math.round(currentZoom * 100)}%`;
+      }
+
+      if (btnOut) {
+        btnOut.style.opacity = currentZoom <= minZoom ? '0.4' : '1';
+        btnOut.style.pointerEvents = currentZoom <= minZoom ? 'none' : 'auto';
+      }
+
+      if (btnIn) {
+        btnIn.style.opacity = currentZoom >= maxZoom ? '0.4' : '1';
+        btnIn.style.pointerEvents = currentZoom >= maxZoom ? 'none' : 'auto';
+      }
+    };
+
+    safeAddListener('btn-zoom-out', 'click', (e) => {
+      if (e) e.stopPropagation();
+      if (currentZoom > minZoom) {
+        currentZoom = Math.max(minZoom, Math.round((currentZoom - zoomStep) * 100) / 100);
+        updateZoomUI();
+      }
+    });
+
+    safeAddListener('btn-zoom-in', 'click', (e) => {
+      if (e) e.stopPropagation();
+      if (currentZoom < maxZoom) {
+        currentZoom = Math.min(maxZoom, Math.round((currentZoom + zoomStep) * 100) / 100);
+        updateZoomUI();
+      }
+    });
+
+    safeAddListener('btn-zoom-reset', 'click', (e) => {
+      if (e) e.stopPropagation();
+      currentZoom = 1.0;
+      updateZoomUI();
+    });
+
+    safeAddListener('tb-mask-clip', 'click', () => {
+      if (editor) editor.openMaskingModal();
+    });
+
+    safeAddListener('btn-close-masking-modal', 'click', () => {
+      if (editor) editor.closeMaskingModal();
+    });
+
+    safeAddListener('btn-cancel-masking-modal', 'click', () => {
+      if (editor) editor.closeMaskingModal();
+    });
+
+    safeAddListener('btn-apply-masking-modal', 'click', () => {
+      if (editor) editor.applyCustomMaskingWithOffset();
+    });
+
+    safeAddListener('slider-mask-scale', 'input', (e) => {
+      const val = parseInt(e.target.value, 10);
+      const lbl = document.getElementById('val-mask-scale');
+      if (lbl) lbl.textContent = `${val}%`;
+      if (editor) editor.updateMaskPreviewScale(val);
+    });
+
+    safeAddListener('slider-mask-rotation', 'input', (e) => {
+      const val = parseInt(e.target.value, 10);
+      const lbl = document.getElementById('val-mask-rotation');
+      if (lbl) lbl.textContent = `${val}°`;
+      if (editor) editor.updateMaskPreviewRotation(val);
+    });
+
+    safeAddListener('btn-mask-center', 'click', () => {
+      if (editor) editor.centerMaskPreviewContent();
+    });
+
     // Bind Sliders
     safeAddListener('slider-rotation', 'input', (e) => {
       const val = parseInt(e.target.value, 10);
@@ -1652,36 +1907,52 @@ export class TShirtCustomizerApp {
     const paneSticker = document.getElementById('pane-design-sticker');
     const panePattern = document.getElementById('pane-design-pattern');
 
+    window.switchToDesignSubtab = (tabName) => {
+      const bSticker = document.getElementById('tab-design-sticker');
+      const bPattern = document.getElementById('tab-design-pattern');
+      const pSticker = document.getElementById('pane-design-sticker');
+      const pPattern = document.getElementById('pane-design-pattern');
+
+      if (tabName === 'pattern') {
+        if (bPattern) {
+          bPattern.classList.add('active');
+          bPattern.style.background = '#ffffff';
+          bPattern.style.color = '#0f172a';
+          bPattern.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)';
+        }
+        if (bSticker) {
+          bSticker.classList.remove('active');
+          bSticker.style.background = 'transparent';
+          bSticker.style.color = '#64748b';
+          bSticker.style.boxShadow = 'none';
+        }
+        if (pPattern) pPattern.style.display = 'flex';
+        if (pSticker) pSticker.style.display = 'none';
+      } else {
+        if (bSticker) {
+          bSticker.classList.add('active');
+          bSticker.style.background = '#ffffff';
+          bSticker.style.color = '#0f172a';
+          bSticker.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)';
+        }
+        if (bPattern) {
+          bPattern.classList.remove('active');
+          bPattern.style.background = 'transparent';
+          bPattern.style.color = '#64748b';
+          bPattern.style.boxShadow = 'none';
+        }
+        if (pSticker) pSticker.style.display = 'flex';
+        if (pPattern) pPattern.style.display = 'none';
+      }
+    };
+
     if (btnTabSticker && btnTabPattern) {
       btnTabSticker.addEventListener('click', () => {
-        btnTabSticker.classList.add('active');
-        btnTabSticker.style.background = '#ffffff';
-        btnTabSticker.style.color = '#0f172a';
-        btnTabSticker.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)';
-
-        btnTabPattern.classList.remove('active');
-        btnTabPattern.style.background = 'transparent';
-        btnTabPattern.style.color = '#64748b';
-        btnTabPattern.style.boxShadow = 'none';
-
-        if (paneSticker) paneSticker.style.display = 'flex';
-        if (panePattern) panePattern.style.display = 'none';
+        window.switchToDesignSubtab('sticker');
       });
 
       btnTabPattern.addEventListener('click', () => {
-        btnTabPattern.classList.add('active');
-        btnTabPattern.style.background = '#ffffff';
-        btnTabPattern.style.color = '#0f172a';
-        btnTabPattern.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)';
-
-        btnTabSticker.classList.remove('active');
-        btnTabSticker.style.background = 'transparent';
-        btnTabSticker.style.color = '#64748b';
-        btnTabSticker.style.boxShadow = 'none';
-
-        if (panePattern) panePattern.style.display = 'flex';
-        if (paneSticker) paneSticker.style.display = 'none';
-
+        window.switchToDesignSubtab('pattern');
         loadArtworksForCustomizer();
       });
     }
@@ -2555,12 +2826,24 @@ export class TShirtCustomizerApp {
     safeAddListener('rail-btn-3d', 'click', open3dModal);
 
     // Left Rail: [색상/면] Button Listener
-    safeAddListener('rail-btn-color', 'click', () => {
+    safeAddListener('rail-btn-color', 'click', (e) => {
+      if (e) e.stopPropagation();
+      document.querySelectorAll('.tool-rail-btn').forEach(btn => btn.classList.remove('active'));
+      const btnColor = document.getElementById('rail-btn-color');
+      if (btnColor) btnColor.classList.add('active');
+
+      if (editor && editor.canvas) {
+        editor.canvas.discardActiveObject();
+        editor.canvas.renderAll();
+      }
+
       const textSec = document.getElementById('section-text-controls');
       const shapeSec = document.getElementById('section-shape-controls');
+      const designSec = document.getElementById('section-design-controls');
       const productSec = document.getElementById('section-product-options');
       if (textSec) textSec.style.display = 'none';
       if (shapeSec) shapeSec.style.display = 'none';
+      if (designSec) designSec.style.display = 'none';
       if (productSec) productSec.style.display = 'flex';
 
       const openSideBtn = document.getElementById('btn-open-side-popover');

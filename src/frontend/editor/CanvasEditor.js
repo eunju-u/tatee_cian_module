@@ -632,7 +632,7 @@ export class CanvasEditor {
         strokeWidth: strokeWidth
       });
     } else if (type === 'triangle') {
-      const points = [{ x: 50, y: 0 }, { x: 100, y: 88 }, { x: 0, y: 88 }];
+      const points = [{ x: 0, y: -44 }, { x: 50, y: 44 }, { x: -50, y: 44 }];
       shapeObj = new fabric.Polygon(points, {
         fill: fillColor,
         stroke: strokeColor,
@@ -696,8 +696,8 @@ export class CanvasEditor {
       for (let i = 0; i < 5; i++) {
         const a = (i * 2 * Math.PI / 5) - (Math.PI / 2);
         points.push({
-          x: 50 + 45 * Math.cos(a),
-          y: 50 + 45 * Math.sin(a)
+          x: 45 * Math.cos(a),
+          y: 45 * Math.sin(a)
         });
       }
       shapeObj = new fabric.Polygon(points, {
@@ -831,6 +831,25 @@ export class CanvasEditor {
 
       if (basePoints) {
         const pathStr = this.buildRoundedPolygonPath(basePoints, r);
+
+        if (active.isCustomMasked) {
+          // For custom masked layers, update clipPath with rounded polygon path
+          const roundedClipPath = new fabric.Path(pathStr, {
+            originX: 'center',
+            originY: 'center',
+            absolutePositioned: true,
+            scaleX: active.maskScaleX || 1.35,
+            scaleY: active.maskScaleY || 1.35,
+            left: active.left,
+            top: active.top
+          });
+          active.set('clipPath', roundedClipPath);
+          active.cornerRadius = r;
+          active.setCoords();
+          this.canvas.renderAll();
+          this.historyManager.saveState();
+          return;
+        }
         const left = active.left;
         const top = active.top;
         const scaleX = active.scaleX || 1;
@@ -855,8 +874,12 @@ export class CanvasEditor {
           shapeType: shapeType,
           originalPoints: basePoints,
           cornerRadius: r,
-          cornerColor: '#f97316',
-          cornerSize: 12,
+          borderColor: '#FF7828',
+          borderScaleFactor: 1.5,
+          cornerColor: '#ffffff',
+          cornerStrokeColor: '#FF7828',
+          cornerSize: 10,
+          cornerStyle: 'circle',
           transparentCorners: false
         });
 
@@ -895,7 +918,13 @@ export class CanvasEditor {
     if (props.scaleX !== undefined) active.set('scaleX', parseFloat(props.scaleX));
     if (props.scaleY !== undefined) active.set('scaleY', parseFloat(props.scaleY));
     if (props.stroke !== undefined) active.set('stroke', props.stroke);
-    if (props.strokeWidth !== undefined) active.set('strokeWidth', parseFloat(props.strokeWidth));
+    if (props.strokeWidth !== undefined) {
+      const sw = parseFloat(props.strokeWidth);
+      active.set('strokeWidth', sw);
+      if (sw > 0 && (!active.stroke || active.stroke === 'none' || active.stroke === 'transparent')) {
+        active.set('stroke', '#17171a');
+      }
+    }
     if (props.opacity !== undefined) active.set('opacity', parseFloat(props.opacity));
 
     active.setCoords();
@@ -908,6 +937,39 @@ export class CanvasEditor {
   }
 
   addImageUrl(url) {
+    if (!url) return;
+
+    // Handle SVG URLs (like Dicebear Robot stickers) by fetching and fixing viewBox dimensions
+    if (url.includes('.svg') || url.includes('/svg') || url.startsWith('data:image/svg+xml')) {
+      fetch(url)
+        .then(res => res.text())
+        .then(svgText => {
+          if (svgText && svgText.includes('<svg')) {
+            let fixedSvg = svgText;
+            const viewBoxMatch = fixedSvg.match(/viewBox=["']([^"']+)["']/i);
+            if (viewBoxMatch) {
+              const parts = viewBoxMatch[1].trim().split(/[\s,]+/);
+              if (parts.length === 4) {
+                const vbWidth = parseFloat(parts[2]) || 200;
+                const vbHeight = parseFloat(parts[3]) || 200;
+                if (!fixedSvg.includes('width=')) {
+                  fixedSvg = fixedSvg.replace('<svg', `<svg width="${vbWidth}" height="${vbHeight}"`);
+                }
+              }
+            }
+            this.addSvgString(fixedSvg);
+            return;
+          }
+          this._loadDirectImage(url);
+        })
+        .catch(() => this._loadDirectImage(url));
+      return;
+    }
+
+    this._loadDirectImage(url);
+  }
+
+  _loadDirectImage(url) {
     fabric.Image.fromURL(url, (img) => {
       if (!img) return;
       const centerX = this.printBox.left + (this.printBox.width / 2);
@@ -1220,12 +1282,18 @@ export class CanvasEditor {
   openMaskingModal() {
     const activeObj = this.canvas.getActiveObject();
     if (!activeObj || activeObj.type !== 'activeSelection') {
-      alert('마스킹할 도형 레이어와 패턴/이미지 레이어를 화면에서 함께 선택(다중 선택)해주세요!');
+      alert('1개의 도형(또는 마스킹된 레이어)과 1개의 패턴/이미지를 함께 선택(2개 레이어 선택)해주세요!');
+      return false;
+    }
+
+    const objects = activeObj.getObjects();
+    if (objects.length !== 2) {
+      alert('마스킹은 반드시 1개의 도형과 1개의 패턴/이미지 (총 2개) 레이어만 선택해야 가능합니다.');
       return false;
     }
 
     const checkIsContent = (o) => Boolean(
-      o && (
+      o && !o.isCustomMasked && !o.isMaskedLayer && (
         o.isPattern ||
         o.isArtwork ||
         o.isSticker ||
@@ -1237,21 +1305,25 @@ export class CanvasEditor {
     );
 
     const checkIsShape = (o) => Boolean(
-      o && !checkIsContent(o) && !o.isGuideline && (
+      o && !o.isGuideline && (
+        o.isCustomMasked ||
+        o.isMaskedLayer ||
         o.isShape ||
         o.shapeType !== undefined ||
-        ['rect', 'circle', 'triangle', 'polygon', 'path'].includes(o.type?.toLowerCase())
+        (!checkIsContent(o) && ['rect', 'circle', 'triangle', 'polygon', 'path'].includes(o.type?.toLowerCase()))
       )
     );
 
-    const objects = activeObj.getObjects();
-    const contentObj = objects.find(o => checkIsContent(o));
-    const shapeObj = objects.find(o => o !== contentObj && checkIsShape(o));
+    const shapes = objects.filter(o => checkIsShape(o));
+    const contents = objects.filter(o => checkIsContent(o));
 
-    if (!shapeObj || !contentObj) {
-      alert('마스킹할 도형 레이어와 패턴/이미지 레이어가 함께 선택되어야 합니다!');
+    if (shapes.length !== 1 || contents.length !== 1) {
+      alert('1개의 도형(또는 마스킹된 레이어)과 1개의 패턴/이미지 레이어를 선택해주세요!');
       return false;
     }
+
+    const shapeObj = shapes[0];
+    const contentObj = contents[0];
 
     this.canvas.discardActiveObject();
 
@@ -1318,6 +1390,7 @@ export class CanvasEditor {
           originY: 'center',
           scaleX: targetScaleX,
           scaleY: targetScaleY,
+          strokeWidth: 0,
           absolutePositioned: true
         });
 
@@ -1328,23 +1401,27 @@ export class CanvasEditor {
           const contentRect = clonedContent.getBoundingRect(true, true);
           const contentWidth = contentRect.width || 100;
           const contentHeight = contentRect.height || 100;
-          // Scale content so it 100% covers the 180px shape container completely
-          const contentFitScale = Math.max(240 / contentWidth, 240 / contentHeight);
+          // Scale content so it 100% covers the shape container completely with generous overhang
+          const contentFitScale = Math.max(260 / contentWidth, 260 / contentHeight);
 
           clonedContent.set({
             scaleX: clonedContent.scaleX * contentFitScale,
             scaleY: clonedContent.scaleY * contentFitScale,
             left: 150,
-            top: 150,
+            top: centerY,
             originX: 'center',
             originY: 'center',
             clipPath: clonedShape,
             selectable: true,
             hasBorders: true,
             hasControls: true,
-            cornerColor: '#2563eb',
+            borderColor: '#FF7828',
+            borderScaleFactor: 1.5,
+            cornerColor: '#ffffff',
+            cornerStrokeColor: '#FF7828',
+            cornerSize: 10,
             cornerStyle: 'circle',
-            cornerSize: 10
+            transparentCorners: false
           });
 
           this.previewContentRef = clonedContent;
@@ -1407,7 +1484,7 @@ export class CanvasEditor {
     if (!this.previewContentRef) return;
     this.previewContentRef.set({
       left: 150,
-      top: 150
+      top: 155
     });
     this.previewContentRef.setCoords();
     if (this.maskPreviewCanvas) this.maskPreviewCanvas.renderAll();
@@ -1436,7 +1513,7 @@ export class CanvasEditor {
     const bRect = this.previewShapeRef.getBoundingRect(true, true);
     
     // Add safe padding to ensure no sub-pixel border clipping occurs during PNG export
-    const padding = 8;
+    const padding = 10;
     const exportLeft = Math.max(0, Math.floor(bRect.left - padding));
     const exportTop = Math.max(0, Math.floor(bRect.top - padding));
     const exportRight = Math.min(300, Math.ceil(bRect.left + bRect.width + padding));
@@ -1465,16 +1542,32 @@ export class CanvasEditor {
       const scaleFactorX = (targetWidth / (bRect.width || 100)) * (bRect.width / exportWidthVal);
       const scaleFactorY = (targetHeight / (bRect.height || 100)) * (bRect.height / exportHeightVal);
 
+      const sType = shapeObj.shapeType || (shapeObj.type === 'triangle' ? 'triangle' : (shapeObj.type === 'rect' ? 'rect' : 'star'));
+      const origPts = shapeObj.originalPoints || (sType === 'star' ? [
+        { x: 50, y: 0 }, { x: 63, y: 38 }, { x: 100, y: 38 }, { x: 69, y: 59 },
+        { x: 82, y: 100 }, { x: 50, y: 75 }, { x: 18, y: 100 }, { x: 31, y: 59 },
+        { x: 0, y: 38 }, { x: 37, y: 38 }
+      ] : null);
+
       maskedImg.set({
         left: shapeObj.left,
         top: shapeObj.top,
-        scaleX: (targetWidth / bRect.width) * ( (bRect.width + padding * 2) / exportWidthVal ),
-        scaleY: (targetHeight / bRect.height) * ( (bRect.height + padding * 2) / exportHeightVal ),
+        scaleX: scaleFactorX,
+        scaleY: scaleFactorY,
         angle: shapeObj.angle || 0,
         originX: 'center',
         originY: 'center',
+        objectCaching: false,
         isMaskedLayer: true,
-        isPattern: true,
+        isCustomMasked: true,
+        isShape: true,
+        shapeType: sType,
+        originalPoints: origPts,
+        stroke: shapeObj.stroke || '#17171a',
+        strokeWidth: shapeObj.strokeWidth || 0,
+        cornerRadius: shapeObj.cornerRadius || 0,
+        maskScaleX: (135 / ((bRect.width) || 100)) * (shapeObj.scaleX || 1),
+        maskScaleY: (135 / ((bRect.height) || 100)) * (shapeObj.scaleY || 1),
         patternTitle: shapeObj.patternTitle || contentObj.patternTitle || '마스킹 레이어'
       });
 
@@ -1519,55 +1612,31 @@ export class CanvasEditor {
     const centerX = this.printBox.left + (this.printBox.width / 2);
     const centerY = this.printBox.top + (this.printBox.height / 2);
 
-    // Check if SVG contains pattern/defs definitions that Fabric loadSVGFromString drops
-    if (svgString.includes('<pattern') || svgString.includes('patternUnits')) {
-      const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
-      fabric.Image.fromURL(dataUrl, (img) => {
-        if (!img) return;
-        img.scaleToWidth(200);
-        img.set({
-          left: centerX,
-          top: centerY,
-          originX: 'center',
-          originY: 'center',
-          cornerColor: '#3b82f6',
-          cornerSize: 12,
-          transparentCorners: false
-        });
-        img.setCoords();
-        img.isPattern = true;
-        img.patternScale = 1.0;
-        img.patternAngle = 0;
-        img.patternOpacity = 1.0;
-        this.canvas.add(img);
-        this.canvas.setActiveObject(img);
-        this.canvas.renderAll();
-        this.handleSelection({ target: img, selected: [img] });
-      }, { crossOrigin: 'anonymous' });
-      return;
-    }
-
-    fabric.loadSVGFromString(svgString, (objects, options) => {
-      const loadedObject = fabric.util.groupSVGElements(objects, options);
-      if (!loadedObject) return;
-      loadedObject.scaleToWidth(180);
-      loadedObject.set({
+    // Convert SVG string to data URL and load via fabric.Image for 100% complete native browser rendering
+    const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
+    fabric.Image.fromURL(dataUrl, (img) => {
+      if (!img) return;
+      img.scaleToWidth(180);
+      img.set({
         left: centerX,
         top: centerY,
         originX: 'center',
         originY: 'center',
-        cornerColor: '#3b82f6',
-        cornerSize: 12,
+        borderColor: '#FF7828',
+        borderScaleFactor: 1.5,
+        cornerColor: '#ffffff',
+        cornerStrokeColor: '#FF7828',
+        cornerSize: 10,
+        cornerStyle: 'circle',
         transparentCorners: false
       });
-      loadedObject.setCoords();
-      loadedObject.isPattern = true;
-      loadedObject.isArtwork = true;
-      this.canvas.add(loadedObject);
-      this.canvas.setActiveObject(loadedObject);
+      img.setCoords();
+      img.isArtwork = true;
+      this.canvas.add(img);
+      this.canvas.setActiveObject(img);
       this.canvas.renderAll();
-      this.handleSelection({ target: loadedObject, selected: [loadedObject] });
-    });
+      this.handleSelection({ target: img, selected: [img] });
+    }, { crossOrigin: 'anonymous' });
   }
 
   toggleGuideBox() {

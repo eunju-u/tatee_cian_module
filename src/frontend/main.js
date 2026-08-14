@@ -729,8 +729,8 @@ function getAppSkeletonHtml(productConfig) {
             도형 모양 안에 맞출 패턴/이미지의 위치를 드래그하거나 아래 슬라이더로 조절하세요.
           </div>
 
-          <div style="display:flex; justify-content:center; align-items:center; background:#f1f5f9; border-radius:16px; padding:12px; border:1px solid #cbd5e1;">
-            <canvas id="canvas-masking-preview" width="300" height="300" style="border-radius:12px; box-shadow:0 4px 6px -1px rgba(0,0,0,0.1); background:#ffffff;"></canvas>
+          <div style="display:flex; justify-content:center; align-items:center; padding:2px;">
+            <canvas id="canvas-masking-preview" width="300" height="300" style="border-radius:12px; border:1px solid #cbd5e1; background:#ffffff;"></canvas>
           </div>
 
           <div style="display:flex; flex-direction:column; gap:10px; background:#f8fafc; padding:12px; border-radius:14px; border:1px solid #e2e8f0;">
@@ -843,7 +843,7 @@ export class TShirtCustomizerApp {
           const allCanvasObjs = editor && editor.canvas ? editor.canvas.getObjects().filter(o => !o.isGuideline) : [];
 
           const checkIsContent = (o) => Boolean(
-            o && (
+            o && !o.isCustomMasked && !o.isMaskedLayer && (
               o.isPattern ||
               o.isArtwork ||
               o.isSticker ||
@@ -855,10 +855,12 @@ export class TShirtCustomizerApp {
           );
 
           const checkIsShape = (o) => Boolean(
-            o && !checkIsContent(o) && !o.isGuideline && (
+            o && !o.isGuideline && (
+              o.isCustomMasked ||
+              o.isMaskedLayer ||
               o.isShape ||
               o.shapeType !== undefined ||
-              ['rect', 'circle', 'triangle', 'polygon', 'path'].includes(o.type?.toLowerCase())
+              (!checkIsContent(o) && ['rect', 'circle', 'triangle', 'polygon', 'path'].includes(o.type?.toLowerCase()))
             )
           );
 
@@ -866,9 +868,13 @@ export class TShirtCustomizerApp {
 
           if (obj && obj.type === 'activeSelection') {
             const selObjs = obj.getObjects();
-            const hasShape = selObjs.some(o => checkIsShape(o));
-            const hasContent = selObjs.some(o => checkIsContent(o));
-            canMask = hasShape && hasContent;
+            if (selObjs.length === 2) {
+              const shapes = selObjs.filter(o => checkIsShape(o));
+              const contents = selObjs.filter(o => checkIsContent(o));
+              canMask = (shapes.length === 1 && contents.length === 1);
+            } else {
+              canMask = false;
+            }
           } else {
             canMask = false;
           }
@@ -878,15 +884,14 @@ export class TShirtCustomizerApp {
           btnMask.style.cursor = canMask ? 'pointer' : 'not-allowed';
         }
 
-        const isPatternObj = Boolean(obj && (
+        const isPatternObj = Boolean(obj && !obj.isCustomMasked && !obj.isMaskedLayer && (
           obj.isPattern ||
-          obj.isArtwork ||
           obj.isPatternLayer ||
-          (obj.rawObject && (obj.rawObject.isPattern || obj.rawObject.isArtwork || obj.rawObject.isPatternLayer)) ||
+          (obj.rawObject && (obj.rawObject.isPattern || obj.rawObject.isPatternLayer)) ||
           (obj.fill && typeof obj.fill === 'object' && obj.fill.type === 'pattern') ||
           (obj.rawObject && obj.rawObject.fill && typeof obj.rawObject.fill === 'object' && obj.rawObject.fill.type === 'pattern') ||
-          (obj.patternTitle !== undefined) ||
-          (obj.rawObject && obj.rawObject.patternTitle !== undefined)
+          (obj.patternTitle !== undefined && obj.patternTitle !== '마스킹 레이어') ||
+          (obj.rawObject && obj.rawObject.patternTitle !== undefined && obj.rawObject.patternTitle !== '마스킹 레이어')
         ));
 
         const isText = Boolean(obj && (
@@ -898,10 +903,12 @@ export class TShirtCustomizerApp {
         const isBasicShape = Boolean(obj && !isPatternObj && !isText && (
           obj.isShape ||
           obj.shapeType !== undefined ||
-          (obj.rawObject && (obj.rawObject.isShape || obj.rawObject.shapeType !== undefined))
-        ) && !obj.isGuideline && !obj.isSticker && !obj.isPattern && !obj.isArtwork);
+          obj.isCustomMasked ||
+          obj.isMaskedLayer ||
+          (obj.rawObject && (obj.rawObject.isShape || obj.rawObject.shapeType !== undefined || obj.rawObject.isCustomMasked))
+        ) && !obj.isGuideline && !obj.isPattern);
 
-        const isDesignArt = Boolean(obj && !isText && !isBasicShape && !obj.isGuideline);
+        const isImage = Boolean(obj && !isText && !isBasicShape && !isPatternObj);
 
         if (isText) {
           if (secText) secText.style.display = 'flex';
@@ -1108,9 +1115,10 @@ export class TShirtCustomizerApp {
               else if (obj.type === 'triangle') shapeType = 'triangle';
               else if (obj.originalPoints?.length === 5) shapeType = 'pentagon';
               else if (obj.originalPoints?.length === 10) shapeType = 'star';
+              else if (obj.isCustomMasked) shapeType = 'star';
             }
 
-            const isEligibleForRounding = Boolean(['triangle', 'square', 'rect', 'rectangle', 'pentagon', 'star'].includes(shapeType));
+            const isEligibleForRounding = Boolean(['triangle', 'square', 'rect', 'rectangle', 'pentagon', 'star'].includes(shapeType) || obj.isCustomMasked);
 
             const sliderRx = document.getElementById('slider-shape-rx');
             const labelRx = document.getElementById('label-val-shape-rx');
@@ -1137,11 +1145,13 @@ export class TShirtCustomizerApp {
                 containerRx.style.pointerEvents = 'none';
                 sliderRx.value = 0;
                 labelRx.textContent = '비활성화';
-                updateSliderProgress(sliderRx);
               }
             }
           }
-        } else if (isDesignArt || obj) {
+        } else if (isImage) {
+          // EXPLICIT USER DIRECTIVE: ONLY WHEN AN IMAGE IS CLICKED, DO NOT AUTO-SWITCH PANELS OR RAIL BUTTONS!
+          // Maintain user's currently open right panel state fixed.
+        } else if (obj) {
           if (secText) secText.style.display = 'none';
           if (secShape) secShape.style.display = 'none';
           if (secDesign) secDesign.style.display = 'flex';
@@ -1151,12 +1161,11 @@ export class TShirtCustomizerApp {
           const designRailBtn = document.getElementById('rail-btn-design');
           if (designRailBtn) designRailBtn.classList.add('active');
 
-          if (obj) {
-            const isPatternType = Boolean(obj.isPattern || obj.isArtwork || !obj.isSticker);
-            if (window.switchToDesignSubtab) {
-              window.switchToDesignSubtab(isPatternType ? 'pattern' : 'sticker');
-            }
-            const patScaleSld = document.getElementById('slider-pattern-scale');
+          const isPatternType = Boolean(obj.isPattern || obj.isArtwork || !obj.isSticker);
+          if (window.switchToDesignSubtab) {
+            window.switchToDesignSubtab(isPatternType ? 'pattern' : 'sticker');
+          }
+          const patScaleSld = document.getElementById('slider-pattern-scale');
             const patScaleLbl = document.getElementById('label-val-pattern-scale');
             const patAngleSld = document.getElementById('slider-pattern-angle');
             const patAngleLbl = document.getElementById('label-val-pattern-angle');
@@ -1209,11 +1218,8 @@ export class TShirtCustomizerApp {
               if (cellPoint) cellPoint.style.display = 'flex';
               if (pickerPoint) pickerPoint.value = cPoint.toLowerCase();
               if (labelPoint) labelPoint.textContent = cPoint;
-            } else {
-              if (cellPoint) cellPoint.style.display = 'none';
             }
-          }
-        } else {
+          } else {
           if (activeRailId === 'rail-btn-text') {
             if (secText) secText.style.display = 'flex';
             if (secShape) secShape.style.display = 'none';
@@ -1585,19 +1591,8 @@ export class TShirtCustomizerApp {
 
     safeAddListener('rail-btn-image', 'click', (e) => {
       if (e) e.stopPropagation();
-      document.querySelectorAll('.tool-rail-btn').forEach(btn => btn.classList.remove('active'));
-      const btnImg = document.getElementById('rail-btn-image');
-      if (btnImg) btnImg.classList.add('active');
-
-      const textSec = document.getElementById('section-text-controls');
-      const shapeSec = document.getElementById('section-shape-controls');
-      const designSec = document.getElementById('section-design-controls');
-      const productSec = document.getElementById('section-product-options');
-      if (textSec) textSec.style.display = 'none';
-      if (shapeSec) shapeSec.style.display = 'none';
-      if (designSec) designSec.style.display = 'flex';
-      if (productSec) productSec.style.display = 'none';
-
+      // EXPLICIT USER DIRECTIVE: Clicking the Image button MUST NOT change/switch the right panel!
+      // Keep user's currently open right panel state fixed.
       const fileInp = document.createElement('input');
       fileInp.type = 'file';
       fileInp.accept = 'image/*';

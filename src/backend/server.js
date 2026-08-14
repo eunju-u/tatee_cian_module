@@ -6,7 +6,7 @@ import customizerRoutes from './routes/customizer.js';
 import adminRoutes from './routes/admin.js';
 
 const app = express();
-const PORT = parseInt(process.env.PORT || '3000', 10);
+const PORT = parseInt(process.env.PORT || '4000', 10);
 
 // Middleware
 app.use(cors());
@@ -41,7 +41,7 @@ app.get('/health', (req, res) => {
 });
 
 const startServer = (port) => {
-  const server = app.listen(port, '127.0.0.1', () => {
+  const server = app.listen(port, () => {
     console.log(`=======================================================`);
     console.log(`🚀 TATEE Customizer Backend API running at:`);
     console.log(`   http://localhost:${port}`);
@@ -53,7 +53,7 @@ const startServer = (port) => {
   });
 
   server.on('error', (err) => {
-    if (err.code === 'EADDRINUSE' || err.code === 'EPERM') {
+    if ((err.code === 'EADDRINUSE' || err.code === 'EPERM') && port < 4010) {
       console.warn(`Port ${port} unavailable (${err.code}), trying port ${port + 1}...`);
       startServer(port + 1);
     } else {

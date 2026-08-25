@@ -27,6 +27,11 @@ app.use('/admin', express.static(path.resolve(process.cwd(), 'admin')));
 app.use('/api', customizerRoutes);
 app.use('/api/admin', adminRoutes);
 
+// Fallback for unhandled API routes (ensures JSON response instead of Express default HTML 404)
+app.use('/api', (req, res) => {
+  res.status(404).json({ success: false, error: `API endpoint not found: ${req.method} ${req.originalUrl}` });
+});
+
 // Redirect Root and Login endpoints
 app.get('/', (req, res) => res.redirect('/demo/detail_demo.html'));
 app.get('/login', (req, res) => res.redirect('/admin/admin_demo.html'));
@@ -41,7 +46,7 @@ app.get('/health', (req, res) => {
 });
 
 const startServer = (port) => {
-  const server = app.listen(port, () => {
+  const server = app.listen(port, '127.0.0.1', () => {
     console.log(`=======================================================`);
     console.log(`🚀 TATEE Customizer Backend API running at:`);
     console.log(`   http://localhost:${port}`);

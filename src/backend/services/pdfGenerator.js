@@ -436,6 +436,19 @@ export class PdfGenerator {
 
                 doc.fontSize(9.5).fillColor('#475569')
                    .text(`   └ 📏 자간 / 행간 / 장평: 자간 ${charSpaceVal}pt | 행간 ${lineHVal} | 장평 ${jangpyeongVal}`, leftX + 10);
+
+                if (el.strokeWidth > 0 && el.strokeColor) {
+                  doc.fontSize(9.5).fillColor('#475569')
+                     .text(`   └ 🖌️ 1차 테두리 (외곽선): 색상 ${el.strokeColor} | 두께 ${el.strokeWidth}px`, leftX + 10);
+                }
+                if (el.hasOuterStroke && el.outerStrokeWidth > 0) {
+                  doc.fontSize(9.5).fillColor('#475569')
+                     .text(`   └ 🎨 2차 외곽선 (이중 테두리): 색상 ${el.outerStrokeColor || '#000000'} | 두께 ${el.outerStrokeWidth}px`, leftX + 10);
+                }
+                if (el.has3dEffect && el.threeDDepth > 0) {
+                  doc.fontSize(9.5).fillColor('#475569')
+                     .text(`   └ 🧊 3D 입체 효과: 색상 ${el.threeDColor || '#000000'} | 깊이 ${el.threeDDepth}px | 각도 ${el.threeDAngle || 45}°`, leftX + 10);
+                }
               } else if (isShape) {
                 if (el.strokeWidth > 0 && el.strokeColor) {
                   doc.fontSize(9.5).fillColor('#475569')

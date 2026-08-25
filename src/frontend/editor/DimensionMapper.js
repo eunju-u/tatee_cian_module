@@ -21,10 +21,10 @@ export class DimensionMapper {
     if (config.printAreaWidthCm) this.printAreaWidthCm = config.printAreaWidthCm;
     if (config.printAreaHeightCm) this.printAreaHeightCm = config.printAreaHeightCm;
 
-    this.printTopPct = config.printTopPct !== undefined ? config.printTopPct : this.printTopPct;
-    this.printLeftPct = config.printLeftPct !== undefined ? config.printLeftPct : this.printLeftPct;
-    this.printWidthPct = config.printWidthPct !== undefined ? config.printWidthPct : this.printWidthPct;
-    this.printHeightPct = config.printHeightPct !== undefined ? config.printHeightPct : this.printHeightPct;
+    if (config.printTopPct !== undefined && !isNaN(config.printTopPct) && config.printTopPct !== null) this.printTopPct = config.printTopPct;
+    if (config.printLeftPct !== undefined && !isNaN(config.printLeftPct) && config.printLeftPct !== null) this.printLeftPct = config.printLeftPct;
+    if (config.printWidthPct !== undefined && !isNaN(config.printWidthPct) && config.printWidthPct !== null) this.printWidthPct = config.printWidthPct;
+    if (config.printHeightPct !== undefined && !isNaN(config.printHeightPct) && config.printHeightPct !== null) this.printHeightPct = config.printHeightPct;
   }
 
   getPxPerCmX() {
@@ -54,38 +54,40 @@ export class DimensionMapper {
   getPrintAreaPx(surfaceConfig = {}) {
     let width, height, left, top;
 
-    const topPct = surfaceConfig.printTopPct !== undefined ? surfaceConfig.printTopPct : this.printTopPct;
-    const leftPct = surfaceConfig.printLeftPct !== undefined ? surfaceConfig.printLeftPct : this.printLeftPct;
-    const widthPct = surfaceConfig.printWidthPct !== undefined ? surfaceConfig.printWidthPct : this.printWidthPct;
-    const heightPct = surfaceConfig.printHeightPct !== undefined ? surfaceConfig.printHeightPct : this.printHeightPct;
+    const topPct = (surfaceConfig && surfaceConfig.printTopPct !== undefined) ? surfaceConfig.printTopPct : this.printTopPct;
+    const leftPct = (surfaceConfig && surfaceConfig.printLeftPct !== undefined) ? surfaceConfig.printLeftPct : this.printLeftPct;
+    const widthPct = (surfaceConfig && surfaceConfig.printWidthPct !== undefined) ? surfaceConfig.printWidthPct : this.printWidthPct;
+    const heightPct = (surfaceConfig && surfaceConfig.printHeightPct !== undefined) ? surfaceConfig.printHeightPct : this.printHeightPct;
 
-    if (topPct !== undefined && leftPct !== undefined && widthPct !== undefined && heightPct !== undefined) {
-      const stageW = 500;
-      const stageH = 590;
-      const stageLeft = (stageW * leftPct) / 100;
-      const stageTop = (stageH * topPct) / 100;
-      width = (stageW * widthPct) / 100;
-      height = (stageH * heightPct) / 100;
+    let finalTopPct = (topPct !== undefined && !isNaN(topPct) && topPct > 0 && topPct < 70) ? topPct : 23.5;
+    let finalLeftPct = (leftPct !== undefined && !isNaN(leftPct) && leftPct > 0 && leftPct < 70) ? leftPct : 22;
+    let finalWidthPct = (widthPct !== undefined && !isNaN(widthPct) && widthPct > 0) ? widthPct : 56;
+    let finalHeightPct = (heightPct !== undefined && !isNaN(heightPct) && heightPct > 0) ? heightPct : 45;
 
-      const offsetX = (stageW - this.canvasPixelWidth) / 2; // (500 - 380) / 2 = 60px
-      const offsetY = (stageH - this.canvasPixelHeight) / 2; // (590 - 480) / 2 = 55px
+    const stageW = 500;
+    const stageH = 590;
+    const stageLeft = (stageW * finalLeftPct) / 100;
+    const stageTop = (stageH * finalTopPct) / 100;
+    width = (stageW * finalWidthPct) / 100;
+    height = (stageH * finalHeightPct) / 100;
 
-      left = stageLeft - offsetX;
-      top = stageTop - offsetY;
-    } else {
-      width = this.cmToPxX(this.printAreaWidthCm);
-      height = this.cmToPxY(this.printAreaHeightCm);
-      left = (this.canvasPixelWidth - width) / 2;
-      top = (this.canvasPixelHeight - height) / 2;
-    }
+    const offsetX = (stageW - this.canvasPixelWidth) / 2; // (500 - 380) / 2 = 60px
+    const offsetY = (stageH - this.canvasPixelHeight) / 2; // (590 - 480) / 2 = 55px
+
+    left = stageLeft - offsetX;
+    top = stageTop - offsetY;
+
+    // Strict clamp so print guide NEVER strays to the bottom right
+    const safeLeft = Math.max(0, Math.min(100, left));
+    const safeTop = Math.max(0, Math.min(120, top));
 
     return {
-      left: Math.max(0, left),
-      top: Math.max(0, top),
+      left: safeLeft,
+      top: safeTop,
       width,
       height,
-      centerX: left + (width / 2),
-      centerY: top + (height / 2),
+      centerX: safeLeft + (width / 2),
+      centerY: safeTop + (height / 2),
       printWidthCm: this.printAreaWidthCm,
       printHeightCm: this.printAreaHeightCm
     };
@@ -167,12 +169,28 @@ export class DimensionMapper {
     const strokeWidth = fabricObject.strokeWidth || 0;
     const cornerRadius = fabricObject.rx || fabricObject.cornerRadius || 0;
 
+    const hasOuterStroke = Boolean(fabricObject._hasOuterStroke);
+    const outerStrokeColor = fabricObject._outerStrokeColor || '#000000';
+    const outerStrokeWidth = fabricObject._outerStrokeWidth !== undefined ? fabricObject._outerStrokeWidth : 0;
+
+    const has3dEffect = Boolean(fabricObject._has3dEffect);
+    const threeDColor = fabricObject._3dColor || '#000000';
+    const threeDDepth = fabricObject._3dDepth !== undefined ? fabricObject._3dDepth : 0;
+    const threeDAngle = fabricObject._3dAngle !== undefined ? fabricObject._3dAngle : 45;
+
     return {
       surface: surfaceName,
       type,
       shapeType,
       strokeColor,
       strokeWidth,
+      hasOuterStroke,
+      outerStrokeColor,
+      outerStrokeWidth,
+      has3dEffect,
+      threeDColor,
+      threeDDepth,
+      threeDAngle,
       cornerRadius,
       text: textContent,
       fontFamily,

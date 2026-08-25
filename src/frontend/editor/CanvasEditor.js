@@ -39,6 +39,7 @@ export class CanvasEditor {
     // Orange (#FF7828) selection box & custom rotation arrow icon
     fabric.Object.prototype.set({
       borderColor: '#FF7828',
+      editingBorderColor: '#FF7828',
       borderScaleFactor: 1.5,
       cornerColor: '#ffffff',
       cornerStrokeColor: '#FF7828',
@@ -49,6 +50,9 @@ export class CanvasEditor {
       rotatingPointOffset: 25,
       controlsAboveOverlay: true
     });
+    if (fabric.IText) {
+      fabric.IText.prototype.editingBorderColor = '#FF7828';
+    }
 
     // Custom Rotation Icon SVG (#FF7828)
     const rotateSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF7828" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>`;
@@ -94,39 +98,108 @@ export class CanvasEditor {
     this.canvas.on('object:added', (e) => {
       const obj = e.target;
       if (obj && !obj.isGuideline && this.canvasClipRect) {
-        obj.clipPath = this.canvasClipRect;
+        if (!obj.isCustomMasked) {
+          obj.clipPath = this.canvasClipRect;
+        }
       }
     });
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('pointerdown', (e) => {
+        this._lastPointerDownTarget = e.target;
+      }, true);
+    }
   }
 
   initGuidelineBox() {
-    this.printBox = this.dimensionMapper.getPrintAreaPx();
+    this.ensureGuidelineBox();
+  }
 
+  ensureGuidelineBox() {
+    this.printBox = this.dimensionMapper.getPrintAreaPx();
+    if (!this.printBox) return;
+
+    this.canvas.clipPath = null;
+
+    // 1. Create fresh canvasClipRect for individual object print area clipping
+    this.canvasClipRect = new fabric.Rect({
+      left: this.printBox.left,
+      top: this.printBox.top,
+      width: this.printBox.width,
+      height: this.printBox.height,
+      originX: 'left',
+      originY: 'top',
+      absolutePositioned: true
+    });
+    this.canvasClipRect.setCoords();
+
+    // 2. Remove all existing guidelines/snaplines and leftover dashed rects
+    const allObjects = this.canvas.getObjects();
+    allObjects.forEach(o => {
+      if (o.isGuideline || o === this.guidelineBox || o === this.snapLineX || o === this.snapLineY) {
+        this.canvas.remove(o);
+      } else if (
+        o.type === 'rect' &&
+        !o.isPattern && !o.isArtwork && !o.isSticker && !o.isShape && !o.isCustomMasked && !o.isMaskedLayer &&
+        o.fill === 'transparent' && o.stroke === '#000000'
+      ) {
+        this.canvas.remove(o);
+      }
+    });
+
+    // 3. Create fresh guidelineBox instance strictly locked at print bounds
+    const isVisible = this.isGuideVisible !== false;
     this.guidelineBox = new fabric.Rect({
       left: this.printBox.left,
       top: this.printBox.top,
       width: this.printBox.width,
       height: this.printBox.height,
+      originX: 'left',
+      originY: 'top',
+      scaleX: 1,
+      scaleY: 1,
+      angle: 0,
       fill: 'transparent',
       stroke: '#000000',
       strokeWidth: 1.5,
       strokeDashArray: [3, 3],
       selectable: false,
       evented: false,
-      isGuideline: true
+      lockMovementX: true,
+      lockMovementY: true,
+      lockScalingX: true,
+      lockScalingY: true,
+      lockRotation: true,
+      hasControls: false,
+      hasBorders: false,
+      hoverCursor: 'default',
+      isGuideline: true,
+      visible: isVisible
     });
 
     this.canvas.add(this.guidelineBox);
-    this.canvas.sendToBack(this.guidelineBox);
+    this.bringGuidelineToFront();
 
-    // Initialize print area clip rect for user artwork objects
-    this.canvasClipRect = new fabric.Rect({
-      left: this.printBox.left,
-      top: this.printBox.top,
-      width: this.printBox.width,
-      height: this.printBox.height,
-      absolutePositioned: true
+    // Re-add snap lines
+    this.snapLineX = new fabric.Line([0, 0, 0, 0], {
+      stroke: '#ff7828', strokeWidth: 1, strokeDashArray: [4, 4],
+      selectable: false, evented: false, visible: false, isGuideline: true
     });
+    this.snapLineY = new fabric.Line([0, 0, 0, 0], {
+      stroke: '#ff7828', strokeWidth: 1, strokeDashArray: [4, 4],
+      selectable: false, evented: false, visible: false, isGuideline: true
+    });
+    this.canvas.add(this.snapLineX);
+    this.canvas.add(this.snapLineY);
+    this.bringGuidelineToFront();
+  }
+
+  bringGuidelineToFront() {
+    if (this.guidelineBox) {
+      this.canvas.bringToFront(this.guidelineBox);
+    }
+    if (this.snapLineX) this.canvas.bringToFront(this.snapLineX);
+    if (this.snapLineY) this.canvas.bringToFront(this.snapLineY);
   }
 
   updatePrintBounds(newBounds) {
@@ -168,7 +241,7 @@ export class CanvasEditor {
     this.snapLineX = new fabric.Line(
       [this.printBox.centerX, this.printBox.top, this.printBox.centerX, this.printBox.top + this.printBox.height],
       {
-        stroke: '#3b82f6',
+        stroke: '#FF7828',
         strokeWidth: 1,
         strokeDashArray: [3, 3],
         selectable: false,
@@ -181,7 +254,7 @@ export class CanvasEditor {
     this.snapLineY = new fabric.Line(
       [this.printBox.left, this.printBox.centerY, this.printBox.left + this.printBox.width, this.printBox.centerY],
       {
-        stroke: '#3b82f6',
+        stroke: '#FF7828',
         strokeWidth: 1,
         strokeDashArray: [3, 3],
         selectable: false,
@@ -219,6 +292,14 @@ export class CanvasEditor {
   }
 
   initEvents() {
+    this.canvas.on('mouse:down', (e) => {
+      if (!e.target || e.target.isGuideline) {
+        this._wasCanvasBackgroundClicked = true;
+      } else {
+        this._wasCanvasBackgroundClicked = false;
+      }
+    });
+
     this.canvas.on('selection:created', (e) => this.handleSelection(e));
     this.canvas.on('selection:updated', (e) => this.handleSelection(e));
     this.canvas.on('selection:cleared', () => {
@@ -229,28 +310,49 @@ export class CanvasEditor {
     this.canvas.on('mouse:up', () => {
       this.hideSnapLines();
       if (this.onScalingDimensions) this.onScalingDimensions(null);
+      setTimeout(() => {
+        this._wasCanvasBackgroundClicked = false;
+      }, 100);
     });
 
     this.canvas.on('object:moving', (e) => {
       const target = e.target;
-      if (!target || target.isGuideline) return;
+      if (!target || target.isGuideline || !this.printBox) return;
 
-      const snapThreshold = 6;
-      const targetCenterX = target.left + (target.getScaledWidth() / 2);
-      const targetCenterY = target.top + (target.getScaledHeight() / 2);
+      if (target._hasOuterStroke) this.syncOuterStrokeObject(target);
+      if (target._hasImageStroke) this.syncImageOuterStroke(target);
 
-      if (Math.abs(targetCenterX - this.printBox.centerX) < snapThreshold) {
-        target.set('left', this.printBox.centerX - (target.getScaledWidth() / 2));
-        this.snapLineX.set('visible', true);
+      const snapThreshold = 7;
+      const center = target.getCenterPoint();
+      const targetCenterX = center.x;
+      const targetCenterY = center.y;
+
+      const guideCenterX = this.printBox.centerX !== undefined ? this.printBox.centerX : (this.printBox.left + (this.printBox.width / 2));
+      const guideCenterY = this.printBox.centerY !== undefined ? this.printBox.centerY : (this.printBox.top + (this.printBox.height / 2));
+
+      // 1. Vertical Center Snap (Horizontal alignment to guide box vertical center)
+      if (Math.abs(targetCenterX - guideCenterX) < snapThreshold) {
+        target.setPositionByOrigin(new fabric.Point(guideCenterX, targetCenterY), 'center', 'center');
+        target.setCoords();
+        if (this.snapLineX) {
+          this.snapLineX.set('visible', true);
+          this.canvas.bringToFront(this.snapLineX);
+        }
       } else {
-        this.snapLineX.set('visible', false);
+        if (this.snapLineX) this.snapLineX.set('visible', false);
       }
 
-      if (Math.abs(targetCenterY - this.printBox.centerY) < snapThreshold) {
-        target.set('top', this.printBox.centerY - (target.getScaledHeight() / 2));
-        this.snapLineY.set('visible', true);
+      // 2. Horizontal Center Snap (Vertical alignment to guide box horizontal center)
+      const currentCenter = target.getCenterPoint();
+      if (Math.abs(currentCenter.y - guideCenterY) < snapThreshold) {
+        target.setPositionByOrigin(new fabric.Point(currentCenter.x, guideCenterY), 'center', 'center');
+        target.setCoords();
+        if (this.snapLineY) {
+          this.snapLineY.set('visible', true);
+          this.canvas.bringToFront(this.snapLineY);
+        }
       } else {
-        this.snapLineY.set('visible', false);
+        if (this.snapLineY) this.snapLineY.set('visible', false);
       }
 
       this.checkBoundaryExceeded(target);
@@ -260,6 +362,8 @@ export class CanvasEditor {
     this.canvas.on('object:rotating', (e) => {
       const target = e.target;
       if (!target || target.isGuideline) return;
+      if (target._hasOuterStroke) this.syncOuterStrokeObject(target);
+      if (target._hasImageStroke) this.syncImageOuterStroke(target);
       this.checkBoundaryExceeded(target);
       if (this.onSelectionChanged) {
         const meta = this.dimensionMapper.getObjectPhysicalMeta(target);
@@ -271,6 +375,8 @@ export class CanvasEditor {
       const target = e.target;
       if (!target || target.isGuideline) return;
 
+      if (target._hasOuterStroke) this.syncOuterStrokeObject(target);
+      if (target._hasImageStroke) this.syncImageOuterStroke(target);
       this.checkBoundaryExceeded(target);
 
       const meta = this.dimensionMapper.getObjectPhysicalMeta(target);
@@ -282,6 +388,8 @@ export class CanvasEditor {
     this.canvas.on('object:modified', (e) => {
       this.hideSnapLines();
       if (e.target && !e.target.isGuideline) {
+        if (e.target._hasOuterStroke) this.syncOuterStrokeObject(e.target);
+        if (e.target._hasImageStroke) this.syncImageOuterStroke(e.target);
         this.checkBoundaryExceeded(e.target);
         if (this.onSelectionChanged) {
           const meta = this.dimensionMapper.getObjectPhysicalMeta(e.target);
@@ -294,14 +402,21 @@ export class CanvasEditor {
     });
 
     this.canvas.on('object:added', (e) => {
-      if (!e.target.isGuideline) {
-        this.historyManager.saveState();
+      if (e.target && !e.target.isGuideline) {
         if (this.onCanvasModified) this.onCanvasModified();
       }
     });
 
     this.canvas.on('object:removed', (e) => {
       if (!e.target.isGuideline) {
+        if (e.target._outerStrokeObj) {
+          this.canvas.remove(e.target._outerStrokeObj);
+          e.target._outerStrokeObj = null;
+        }
+        if (e.target._imageContourObj) {
+          this.canvas.remove(e.target._imageContourObj);
+          e.target._imageContourObj = null;
+        }
         this.historyManager.saveState();
         if (this.onCanvasModified) this.onCanvasModified();
       }
@@ -347,22 +462,76 @@ export class CanvasEditor {
   handleSelection(e) {
     const activeObj = this.canvas.getActiveObject();
     const selected = activeObj || (e && e.target ? e.target : (e && e.selected && e.selected.length > 0 ? e.selected[0] : null));
-    if (selected && !selected.isGuideline && this.onSelectionChanged) {
-      const meta = this.dimensionMapper.getObjectPhysicalMeta(selected);
-      this.onSelectionChanged(meta, selected);
+    if (selected && !selected.isGuideline) {
+      this._lastSelectedObject = selected;
+      if (selected.type && String(selected.type).toLowerCase().includes('text')) {
+        this._lastSelectedTextObject = selected;
+      }
+      if (this.onSelectionChanged) {
+        const meta = this.dimensionMapper.getObjectPhysicalMeta(selected);
+        this.onSelectionChanged(meta, selected);
+      }
     }
   }
 
   handleSelectionCleared() {
+    if (this._explicitDeselect) {
+      this._explicitDeselect = false;
+      this._lastSelectedObject = null;
+      if (this.onSelectionChanged) {
+        this.onSelectionChanged(null, null);
+      }
+      return;
+    }
+
+    const target = this._lastPointerDownTarget;
+    const isInsideUI = target && (
+      target.closest('.right-edit-panel') ||
+      target.closest('.floating-layer-card') ||
+      target.closest('.layer-card-item') ||
+      target.closest('.left-tools-rail') ||
+      target.closest('.left-tool-rail') ||
+      target.closest('.top-action-bar') ||
+      target.closest('.top-action-toolbar') ||
+      target.closest('.surface-popover-card') ||
+      target.closest('#side-popover') ||
+      target.closest('#btn-toggle-side-popover') ||
+      target.closest('.mobile-quick-ribbon') ||
+      target.closest('#mobile-quick-action-ribbon') ||
+      target.closest('.mobile-floating-mini-modal') ||
+      target.closest('#mobile-compact-slider-bar') ||
+      target.closest('#text-color-popover-modal')
+    );
+
+    // Only preserve active selection if user explicitly clicked inside UI control panels outside canvas/stage
+    if (isInsideUI && this._lastSelectedObject && this.canvas.getObjects().includes(this._lastSelectedObject)) {
+      this.canvas.setActiveObject(this._lastSelectedObject);
+      this.canvas.renderAll();
+      return;
+    }
+
+    this._lastSelectedObject = null;
     if (this.onSelectionChanged) {
       this.onSelectionChanged(null, null);
     }
+  }
+
+  triggerChange() {
+    this.historyManager.saveState();
+    if (this.layerManager) this.layerManager.updateLayerList();
+    if (this.onCanvasModified) this.onCanvasModified();
   }
 
   // --- TOP TOOLBAR ACTIONS ---
 
   undo() {
     this.historyManager.undo(() => {
+      this.isGuideVisible = true;
+      this.ensureGuidelineBox();
+      if (this.guidelineBox) {
+        this.guidelineBox.set('visible', true);
+        this.bringGuidelineToFront();
+      }
       this.canvas.renderAll();
       if (this.layerManager) this.layerManager.updateLayerList();
       if (this.onCanvasModified) this.onCanvasModified();
@@ -371,6 +540,12 @@ export class CanvasEditor {
 
   redo() {
     this.historyManager.redo(() => {
+      this.isGuideVisible = true;
+      this.ensureGuidelineBox();
+      if (this.guidelineBox) {
+        this.guidelineBox.set('visible', true);
+        this.bringGuidelineToFront();
+      }
       this.canvas.renderAll();
       if (this.layerManager) this.layerManager.updateLayerList();
       if (this.onCanvasModified) this.onCanvasModified();
@@ -378,6 +553,8 @@ export class CanvasEditor {
   }
 
   resetCanvas() {
+    this._explicitDeselect = true;
+    this._lastSelectedObject = null;
     this.canvas.getObjects().forEach(obj => {
       if (!obj.isGuideline) this.canvas.remove(obj);
     });
@@ -389,6 +566,8 @@ export class CanvasEditor {
   deleteActiveObject() {
     const active = this.canvas.getActiveObject();
     if (active) {
+      this._explicitDeselect = true;
+      this._lastSelectedObject = null;
       if (active.type === 'activeSelection') {
         active.forEachObject(obj => this.canvas.remove(obj));
       } else {
@@ -583,8 +762,14 @@ export class CanvasEditor {
       charSpacing: options.charSpacing || 0,
       lineHeight: options.lineHeight || 1.16,
       textAlign: options.textAlign || 'center',
-      cornerColor: '#f97316',
-      cornerSize: 12,
+      paintFirst: 'stroke',
+      stroke: options.stroke || '#000000',
+      strokeWidth: options.strokeWidth || 0,
+      borderColor: '#FF7828',
+      cornerColor: '#ffffff',
+      cornerStrokeColor: '#FF7828',
+      cornerSize: 10,
+      cornerStyle: 'circle',
       transparentCorners: false
     });
 
@@ -721,8 +906,11 @@ export class CanvasEditor {
       top: centerY,
       originX: 'center',
       originY: 'center',
-      cornerColor: '#f97316',
-      cornerSize: 12,
+      borderColor: '#FF7828',
+      cornerColor: '#ffffff',
+      cornerStrokeColor: '#FF7828',
+      cornerSize: 10,
+      cornerStyle: 'circle',
       transparentCorners: false,
       isShape: true,
       shapeType: type
@@ -894,7 +1082,11 @@ export class CanvasEditor {
   }
 
   updateActiveObject(props = {}) {
-    const active = this.canvas.getActiveObject();
+    let active = this.canvas.getActiveObject();
+    if (!active && this._lastSelectedTextObject && this.canvas.getObjects().includes(this._lastSelectedTextObject)) {
+      active = this._lastSelectedTextObject;
+      this.canvas.setActiveObject(active);
+    }
     if (!active) return;
 
     if (props.text !== undefined && active.type.includes('text')) active.set('text', props.text);
@@ -917,17 +1109,36 @@ export class CanvasEditor {
     }
     if (props.scaleX !== undefined) active.set('scaleX', parseFloat(props.scaleX));
     if (props.scaleY !== undefined) active.set('scaleY', parseFloat(props.scaleY));
-    if (props.stroke !== undefined) active.set('stroke', props.stroke);
+    if (props.stroke !== undefined) {
+      active.set('stroke', props.stroke);
+      if (active.type && String(active.type).toLowerCase().includes('text')) {
+        active.set({ paintFirst: 'stroke', strokeLineJoin: 'round', strokeLineCap: 'round' });
+      }
+    }
     if (props.strokeWidth !== undefined) {
       const sw = parseFloat(props.strokeWidth);
       active.set('strokeWidth', sw);
+      if (active.type && String(active.type).toLowerCase().includes('text')) {
+        active.set({ paintFirst: 'stroke', strokeLineJoin: 'round', strokeLineCap: 'round' });
+      }
       if (sw > 0 && (!active.stroke || active.stroke === 'none' || active.stroke === 'transparent')) {
-        active.set('stroke', '#17171a');
+        active.set('stroke', '#ffffff');
       }
     }
+    if (props.paintFirst !== undefined) active.set('paintFirst', props.paintFirst);
+    if (props.shadow !== undefined) active.set('shadow', props.shadow);
     if (props.opacity !== undefined) active.set('opacity', parseFloat(props.opacity));
+    if (props.flipX !== undefined) active.set('flipX', Boolean(props.flipX));
+    if (props.flipY !== undefined) active.set('flipY', Boolean(props.flipY));
+
+    if (active._hasOuterStroke) {
+      this.syncOuterStrokeObject(active);
+    }
 
     active.setCoords();
+    if (!this.canvas.getActiveObject()) {
+      this.canvas.setActiveObject(active);
+    }
     this.canvas.renderAll();
 
     if (this.onSelectionChanged) {
@@ -936,7 +1147,288 @@ export class CanvasEditor {
     }
   }
 
-  addImageUrl(url) {
+  syncOuterStrokeObject(active, options = {}) {
+    if (!active || !active.type || !String(active.type).toLowerCase().includes('text')) return;
+
+    const enabled = options.enabled !== undefined ? options.enabled : Boolean(active._hasOuterStroke);
+    const color = options.color || active._outerStrokeColor || '#000000';
+    const width = options.width !== undefined ? options.width : (active._outerStrokeWidth !== undefined ? active._outerStrokeWidth : 4);
+
+    active._hasOuterStroke = enabled;
+    active._outerStrokeColor = color;
+    active._outerStrokeWidth = width;
+
+    if (!enabled || width <= 0) {
+      if (active._outerStrokeObj) {
+        this.canvas.remove(active._outerStrokeObj);
+        active._outerStrokeObj = null;
+      }
+      return;
+    }
+
+    let outerObj = active._outerStrokeObj;
+    if (!outerObj || !this.canvas.getObjects().includes(outerObj)) {
+      outerObj = new fabric.IText(active.text || '', {
+        selectable: false,
+        evented: false,
+        isGuideline: true,
+        paintFirst: 'stroke',
+        strokeLineJoin: 'round',
+        strokeLineCap: 'round',
+        fill: 'transparent'
+      });
+      active._outerStrokeObj = outerObj;
+      const idx = this.canvas.getObjects().indexOf(active);
+      this.canvas.insertAt(outerObj, Math.max(0, idx));
+    }
+
+    const totalWidth = (active.strokeWidth || 0) + (width * 2);
+
+    outerObj.set({
+      text: active.text,
+      left: active.left,
+      top: active.top,
+      originX: active.originX,
+      originY: active.originY,
+      fontFamily: active.fontFamily,
+      fontSize: active.fontSize,
+      fontWeight: active.fontWeight,
+      fontStyle: active.fontStyle,
+      underline: active.underline,
+      linethrough: active.linethrough,
+      charSpacing: active.charSpacing,
+      lineHeight: active.lineHeight,
+      textAlign: active.textAlign,
+      angle: active.angle,
+      scaleX: active.scaleX,
+      scaleY: active.scaleY,
+      stroke: color,
+      strokeWidth: totalWidth,
+      strokeLineJoin: 'round',
+      strokeLineCap: 'round',
+      paintFirst: 'stroke',
+      fill: 'transparent'
+    });
+
+    if (active._has3dEffect) {
+      this.apply3dEffect(active);
+    }
+    outerObj.setCoords();
+  }
+
+  isImageCutout(fabricImg) {
+    if (!fabricImg) return false;
+    if (fabricImg._isCutoutDetected !== undefined) {
+      return fabricImg._isCutoutDetected;
+    }
+
+    const imgEl = fabricImg._element || (fabricImg.getElement && fabricImg.getElement());
+    if (!imgEl) return false;
+
+    try {
+      const canvas = document.createElement('canvas');
+      const w = Math.min(200, imgEl.naturalWidth || imgEl.width || 200);
+      const h = Math.min(200, imgEl.naturalHeight || imgEl.height || 200);
+      if (w <= 0 || h <= 0) return false;
+
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(imgEl, 0, 0, w, h);
+
+      const imgData = ctx.getImageData(0, 0, w, h);
+      const data = imgData.data;
+
+      let transparentPixelCount = 0;
+      const totalPixels = w * h;
+      const sampleStep = Math.max(1, Math.floor(totalPixels / 1000));
+
+      for (let i = 0; i < data.length; i += 4 * sampleStep) {
+        const alpha = data[i + 3];
+        if (alpha < 240) {
+          transparentPixelCount++;
+          if (transparentPixelCount > 5) {
+            fabricImg._isCutoutDetected = true;
+            return true;
+          }
+        }
+      }
+
+      fabricImg._isCutoutDetected = false;
+      return false;
+    } catch (e) {
+      const src = fabricImg._originalSrc || imgEl.src || '';
+      const isCutout = src.includes('.png') || src.includes('.svg') || src.includes('data:image/png') || src.includes('data:image/svg');
+      fabricImg._isCutoutDetected = isCutout;
+      return isCutout;
+    }
+  }
+
+  syncImageOuterStroke(active, options = {}) {
+    if (!active || !this.canvas) return;
+
+    const enabled = options.enabled !== undefined ? options.enabled : Boolean(active._hasImageStroke);
+    const color = options.color || active._imageStrokeColor || '#ffffff';
+    const width = options.width !== undefined ? options.width : (active._imageStrokeWidth !== undefined ? active._imageStrokeWidth : 4);
+    
+    // Auto detect cutout vs square box
+    const isCutout = this.isImageCutout(active);
+    const strokeType = isCutout ? 'contour' : 'box';
+
+    active._hasImageStroke = enabled;
+    active._imageStrokeColor = color;
+    active._imageStrokeWidth = width;
+    active._imageStrokeType = strokeType;
+
+    // First, clear native rectangular stroke if switching away from box or disabling
+    if (!enabled || strokeType !== 'box') {
+      active.set({ stroke: null, strokeWidth: 0 });
+    }
+
+    // Clear companion contour stroke object if disabling or switching to box
+    if (!enabled || strokeType !== 'contour' || width <= 0) {
+      if (active._imageContourObj) {
+        this.canvas.remove(active._imageContourObj);
+        active._imageContourObj = null;
+      }
+    }
+
+    if (!enabled || width <= 0) {
+      active.setCoords();
+      this.canvas.renderAll();
+      return;
+    }
+
+    if (strokeType === 'box') {
+      active.set({
+        stroke: color,
+        strokeWidth: width,
+        strokeUniform: true,
+        strokeLineJoin: 'round',
+        strokeLineCap: 'round'
+      });
+      active.setCoords();
+      this.canvas.renderAll();
+      return;
+    }
+
+    // strokeType === 'contour' (Sticker / Cutout Contour Outline)
+    const imgEl = active._element || (active.getElement && active.getElement());
+    if (!imgEl) {
+      active.setCoords();
+      this.canvas.renderAll();
+      return;
+    }
+
+    try {
+      const strokeWidthPx = Math.max(1, Math.round(width));
+      const pad = strokeWidthPx * 3;
+      const nw = imgEl.naturalWidth || imgEl.width || 300;
+      const nh = imgEl.naturalHeight || imgEl.height || 300;
+
+      const offCanvas = document.createElement('canvas');
+      offCanvas.width = nw + pad * 2;
+      offCanvas.height = nh + pad * 2;
+      const ctx = offCanvas.getContext('2d');
+
+      // Create solid color silhouette of the non-transparent pixels
+      const silCanvas = document.createElement('canvas');
+      silCanvas.width = nw;
+      silCanvas.height = nh;
+      const silCtx = silCanvas.getContext('2d');
+      silCtx.drawImage(imgEl, 0, 0, nw, nh);
+      silCtx.globalCompositeOperation = 'source-in';
+      silCtx.fillStyle = color;
+      silCtx.fillRect(0, 0, nw, nh);
+
+      // Expand silhouette radially
+      const steps = Math.max(24, Math.floor(strokeWidthPx * 4));
+      for (let i = 0; i < steps; i++) {
+        const rad = (i / steps) * Math.PI * 2;
+        const dx = Math.cos(rad) * strokeWidthPx + pad;
+        const dy = Math.sin(rad) * strokeWidthPx + pad;
+        ctx.drawImage(silCanvas, dx, dy);
+      }
+
+      let contourObj = active._imageContourObj;
+      if (!contourObj || !this.canvas.getObjects().includes(contourObj)) {
+        contourObj = new fabric.Image(offCanvas, {
+          selectable: false,
+          evented: false,
+          isGuideline: true,
+          objectCaching: false
+        });
+        active._imageContourObj = contourObj;
+        const idx = this.canvas.getObjects().indexOf(active);
+        this.canvas.insertAt(contourObj, Math.max(0, idx));
+      } else {
+        contourObj.setElement(offCanvas);
+      }
+
+      // Sync position, rotation, scale, origin with active image
+      contourObj.set({
+        left: active.left,
+        top: active.top,
+        originX: active.originX || 'center',
+        originY: active.originY || 'center',
+        scaleX: active.scaleX * ((nw + pad * 2) / nw),
+        scaleY: active.scaleY * ((nh + pad * 2) / nh),
+        angle: active.angle || 0,
+        flipX: active.flipX || false,
+        flipY: active.flipY || false,
+        opacity: active.opacity !== undefined ? active.opacity : 1
+      });
+
+      contourObj.setCoords();
+      active.setCoords();
+      this.canvas.renderAll();
+    } catch (err) {
+      console.error('Error rendering image contour stroke:', err);
+    }
+  }
+
+  apply3dEffect(active, options = {}) {
+    if (!active) return;
+
+    const enabled = options.enabled !== undefined ? options.enabled : Boolean(active._has3dEffect);
+    const color = options.color || active._3dColor || '#000000';
+    const depth = options.depth !== undefined ? options.depth : (active._3dDepth !== undefined ? active._3dDepth : 6);
+    const angle = options.angle !== undefined ? options.angle : (active._3dAngle !== undefined ? active._3dAngle : 45);
+
+    active._has3dEffect = enabled;
+    active._3dColor = color;
+    active._3dDepth = depth;
+    active._3dAngle = angle;
+
+    if (!enabled || depth <= 0) {
+      active.shadow = null;
+      if (active._outerStrokeObj) active._outerStrokeObj.shadow = null;
+      this.canvas.renderAll();
+      return;
+    }
+
+    const angleRad = (angle * Math.PI) / 180;
+    const offsetX = Math.round(depth * Math.cos(angleRad));
+    const offsetY = Math.round(depth * Math.sin(angleRad));
+
+    const shadowObj = new fabric.Shadow({
+      color: color,
+      blur: 0,
+      offsetX: offsetX,
+      offsetY: offsetY
+    });
+
+    if (active._outerStrokeObj) {
+      active._outerStrokeObj.shadow = shadowObj;
+      active.shadow = null;
+    } else {
+      active.shadow = shadowObj;
+    }
+
+    this.canvas.renderAll();
+  }
+
+  addImageUrl(url, options = {}) {
     if (!url) return;
 
     // Handle SVG URLs (like Dicebear Robot stickers) by fetching and fixing viewBox dimensions
@@ -957,19 +1449,19 @@ export class CanvasEditor {
                 }
               }
             }
-            this.addSvgString(fixedSvg);
+            this.addSvgString(fixedSvg, options);
             return;
           }
-          this._loadDirectImage(url);
+          this._loadDirectImage(url, options);
         })
-        .catch(() => this._loadDirectImage(url));
+        .catch(() => this._loadDirectImage(url, options));
       return;
     }
 
-    this._loadDirectImage(url);
+    this._loadDirectImage(url, options);
   }
 
-  _loadDirectImage(url) {
+  _loadDirectImage(url, options = {}) {
     fabric.Image.fromURL(url, (img) => {
       if (!img) return;
       const centerX = this.printBox.left + (this.printBox.width / 2);
@@ -981,16 +1473,27 @@ export class CanvasEditor {
         top: centerY,
         originX: 'center',
         originY: 'center',
-        cornerColor: '#3b82f6',
-        cornerSize: 12,
-        transparentCorners: false
+        borderColor: '#FF7828',
+        borderScaleFactor: 1.5,
+        cornerColor: '#ffffff',
+        cornerStrokeColor: '#FF7828',
+        cornerSize: 10,
+        cornerStyle: 'circle',
+        transparentCorners: false,
+        isArtwork: Boolean(options.isArtwork),
+        isIllustration: Boolean(options.isIllustration),
+        isSticker: Boolean(options.isSticker),
+        isDesignElement: Boolean(options.isArtwork || options.isIllustration || options.isSticker || options.isDesignElement),
+        title: options.artworkTitle || img.title
       });
       img.setCoords();
 
       this.canvas.add(img);
+      this.bringGuidelineToFront();
       this.canvas.setActiveObject(img);
       this.canvas.renderAll();
       this.handleSelection({ target: img, selected: [img] });
+      if (this.layerManager) this.layerManager.updateLayerList();
     }, { crossOrigin: 'anonymous' });
   }
 
@@ -1023,15 +1526,27 @@ export class CanvasEditor {
 
       const allRects = Array.from(svgEl.querySelectorAll('rect'));
       let bgRect = allRects.find(r => {
+        const fill = r.getAttribute('fill') || '';
+        if (fill.startsWith('url(')) return false;
         const w = r.getAttribute('width');
-        return w === '100%' || w === '300' || w === '80' || w === '90' || w === '150';
+        return w === '100%' || w === '300' || w === '80' || w === '90' || w === '150' || w === '30' || w === '100';
       });
-      if (!bgRect && allRects.length > 0) bgRect = allRects[0];
+
+      if (!bgRect && allRects.length > 0) {
+        bgRect = allRects.find(r => {
+          const fill = r.getAttribute('fill') || '';
+          return !fill.startsWith('url(');
+        }) || allRects[0];
+      }
 
       let bgColor = bgRect ? (bgRect.getAttribute('fill') || '#ffffff') : '#ffffff';
       if (!bgColor || bgColor.startsWith('url(')) bgColor = '#ffffff';
 
-      const graphicElements = Array.from(svgEl.querySelectorAll('path, circle, polygon, rect, line, ellipse')).filter(el => el !== bgRect);
+      const graphicElements = Array.from(svgEl.querySelectorAll('path, circle, polygon, rect, line, ellipse')).filter(el => {
+        if (el === bgRect) return false;
+        const fill = el.getAttribute('fill') || '';
+        return !fill.startsWith('url(');
+      });
 
       const colorMap = new Map();
       graphicElements.forEach(el => {
@@ -1069,7 +1584,7 @@ export class CanvasEditor {
     }
   }
 
-  recolorSvgPattern(svgString, { colorMain, colorPoint, colorBg, origPoint }) {
+  recolorSvgPattern(svgString, { colorMain, colorPoint, colorBg, origMain, origPoint, origBg }) {
     if (!svgString) return svgString;
     try {
       const parser = new DOMParser();
@@ -1077,13 +1592,23 @@ export class CanvasEditor {
       const svgEl = doc.querySelector('svg');
       if (!svgEl) return svgString;
 
-      const allRects = Array.from(svgEl.querySelectorAll('rect'));
+      const patternEl = doc.querySelector('pattern');
+      const targetContainer = patternEl || svgEl;
+
+      const allRects = Array.from(targetContainer.querySelectorAll('rect'));
       let bgRect = allRects.find(r => {
+        const fill = r.getAttribute('fill') || '';
+        if (fill.startsWith('url(')) return false;
         const w = r.getAttribute('width');
-        return w === '100%' || w === '300' || w === '80' || w === '90' || w === '150';
+        return w === '100%' || w === '300' || w === '80' || w === '90' || w === '150' || w === '30' || w === '100';
       });
 
-      if (!bgRect && allRects.length > 0) bgRect = allRects[0];
+      if (!bgRect && allRects.length > 0) {
+        bgRect = allRects.find(r => {
+          const fill = r.getAttribute('fill') || '';
+          return !fill.startsWith('url(');
+        }) || allRects[0];
+      }
 
       if (colorBg) {
         if (bgRect) {
@@ -1093,11 +1618,19 @@ export class CanvasEditor {
           newBg.setAttribute('width', '100%');
           newBg.setAttribute('height', '100%');
           newBg.setAttribute('fill', colorBg);
-          svgEl.insertBefore(newBg, svgEl.firstChild);
+          targetContainer.insertBefore(newBg, targetContainer.firstChild);
         }
       }
 
-      const graphicElements = Array.from(svgEl.querySelectorAll('path, circle, polygon, rect, line, ellipse')).filter(el => el !== bgRect);
+      const graphicElements = Array.from(doc.querySelectorAll('path, circle, polygon, rect, line, ellipse')).filter(el => {
+        if (el === bgRect) return false;
+        const fill = el.getAttribute('fill') || '';
+        return !fill.startsWith('url(');
+      });
+
+      const normOrigMain = origMain ? this.normalizeHex(origMain) : null;
+      const normOrigPoint = origPoint ? this.normalizeHex(origPoint) : null;
+      const normOrigBg = origBg ? this.normalizeHex(origBg) : null;
 
       if (graphicElements.length > 0) {
         graphicElements.forEach((el) => {
@@ -1106,18 +1639,22 @@ export class CanvasEditor {
 
           if (fill && fill !== 'none' && !fill.startsWith('url(')) {
             const normFill = this.normalizeHex(fill);
-            if (origPoint && normFill === origPoint && colorPoint) {
+            if (normOrigPoint && normFill === normOrigPoint && colorPoint) {
               el.setAttribute('fill', colorPoint);
-            } else if (colorMain) {
+            } else if (normOrigMain && normFill === normOrigMain && colorMain) {
+              el.setAttribute('fill', colorMain);
+            } else if (!normOrigPoint && !normOrigMain && colorMain && normFill !== normOrigBg) {
               el.setAttribute('fill', colorMain);
             }
           }
 
           if (stroke && stroke !== 'none') {
             const normStroke = this.normalizeHex(stroke);
-            if (origPoint && normStroke === origPoint && colorPoint) {
+            if (normOrigPoint && normStroke === normOrigPoint && colorPoint) {
               el.setAttribute('stroke', colorPoint);
-            } else if (colorMain) {
+            } else if (normOrigMain && normStroke === normOrigMain && colorMain) {
+              el.setAttribute('stroke', colorMain);
+            } else if (!normOrigPoint && !normOrigMain && colorMain && normStroke !== normOrigBg) {
               el.setAttribute('stroke', colorMain);
             }
           }
@@ -1140,12 +1677,15 @@ export class CanvasEditor {
 
     if (!svgString && !imgUrl) return;
 
-    const applyPatternImage = (imageSource) => {
-      const tileWidth = imageSource.width || 100;
-      const tileHeight = imageSource.height || 100;
+    const applyPatternImage = (imageSource, finalSvg) => {
+      const tileWidth = (imageSource.naturalWidth && imageSource.naturalWidth > 0) ? imageSource.naturalWidth : ((imageSource.width && imageSource.width > 0) ? imageSource.width : 100);
+      const tileHeight = (imageSource.naturalHeight && imageSource.naturalHeight > 0) ? imageSource.naturalHeight : ((imageSource.height && imageSource.height > 0) ? imageSource.height : 100);
 
       // Base pattern scale factor so tile repeats nicely (around 60~80px per unit tile)
-      const baseScale = Math.min(80 / tileWidth, 80 / tileHeight) || 0.5;
+      let baseScale = Math.min(80 / tileWidth, 80 / tileHeight);
+      if (!isFinite(baseScale) || isNaN(baseScale) || baseScale <= 0) {
+        baseScale = 0.5;
+      }
 
       const pattern = new fabric.Pattern({
         source: imageSource,
@@ -1161,16 +1701,26 @@ export class CanvasEditor {
         originX: 'center',
         originY: 'center',
         fill: pattern,
-        cornerColor: '#3b82f6',
-        cornerSize: 12,
-        transparentCorners: false
+        borderColor: '#FF7828',
+        cornerColor: '#ffffff',
+        cornerStrokeColor: '#FF7828',
+        cornerSize: 10,
+        cornerStyle: 'circle',
+        transparentCorners: false,
+        isPattern: true,
+        isArtwork: true,
+        isDesignElement: true
       });
 
-      const extracted = this.analyzeSvgColors(svgString);
+      if (this.canvasClipRect) {
+        rect.clipPath = this.canvasClipRect;
+      }
+
+      const extracted = this.analyzeSvgColors(finalSvg || svgString);
 
       rect.isPattern = true;
       rect.patternSourceImg = imageSource;
-      rect.rawSvgContent = svgString;
+      rect.rawSvgContent = finalSvg || svgString;
       rect.patternBaseScale = baseScale;
       rect.patternScale = 1.0;    // 100%
       rect.patternAngle = 0;      // 0 deg
@@ -1188,19 +1738,29 @@ export class CanvasEditor {
       this.canvas.setActiveObject(rect);
       this.canvas.renderAll();
       this.handleSelection({ target: rect, selected: [rect] });
+      if (this.layerManager) this.layerManager.updateLayerList();
+      this.historyManager.saveState();
     };
 
     if (svgString) {
-      const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgString);
+      const uniqueSuffix = `_p_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+      const scopedSvg = svgString
+        .replace(/id="([^"]+)"/g, (m, id) => `id="${id}${uniqueSuffix}"`)
+        .replace(/url\(#([^)]+)\)/g, (m, id) => `url(#${id}${uniqueSuffix})`);
+
+      const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(scopedSvg);
       const imgEl = new Image();
       imgEl.crossOrigin = 'anonymous';
       imgEl.onload = () => {
-        applyPatternImage(imgEl);
+        applyPatternImage(imgEl, scopedSvg);
+      };
+      imgEl.onerror = (e) => {
+        console.error('Pattern image load error:', e);
       };
       imgEl.src = dataUrl;
     } else if (imgUrl) {
       fabric.util.loadImage(imgUrl, (imgEl) => {
-        if (imgEl) applyPatternImage(imgEl);
+        if (imgEl) applyPatternImage(imgEl, '');
       }, null, 'anonymous');
     }
   }
@@ -1219,7 +1779,9 @@ export class CanvasEditor {
         colorMain: activeObj.patternColorMain,
         colorPoint: activeObj.patternColorPoint,
         colorBg: activeObj.patternColorBg,
-        origPoint: activeObj.origColorPoint
+        origMain: activeObj.origColorMain,
+        origPoint: activeObj.origColorPoint,
+        origBg: activeObj.origColorBg
       });
 
       const dataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(recoloredSvg);
@@ -1228,7 +1790,7 @@ export class CanvasEditor {
       imgEl.onload = () => {
         const tileWidth = imgEl.width || 100;
         const tileHeight = imgEl.height || 100;
-        const baseScale = Math.min(80 / tileWidth, 80 / tileHeight) || 0.5;
+        const baseScale = activeObj.patternBaseScale || Math.min(80 / tileWidth, 80 / tileHeight) || 0.5;
         activeObj.patternBaseScale = baseScale;
 
         const curScale = (activeObj.patternScale !== undefined ? activeObj.patternScale : 1.0) * baseScale;
@@ -1251,7 +1813,7 @@ export class CanvasEditor {
     }
   }
 
-  updatePatternProperties({ scale, angle, opacity }) {
+  updatePatternProperties({ scale, angle, opacity }, saveHistory = true) {
     const activeObj = this.canvas.getActiveObject();
     if (!activeObj) return;
 
@@ -1276,7 +1838,11 @@ export class CanvasEditor {
     }
 
     this.canvas.renderAll();
-    this.triggerChange();
+    if (saveHistory) {
+      this.triggerChange();
+    } else if (this.onCanvasModified) {
+      this.onCanvasModified();
+    }
   }
 
   openMaskingModal() {
@@ -1606,7 +2172,7 @@ export class CanvasEditor {
     this.previewShapeRef = null;
   }
 
-  addSvgString(svgString) {
+  addSvgString(svgString, options = {}) {
     if (!svgString) return;
 
     const centerX = this.printBox.left + (this.printBox.width / 2);
@@ -1628,14 +2194,21 @@ export class CanvasEditor {
         cornerStrokeColor: '#FF7828',
         cornerSize: 10,
         cornerStyle: 'circle',
-        transparentCorners: false
+        transparentCorners: false,
+        isArtwork: Boolean(options.isArtwork),
+        isIllustration: Boolean(options.isIllustration),
+        isSticker: Boolean(options.isSticker),
+        isDesignElement: Boolean(options.isArtwork || options.isIllustration || options.isSticker || options.isDesignElement),
+        title: options.artworkTitle || img.title
       });
       img.setCoords();
       img.isArtwork = true;
       this.canvas.add(img);
+      this.bringGuidelineToFront();
       this.canvas.setActiveObject(img);
       this.canvas.renderAll();
       this.handleSelection({ target: img, selected: [img] });
+      if (this.layerManager) this.layerManager.updateLayerList();
     }, { crossOrigin: 'anonymous' });
   }
 
@@ -1878,60 +2451,76 @@ export class CanvasEditor {
   }
 
   getCanvasJson() {
-    return this.canvas.toJSON([
+    const json = this.canvas.toJSON([
       'fontFamily', 'fill', 'angle', 'fontWeight', 'fontStyle', 'underline', 'linethrough',
       'charSpacing', 'lineHeight', 'textAlign', 'isGuideline', 'shapeType', 'rx', 'ry',
       'cornerRadius', 'stroke', 'strokeWidth', 'scaleX', 'scaleY', 'isPattern', 'isArtwork',
-      'isSticker', 'isShape', 'isClipped', 'rawSvgContent', 'patternBaseScale', 'patternScale',
+      'isSticker', 'isIllustration', 'isDesignElement', 'isShape', 'isClipped', 'rawSvgContent', 'patternBaseScale', 'patternScale',
       'patternAngle', 'patternOpacity', 'patternColorMain', 'patternColorPoint', 'patternColorBg',
-      'hasPointColor', 'origColorMain', 'origColorPoint', 'origColorBg', 'patternTitle'
+      'hasPointColor', 'origColorMain', 'origColorPoint', 'origColorBg', 'patternTitle',
+      'isCustomMasked', 'isMaskedLayer', 'maskScaleX', 'maskScaleY'
     ]);
+
+    if (json && Array.isArray(json.objects)) {
+      // 1. Strictly filter out guideline overlay objects (guidelineBox, snap lines)
+      json.objects = json.objects.filter(o => {
+        if (o.isGuideline) return false;
+        if (o.strokeDashArray && o.strokeDashArray.length > 0 && !o.isPattern && !o.isArtwork && !o.isSticker && !o.isShape) return false;
+        return true;
+      });
+
+      // 2. Remove clipPath from serialized json objects and sanitize pattern fills for clean JSON serialization
+      json.objects.forEach(o => {
+        if (o.isPattern || (o.fill && typeof o.fill === 'object')) {
+          o.fill = '#ffffff'; // Re-hydrated asynchronously from rawSvgContent on load
+        }
+        if (o.clipPath && !o.isCustomMasked) {
+          delete o.clipPath;
+        }
+      });
+    }
+    return json;
   }
 
   loadCanvasJson(json, callback) {
-    this.canvas.clipPath = null;
     this.canvas.loadFromJSON(json, () => {
-      // Remove any legacy guideline/snapline objects restored from history JSON
-      const legacyGuides = this.canvas.getObjects().filter(o => o.isGuideline);
-      legacyGuides.forEach(g => this.canvas.remove(g));
+      // 1. Synchronously ensure fresh guidelineBox & global canvasClipRect
+      this.isGuideVisible = true;
+      this.ensureGuidelineBox();
+      if (this.guidelineBox) {
+        this.guidelineBox.set('visible', true);
+        this.bringGuidelineToFront();
+      }
 
-      // Re-apply clipPath to all user design objects
+      // 2. Re-apply print area clipPath and update coordinates for all user design objects
       this.canvas.getObjects().forEach(obj => {
         if (!obj.isGuideline && this.canvasClipRect) {
-          obj.clipPath = this.canvasClipRect;
+          if (!obj.isCustomMasked) {
+            obj.clipPath = this.canvasClipRect;
+          }
+          obj.setCoords();
         }
       });
 
-      // Re-hydrate pattern objects so pattern fill renders perfectly on undo/redo
+      // 3. Render canvas IMMEDIATELY so guideline box & objects are drawn instantly
+      this.canvas.renderAll();
+      if (this.layerManager) this.layerManager.updateLayerList();
+
+      // 4. Re-hydrate pattern objects asynchronously
       const patternObjects = this.canvas.getObjects().filter(o => o.isPattern);
       let pendingPatterns = patternObjects.length;
 
       const finishLoad = () => {
-        // Re-inject authoritative fixed Admin guidelineBox with exact printBox dimensions
-        const isVisible = this.isGuideVisible !== false;
+        this.isGuideVisible = true;
+        if (!this.guidelineBox || !this.canvas.contains(this.guidelineBox)) {
+          this.ensureGuidelineBox();
+        }
         if (this.guidelineBox) {
-          if (this.printBox) {
-            this.guidelineBox.set({
-              left: this.printBox.left,
-              top: this.printBox.top,
-              width: this.printBox.width,
-              height: this.printBox.height
-            });
-          }
-          this.guidelineBox.set('visible', isVisible);
-          this.canvas.add(this.guidelineBox);
-          this.canvas.sendToBack(this.guidelineBox);
+          this.guidelineBox.set('visible', true);
+          this.bringGuidelineToFront();
         }
-        if (this.snapLineX) {
-          this.snapLineX.set('visible', false);
-          this.canvas.add(this.snapLineX);
-        }
-        if (this.snapLineY) {
-          this.snapLineY.set('visible', false);
-          this.canvas.add(this.snapLineY);
-        }
-
         this.canvas.renderAll();
+        if (this.layerManager) this.layerManager.updateLayerList();
         if (callback) callback();
       };
 
@@ -1944,18 +2533,27 @@ export class CanvasEditor {
             const imgEl = new Image();
             imgEl.crossOrigin = 'anonymous';
             imgEl.onload = () => {
-              const tileWidth = imgEl.width || 100;
-              const tileHeight = imgEl.height || 100;
-              const baseScale = obj.patternBaseScale || Math.min(80 / tileWidth, 80 / tileHeight) || 0.5;
-              const effScale = baseScale * (obj.patternScale || 1.0);
-              const pat = new fabric.Pattern({
-                source: imgEl,
-                repeat: 'repeat',
-                patternTransform: [effScale, 0, 0, effScale, 0, 0]
-              });
-              obj.set('fill', pat);
-              pendingPatterns--;
-              if (pendingPatterns === 0) finishLoad();
+              try {
+                const tileWidth = (imgEl.naturalWidth && imgEl.naturalWidth > 0) ? imgEl.naturalWidth : ((imgEl.width && imgEl.width > 0) ? imgEl.width : 100);
+                const tileHeight = (imgEl.naturalHeight && imgEl.naturalHeight > 0) ? imgEl.naturalHeight : ((imgEl.height && imgEl.height > 0) ? imgEl.height : 100);
+                let baseScale = obj.patternBaseScale || Math.min(80 / tileWidth, 80 / tileHeight);
+                if (!isFinite(baseScale) || isNaN(baseScale) || baseScale <= 0) baseScale = 0.5;
+                let effScale = baseScale * (obj.patternScale || 1.0);
+                if (!isFinite(effScale) || isNaN(effScale) || effScale <= 0) effScale = 0.5;
+
+                const pat = new fabric.Pattern({
+                  source: imgEl,
+                  repeat: 'repeat',
+                  patternTransform: [effScale, 0, 0, effScale, 0, 0]
+                });
+                obj.set('fill', pat);
+                obj.setCoords();
+              } catch (e) {
+                console.error('Pattern re-hydration error:', e);
+              } finally {
+                pendingPatterns--;
+                if (pendingPatterns === 0) finishLoad();
+              }
             };
             imgEl.onerror = () => {
               pendingPatterns--;

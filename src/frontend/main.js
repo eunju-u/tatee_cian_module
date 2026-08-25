@@ -101,47 +101,72 @@ function getAppSkeletonHtml(productConfig) {
         <div class="center-workspace">
 
           <!-- TOP ACTION TOOLBAR -->
-          <div class="top-action-toolbar">
-            <div class="tb-group-pill">
-              <button class="tb-btn" id="tb-reset" title="처음으로"><div class="tb-btn-icon">${svg.reset}</div><span class="tb-btn-label">처음으로</span></button>
-              <button class="tb-btn" id="tb-undo" title="취소"><div class="tb-btn-icon">${svg.undo}</div><span class="tb-btn-label">취소</span></button>
-              <button class="tb-btn" id="tb-redo" title="다시실행"><div class="tb-btn-icon">${svg.redo}</div><span class="tb-btn-label">다시실행</span></button>
-            </div>
+          <div class="top-action-toolbar-wrapper">
+            <div class="top-action-toolbar">
+              <div class="tb-group-pill">
+                <button class="tb-btn" id="tb-reset" title="처음으로"><div class="tb-btn-icon">${svg.reset}</div><span class="tb-btn-label">처음으로</span></button>
+              </div>
 
-            <div class="tb-group-pill">
-              <button class="tb-btn" id="tb-delete" title="삭제"><div class="tb-btn-icon">${svg.trash}</div><span class="tb-btn-label">삭제</span></button>
-              <button class="tb-btn" id="tb-bring-forward" title="앞으로"><div class="tb-btn-icon">${svg.front}</div><span class="tb-btn-label">앞으로</span></button>
-              <button class="tb-btn" id="tb-send-backward" title="뒤로"><div class="tb-btn-icon">${svg.back}</div><span class="tb-btn-label">뒤로</span></button>
-            </div>
+              <div class="tb-group-pill">
+                <button class="tb-btn" id="tb-undo" title="취소"><div class="tb-btn-icon">${svg.undo}</div><span class="tb-btn-label">취소</span></button>
+                <button class="tb-btn" id="tb-redo" title="다시실행"><div class="tb-btn-icon">${svg.redo}</div><span class="tb-btn-label">다시실행</span></button>
+              </div>
 
-            <div class="tb-group-pill">
-              <button class="tb-btn" id="tb-group" title="그룹"><div class="tb-btn-icon">${svg.group}</div><span class="tb-btn-label">그룹</span></button>
-              <button class="tb-btn" id="tb-ungroup" title="그룹해제"><div class="tb-btn-icon">${svg.ungroup}</div><span class="tb-btn-label">해제</span></button>
-            </div>
+              <div class="tb-group-pill">
+                <button class="tb-btn" id="tb-delete" title="삭제"><div class="tb-btn-icon">${svg.trash}</div><span class="tb-btn-label">삭제</span></button>
+                <button class="tb-btn" id="tb-bring-forward" title="앞으로"><div class="tb-btn-icon">${svg.front}</div><span class="tb-btn-label">앞으로</span></button>
+                <button class="tb-btn" id="tb-send-backward" title="뒤로"><div class="tb-btn-icon">${svg.back}</div><span class="tb-btn-label">뒤로</span></button>
+              </div>
 
-            <div class="tb-group-pill">
-              <button class="tb-btn" id="tb-flip-x" title="좌우반전"><div class="tb-btn-icon">${svg.flipH}</div><span class="tb-btn-label">좌우</span></button>
-              <button class="tb-btn" id="tb-flip-y" title="상하반전"><div class="tb-btn-icon">${svg.flipV}</div><span class="tb-btn-label">상하</span></button>
-            </div>
+              <div class="tb-group-pill">
+                <button class="tb-btn" id="tb-group" title="그룹"><div class="tb-btn-icon">${svg.group}</div><span class="tb-btn-label">그룹</span></button>
+                <button class="tb-btn" id="tb-ungroup" title="그룹해제"><div class="tb-btn-icon">${svg.ungroup}</div><span class="tb-btn-label">해제</span></button>
+              </div>
 
-            <div class="tb-group-pill">
-              <button class="tb-btn" id="tb-mask-clip" title="마스킹 (도형 안에 패턴/이미지 넣기)" disabled style="opacity:0.4; cursor:not-allowed;">
-                <div class="tb-btn-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/><path d="M12 8l4 4-4 4"/></svg></div>
-                <span class="tb-btn-label">마스킹</span>
-              </button>
-            </div>
+              <div class="tb-group-pill">
+                <button class="tb-btn" id="tb-flip-x" title="좌우반전"><div class="tb-btn-icon">${svg.flipH}</div><span class="tb-btn-label">좌우</span></button>
+                <button class="tb-btn" id="tb-flip-y" title="상하반전"><div class="tb-btn-icon">${svg.flipV}</div><span class="tb-btn-label">상하</span></button>
+              </div>
 
-            <div class="tb-group-pill">
-              <button class="tb-btn" id="tb-align-left" title="왼쪽"><div class="tb-btn-icon">${svg.al}</div><span class="tb-btn-label">왼쪽</span></button>
-              <button class="tb-btn" id="tb-align-center-h" title="가운데"><div class="tb-btn-icon">${svg.ac}</div><span class="tb-btn-label">가운데</span></button>
-              <button class="tb-btn" id="tb-align-right" title="오른쪽"><div class="tb-btn-icon">${svg.ar}</div><span class="tb-btn-label">오른쪽</span></button>
-              <button class="tb-btn" id="tb-align-top" title="위"><div class="tb-btn-icon">${svg.at}</div><span class="tb-btn-label">위</span></button>
-              <button class="tb-btn" id="tb-align-center-v" title="가운데"><div class="tb-btn-icon">${svg.am}</div><span class="tb-btn-label">중간</span></button>
-              <button class="tb-btn" id="tb-align-bottom" title="아래"><div class="tb-btn-icon">${svg.ab}</div><span class="tb-btn-label">아래</span></button>
-            </div>
+              <div class="tb-group-pill" id="container-tb-mask-wrapper" style="position:relative; display:inline-flex;">
+                <button class="tb-btn" id="tb-mask-clip" title="" disabled style="opacity:0.4; cursor:not-allowed;">
+                  <div class="tb-btn-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18"/><path d="M12 8l4 4-4 4"/></svg></div>
+                  <span class="tb-btn-label">마스킹</span>
+                </button>
 
-            <div class="tb-group-pill">
-              <button class="tb-btn active" id="btn-toggle-guide-line" title="인쇄 가이드 영역 ON/OFF"><div class="tb-btn-icon">${svg.guideOn}</div><span class="tb-btn-label">가이드</span></button>
+                <!-- MASKING SPEECH BUBBLE TOOLTIP -->
+                <div id="tooltip-mask-info" style="display:none; position:absolute; top:calc(100% + 10px); left:50%; transform:translateX(-50%); width:260px; background:#0f172a; color:#ffffff; padding:12px 14px; border-radius:12px; border:1px solid #334155; box-shadow:0 12px 30px rgba(15,23,42,0.35); z-index:99999; pointer-events:none; flex-direction:column; gap:6px; box-sizing:border-box;">
+                  <!-- Top Arrow -->
+                  <div style="position:absolute; top:-6px; left:50%; transform:translateX(-50%); width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-bottom:6px solid #0f172a;"></div>
+
+                  <div style="font-size:12px; font-weight:800; color:#38bdf8; display:flex; align-items:center; gap:5px;">
+                    <span>✂️ 마스킹(클리핑) 기능</span>
+                  </div>
+
+                  <div style="font-size:11px; line-height:1.45; color:#cbd5e1; font-weight:500;">
+                    도형 모양(액자) 안에 이미지, 패턴, 스티커를 가두어 잘라 넣는 그래픽 합성 기능입니다.
+                  </div>
+
+                  <div style="height:1px; background:#1e293b; margin:2px 0;"></div>
+
+                  <div style="font-size:10.5px; line-height:1.4; color:#fbbf24; font-weight:700;">
+                    💡 <span style="color:#f8fafc;">도형 1개 + (이미지/패턴/스티커) 1개</span>를 <span style="color:#38bdf8;">Shift 키</span>를 눌러 함께 선택(1:1) 시 활성화됩니다.
+                  </div>
+                </div>
+              </div>
+
+              <div class="tb-group-pill">
+                <button class="tb-btn" id="tb-align-left" title="왼쪽"><div class="tb-btn-icon">${svg.al}</div><span class="tb-btn-label">왼쪽</span></button>
+                <button class="tb-btn" id="tb-align-center-h" title="가운데"><div class="tb-btn-icon">${svg.ac}</div><span class="tb-btn-label">가운데</span></button>
+                <button class="tb-btn" id="tb-align-right" title="오른쪽"><div class="tb-btn-icon">${svg.ar}</div><span class="tb-btn-label">오른쪽</span></button>
+                <button class="tb-btn" id="tb-align-top" title="위"><div class="tb-btn-icon">${svg.at}</div><span class="tb-btn-label">위</span></button>
+                <button class="tb-btn" id="tb-align-center-v" title="가운데"><div class="tb-btn-icon">${svg.am}</div><span class="tb-btn-label">중간</span></button>
+                <button class="tb-btn" id="tb-align-bottom" title="아래"><div class="tb-btn-icon">${svg.ab}</div><span class="tb-btn-label">아래</span></button>
+              </div>
+
+              <div class="tb-group-pill">
+                <button class="tb-btn active" id="btn-toggle-guide-line" title="인쇄 가이드 영역 ON/OFF"><div class="tb-btn-icon">${svg.guideOn}</div><span class="tb-btn-label">가이드</span></button>
+              </div>
             </div>
           </div>
 
@@ -206,6 +231,14 @@ function getAppSkeletonHtml(productConfig) {
 
             <!-- MOCKUP CANVAS -->
             <div class="canvas-mockup-stage" id="canvas-mockup-wrapper" style="position:relative; width:500px; height:590px; display:flex; align-items:center; justify-content:center; overflow:visible; touch-action:none;">
+              <!-- FONT LOADING OVERLAY GIF -->
+              <div id="font-loading-overlay" style="display:none; position:absolute; inset:0; background:rgba(255,255,255,0.78); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px); z-index:90; flex-direction:column; align-items:center; justify-content:center; gap:12px; border-radius:16px; pointer-events:none; transition:opacity 0.2s ease;">
+                <div style="width:48px; height:48px; display:flex; align-items:center; justify-content:center; background:#ffffff; border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,0.1); padding:8px;">
+                  <img id="font-loading-gif" src="${(typeof window !== 'undefined' && window.CUSTOMIZER_CONFIG && window.CUSTOMIZER_CONFIG.loadingGifUrl) || 'https://i.gifer.com/ZZ5H.gif'}" style="width:32px; height:32px; object-fit:contain;" alt="서체 로딩 중..." />
+                </div>
+                <span style="font-size:12.5px; font-weight:700; color:#17171a; letter-spacing:-0.2px;">서체를 적용하고 있습니다...</span>
+              </div>
+
               <div id="garment-bg-layer" style="position:absolute; inset:0; background-image: url('${productConfig.surfaces.front}'); background-size:contain; background-position:center center; background-repeat:no-repeat; pointer-events:none; z-index:1;"></div>
               <div id="canvas-fg-layer" style="position:relative; z-index:2;">
                 <canvas id="customizer-canvas" width="380" height="480"></canvas>
@@ -217,9 +250,17 @@ function getAppSkeletonHtml(productConfig) {
 
         <!-- RIGHT EDIT PANEL (372px) -->
         <div class="right-edit-panel" style="position:relative;">
-
+          
           <!-- SCROLLABLE CONTENT BODY -->
           <div class="panel-body-scroll" id="panel-content-body">
+
+            <!-- MOBILE SHEET HEADER WITH CONFIRM & CLOSE BUTTONS INSIDE POPUP -->
+            <div class="mobile-sheet-header" id="mobile-sheet-header" style="display:none;">
+              <div style="display:flex; align-items:center; gap:8px; margin-left:auto;">
+                <button type="button" id="btn-confirm-mobile-sheet" class="mobile-confirm-sheet-btn" title="확인">✓</button>
+                <button type="button" id="btn-close-mobile-sheet" class="mobile-close-sheet-btn" title="닫기">✕</button>
+              </div>
+            </div>
             
             <!-- SECTION 1: TEXT EDIT CONTROLS (Displayed when text object is selected) -->
             <div id="section-text-controls" style="display:none; flex-direction:column; gap:16px; position:relative;">
@@ -293,6 +334,106 @@ function getAppSkeletonHtml(productConfig) {
                   </div>
                   <input type="range" min="50" max="150" step="1" value="100" id="slider-scale-x" class="slider-range-input">
                 </div>
+              </div>
+
+              <!-- UNIFIED TEXT EFFECTS (통합 텍스트 효과 패널 - SIMPLE STACKED CARDS) -->
+              <div style="display:flex; flex-direction:column; gap:10px; border-top:1px solid #f0f0f3; padding-top:14px; margin-top:4px;">
+                
+                <!-- SECTION TITLE -->
+                <div style="font-size:12px; font-weight:700; color:#18181b; letter-spacing:-0.01em;">
+                  텍스트 효과 (테두리 & 3D)
+                </div>
+
+                <!-- 1. 1차 테두리 (Stroke) -->
+                <div style="display:flex; flex-direction:column; gap:8px; background:#fbfbfd; border:1px solid #e8e8ed; border-radius:10px; padding:10px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:11.5px; font-weight:700; color:#18181b;">1차 테두리</span>
+                    <span id="label-val-text-stroke" style="font-size:11px; font-weight:700; color:#71717a;">0px</span>
+                  </div>
+
+                  <div style="display:flex; align-items:center; gap:8px;">
+                    <!-- COLOR PICKER BUTTON -->
+                    <button type="button" id="btn-text-stroke-color" style="display:flex; align-items:center; gap:5px; background:#ffffff; border:1px solid #d4d4d8; padding:4px 8px; border-radius:7px; cursor:pointer; position:relative; box-shadow:0 1px 2px rgba(0,0,0,0.02);">
+                      <div id="preview-text-stroke-color" style="width:14px; height:14px; border-radius:50%; border:1px solid #a1a1aa; background:#ffffff; flex-shrink:0;"></div>
+                      <span style="font-size:10.5px; font-weight:600; color:#27272a; white-space:nowrap;">색상</span>
+                      <input type="color" id="input-text-stroke-color" value="#ffffff" style="opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer;">
+                    </button>
+
+                    <!-- SLIDER -->
+                    <input type="range" min="0" max="30" step="1" value="0" id="slider-text-stroke" class="slider-range-input" style="flex:1;">
+                  </div>
+                </div>
+
+                <!-- 2. 2차 외곽선 (Double Stroke) -->
+                <div style="display:flex; flex-direction:column; gap:8px; background:#fbfbfd; border:1px solid #e8e8ed; border-radius:10px; padding:10px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:11.5px; font-weight:700; color:#18181b;">2차 외곽선</span>
+                    <label style="display:inline-flex; align-items:center; gap:5px; cursor:pointer; font-size:11px; font-weight:700; color:#18181b;">
+                      <input type="checkbox" id="check-text-double-stroke" style="cursor:pointer; width:14px; height:14px; accent-color:#18181b;">
+                      <span>사용</span>
+                    </label>
+                  </div>
+
+                  <div id="container-double-stroke-controls" style="display:none; flex-direction:column; gap:8px; padding-top:4px; border-top:1px dashed #e4e4e8;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-size:11px; font-weight:600; color:#52525b;">두께</span>
+                      <span id="label-val-shadow-offset" style="font-size:11px; font-weight:700; color:#71717a;">4px</span>
+                    </div>
+
+                    <div style="display:flex; align-items:center; gap:8px;">
+                      <button type="button" id="btn-text-shadow-color" style="display:flex; align-items:center; gap:5px; background:#ffffff; border:1px solid #d4d4d8; padding:4px 8px; border-radius:7px; cursor:pointer; position:relative; box-shadow:0 1px 2px rgba(0,0,0,0.02);">
+                        <div id="preview-text-shadow-color" style="width:14px; height:14px; border-radius:50%; border:1px solid #a1a1aa; background:#000000; flex-shrink:0;"></div>
+                        <span style="font-size:10.5px; font-weight:600; color:#27272a; white-space:nowrap;">색상</span>
+                        <input type="color" id="input-text-shadow-color" value="#000000" style="opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer;">
+                      </button>
+
+                      <input type="range" min="1" max="25" step="1" value="4" id="slider-text-shadow-offset" class="slider-range-input" style="flex:1;">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 3. 3D 입체 (3D Extrude) -->
+                <div style="display:flex; flex-direction:column; gap:8px; background:#fbfbfd; border:1px solid #e8e8ed; border-radius:10px; padding:10px;">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-size:11.5px; font-weight:700; color:#18181b;">3D 입체 효과</span>
+                    <label style="display:inline-flex; align-items:center; gap:5px; cursor:pointer; font-size:11px; font-weight:700; color:#18181b;">
+                      <input type="checkbox" id="check-text-3d-effect" style="cursor:pointer; width:14px; height:14px; accent-color:#18181b;">
+                      <span>사용</span>
+                    </label>
+                  </div>
+
+                  <div id="container-3d-effect-controls" style="display:none; flex-direction:column; gap:8px; padding-top:4px; border-top:1px dashed #e4e4e8;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                      <span style="font-size:11px; font-weight:600; color:#52525b;">깊이</span>
+                      <span id="label-val-text-3d-depth" style="font-size:11px; font-weight:700; color:#71717a;">6px</span>
+                    </div>
+
+                    <div style="display:flex; align-items:center; gap:8px;">
+                      <button type="button" id="btn-text-3d-color" style="display:flex; align-items:center; gap:5px; background:#ffffff; border:1px solid #d4d4d8; padding:4px 8px; border-radius:7px; cursor:pointer; position:relative; box-shadow:0 1px 2px rgba(0,0,0,0.02);">
+                        <div id="preview-text-3d-color" style="width:14px; height:14px; border-radius:50%; border:1px solid #a1a1aa; background:#000000; flex-shrink:0;"></div>
+                        <span style="font-size:10.5px; font-weight:600; color:#27272a; white-space:nowrap;">색상</span>
+                        <input type="color" id="input-text-3d-color" value="#000000" style="opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer;">
+                      </button>
+
+                      <input type="range" min="1" max="30" step="1" value="6" id="slider-text-3d-depth" class="slider-range-input" style="flex:1;">
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:2px;">
+                      <span style="font-size:11px; font-weight:600; color:#52525b;">방향</span>
+                      <span id="label-val-text-3d-angle" style="font-size:10.5px; font-weight:700; color:#71717a;">우하단 (45°)</span>
+                    </div>
+
+                    <div style="display:flex; align-items:center; gap:5px;">
+                      <button type="button" class="btn-3d-dir-preset active" data-angle="45" style="flex:1; padding:5px 0; font-size:11px; font-weight:700; background:#18181b; border:1px solid #18181b; border-radius:6px; cursor:pointer; color:#ffffff;">↘ 우하</button>
+                      <button type="button" class="btn-3d-dir-preset" data-angle="135" style="flex:1; padding:5px 0; font-size:11px; font-weight:700; background:#ffffff; border:1px solid #d4d4d8; border-radius:6px; cursor:pointer; color:#52525b;">↙ 좌하</button>
+                      <button type="button" class="btn-3d-dir-preset" data-angle="90" style="flex:1; padding:5px 0; font-size:11px; font-weight:700; background:#ffffff; border:1px solid #d4d4d8; border-radius:6px; cursor:pointer; color:#52525b;">↓ 직하</button>
+                      <button type="button" class="btn-3d-dir-preset" data-angle="-45" style="flex:1; padding:5px 0; font-size:11px; font-weight:700; background:#ffffff; border:1px solid #d4d4d8; border-radius:6px; cursor:pointer; color:#52525b;">↗ 우상</button>
+                    </div>
+
+                    <input type="range" min="-180" max="180" step="5" value="45" id="slider-text-3d-angle" class="slider-range-input">
+                  </div>
+                </div>
+
               </div>
 
               <div style="height:1px; background:#f0f0f3;"></div>
@@ -584,25 +725,45 @@ function getAppSkeletonHtml(productConfig) {
                 <div style="font-size:15px; font-weight:800; color:#1e293b;">디자인 요소 추가</div>
               </div>
 
-              <!-- SUB-TAB SWITCHER: STICKER VS PATTERN -->
+              <!-- SUB-TAB SWITCHER: STICKER VS PATTERN VS ILLUSTRATION -->
               <div style="display:flex; background:#f1f5f9; padding:4px; border-radius:10px; gap:4px; border:1px solid #e2e8f0;">
-                <button type="button" id="tab-design-sticker" class="btn-design-subtab active" style="flex:1; padding:8px 0; border:none; border-radius:8px; font-size:13px; font-weight:800; cursor:pointer; background:#ffffff; color:#0f172a; box-shadow:0 1px 3px rgba(0,0,0,0.08); transition:all 0.15s ease;">
-                  🎨 스티커
+                <button type="button" id="tab-design-sticker" class="btn-design-subtab active" style="flex:1; padding:7px 0; border:none; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer; background:#ffffff; color:#0f172a; box-shadow:0 1px 3px rgba(0,0,0,0.08); transition:all 0.15s ease;">
+                  스티커
                 </button>
-                <button type="button" id="tab-design-pattern" class="btn-design-subtab" style="flex:1; padding:8px 0; border:none; border-radius:8px; font-size:13px; font-weight:800; cursor:pointer; background:transparent; color:#64748b; transition:all 0.15s ease;">
-                  🏁 패턴
+                <button type="button" id="tab-design-pattern" class="btn-design-subtab" style="flex:1; padding:7px 0; border:none; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer; background:transparent; color:#64748b; transition:all 0.15s ease;">
+                  패턴
+                </button>
+                <button type="button" id="tab-design-illustration" class="btn-design-subtab" style="flex:1; padding:7px 0; border:none; border-radius:8px; font-size:12px; font-weight:800; cursor:pointer; background:transparent; color:#64748b; transition:all 0.15s ease;">
+                  일러스트
                 </button>
               </div>
 
               <!-- PANE 1: STICKERS PANEL -->
-              <div id="pane-design-sticker" style="display:flex; flex-direction:column; gap:16px;">
+              <div id="pane-design-sticker" style="display:flex; flex-direction:column; gap:12px;">
                 <div>
-                  <div style="font-size:11.5px; font-weight:700; color:#8b8b93; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+                  <div style="font-size:11.5px; font-weight:700; color:#8b8b93; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
                     <span>그래픽 스티커 목록</span>
                     <span id="sticker-count-tag" style="color:#0f766e; font-weight:700;"></span>
                   </div>
+                  <!-- Group Chips for Stickers -->
+                  <div id="sticker-group-chips" style="display:flex; gap:4px; overflow-x:auto; padding-bottom:6px; margin-bottom:6px; scrollbar-width:none;"></div>
                   <div id="user-stickers-grid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; max-height:360px; overflow-y:auto; padding:2px;">
                     <div style="grid-column:1/-1; text-align:center; padding:12px; font-size:11.5px; color:#94a3b8;">스티커 로딩 중...</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- PANE 3: ILLUSTRATION PANEL -->
+              <div id="pane-design-illustration" style="display:none; flex-direction:column; gap:12px;">
+                <div>
+                  <div style="font-size:11.5px; font-weight:700; color:#8b8b93; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center;">
+                    <span>아트 일러스트 목록</span>
+                    <span id="illustration-count-tag" style="color:#0f766e; font-weight:700;"></span>
+                  </div>
+                  <!-- Group Chips for Illustrations -->
+                  <div id="illustration-group-chips" style="display:flex; gap:4px; overflow-x:auto; padding-bottom:6px; margin-bottom:6px; scrollbar-width:none;"></div>
+                  <div id="user-illustrations-grid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; max-height:360px; overflow-y:auto; padding:2px;">
+                    <div style="grid-column:1/-1; text-align:center; padding:12px; font-size:11.5px; color:#94a3b8;">일러스트 로딩 중...</div>
                   </div>
                 </div>
               </div>
@@ -689,11 +850,108 @@ function getAppSkeletonHtml(productConfig) {
                   <span id="pattern-count-tag" style="color:#f59e0b; font-weight:700;"></span>
                 </div>
 
+                <!-- Group Chips for Patterns -->
+                <div id="pattern-group-chips" style="display:flex; gap:4px; overflow-x:auto; padding-bottom:6px; margin-bottom:2px; scrollbar-width:none;"></div>
+
                 <div id="user-patterns-grid" style="display:grid; grid-template-columns: repeat(2, 1fr); gap:10px; max-height:280px; overflow-y:auto; padding:2px;">
                   <div style="grid-column:1/-1; text-align:center; padding:18px; font-size:11.5px; color:#94a3b8;">패턴 로딩 중...</div>
                 </div>
               </div>
             </div>
+
+            <!-- SECTION 5: IMAGE CONTROLS & BACKGROUND REMOVAL (전용 이미지 편집 및 배경 제거 패널) -->
+            <div id="section-image-controls" style="display:none; flex-direction:column; gap:18px; position:relative;">
+              
+              <!-- PANEL HEADER -->
+              <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #f1f5f9; padding-bottom:10px;">
+                <div style="font-size:14px; font-weight:800; color:#0f172a; display:flex; align-items:center; gap:6px;">
+                  <span>이미지 편집</span>
+                </div>
+              </div>
+
+              <!-- BACKGROUND REMOVAL ACTION BUTTON -->
+              <div>
+                <button type="button" id="btn-remove-bg-action" style="width:100%; padding:10px 14px; background:#ffffff; color:#0f172a; border:1px solid #e2e8f0; border-radius:10px; font-size:12.5px; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 1px 2px rgba(0,0,0,0.04); transition:all 0.15s ease;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4V2"/><path d="M15 16v-2"/><path d="M8 9h2"/><path d="M20 9h2"/><line x1="3" y1="21" x2="12" y2="12"/></svg>
+                  <span>배경 투명하게 제거</span>
+                </button>
+              </div>
+
+              <div style="height:1px; background:#f1f5f9;"></div>
+
+              <!-- IMAGE ADJUSTMENTS SECTION -->
+              <div style="display:flex; flex-direction:column; gap:14px;">
+                <div style="font-size:12.5px; font-weight:800; color:#0f172a; display:flex; align-items:center; gap:6px;">
+                  <span>이미지 세부 조정</span>
+                </div>
+
+                <!-- OPACITY -->
+                <div>
+                  <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:11.5px; font-weight:700; color:#475569;">
+                    <span>불투명도</span>
+                    <span id="label-val-img-opacity" style="font-weight:800; color:#0f172a;">100%</span>
+                  </div>
+                  <input type="range" min="10" max="100" step="1" value="100" id="slider-img-opacity" class="slider-range-input">
+                </div>
+
+                <!-- ROTATION -->
+                <div>
+                  <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:11.5px; font-weight:700; color:#475569;">
+                    <span>회전 각도</span>
+                    <span id="label-val-img-rotation" style="font-weight:800; color:#0f172a;">0°</span>
+                  </div>
+                  <input type="range" min="-180" max="180" step="1" value="0" id="slider-img-rotation" class="slider-range-input">
+                </div>
+
+                <!-- FLIP BUTTONS -->
+                <div>
+                  <div style="font-size:11.5px; font-weight:700; color:#475569; margin-bottom:6px;">대칭 반전</div>
+                  <div style="display:flex; gap:8px;">
+                    <button type="button" id="btn-img-flip-x" style="flex:1; padding:8px; background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; font-size:11.5px; font-weight:700; color:#334155; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s ease;">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 12H3"/><path d="M11 18l-6-6 6-6"/><path d="M21 18V6"/></svg>
+                      <span>좌우 반전</span>
+                    </button>
+                    <button type="button" id="btn-img-flip-y" style="flex:1; padding:8px; background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; font-size:11.5px; font-weight:700; color:#334155; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:6px; transition:all 0.15s ease;">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17V3"/><path d="M18 11l-6-6-6 6"/><path d="M18 21H6"/></svg>
+                      <span>상하 반전</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div style="height:1px; background:#f1f5f9; margin:4px 0;"></div>
+
+                <!-- IMAGE STROKE / BORDER CONTROLS -->
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                  <div style="font-size:12.5px; font-weight:800; color:#0f172a; display:flex; align-items:center; justify-content:space-between;">
+                    <span>테두리 (외곽선)</span>
+                    <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer; font-size:11.5px; font-weight:700; color:#475569;">
+                      <input type="checkbox" id="chk-img-stroke-enable" style="width:15px; height:15px; accent-color:#0f172a; cursor:pointer;">
+                      <span>테두리 적용</span>
+                    </label>
+                  </div>
+
+                  <div id="wrapper-img-stroke-options" style="display:none; flex-direction:column; gap:12px; background:#f8fafc; padding:12px; border-radius:12px; border:1px solid #e2e8f0;">
+                    <!-- STROKE COLOR & WIDTH -->
+                    <div style="display:grid; grid-template-columns:1fr 1.2fr; gap:10px; align-items:center;">
+                      <div>
+                        <div style="font-size:11px; font-weight:700; color:#64748b; margin-bottom:6px;">테두리 색상</div>
+                        <div style="display:flex; align-items:center; gap:6px;">
+                          <input type="color" id="picker-img-stroke-color" value="#ffffff" style="width:32px; height:32px; border-radius:8px; border:1px solid #cbd5e1; cursor:pointer; padding:0; background:none; flex-shrink:0;">
+                          <input type="text" id="input-img-stroke-color-hex" value="#ffffff" class="form-input" style="font-size:11px; font-weight:700; text-transform:uppercase; padding:4px 6px; width:65px;">
+                        </div>
+                      </div>
+
+                      <div>
+                        <div style="display:flex; justify-content:space-between; margin-bottom:6px; font-size:11px; font-weight:700; color:#64748b;">
+                          <span>두께</span>
+                          <span id="label-val-img-stroke-width" style="font-weight:800; color:#0f172a;">4px</span>
+                        </div>
+                        <input type="range" min="1" max="25" step="1" value="4" id="slider-img-stroke-width" class="slider-range-input">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
               </div>
 
             </div>
@@ -701,6 +959,140 @@ function getAppSkeletonHtml(productConfig) {
           </div>
         </div>
 
+      <!-- MOBILE QUICK ACTION RIBBON (Appears ONLY when text tool is selected on mobile) -->
+      <div id="mobile-quick-action-ribbon" class="mobile-quick-ribbon" style="display:none;">
+        <button type="button" class="mq-btn mq-btn-back" id="mq-btn-back" title="메인 메뉴로 돌아가기">
+          <span class="mq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></span>
+          <span class="mq-label">이전</span>
+        </button>
+
+        <button type="button" class="mq-btn" id="mq-btn-font" title="서체 변경">
+          <span class="mq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg></span>
+          <span class="mq-label">서체</span>
+        </button>
+        <button type="button" class="mq-btn" id="mq-btn-color" title="색상 선택">
+          <span class="mq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg></span>
+          <span class="mq-label">글자색</span>
+        </button>
+        <button type="button" class="mq-btn" id="mq-btn-size" title="크기 조절">
+          <span class="mq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16"/><path d="M4 15l4-8 4 8"/><path d="M6 13h4"/><path d="M15 15l2.5-5 2.5 5"/><path d="M16.2 13.5h2.6"/></svg></span>
+          <span class="mq-label">크기</span>
+        </button>
+        <button type="button" class="mq-btn" id="mq-btn-align-left" title="왼쪽 정렬">
+          <span class="mq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h10M4 18h13"/></svg></span>
+          <span class="mq-label">왼쪽</span>
+        </button>
+        <button type="button" class="mq-btn active" id="mq-btn-align-center" title="가운데 정렬">
+          <span class="mq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M7 12h10M6 18h12"/></svg></span>
+          <span class="mq-label">가운데</span>
+        </button>
+        <button type="button" class="mq-btn" id="mq-btn-align-right" title="오른쪽 정렬">
+          <span class="mq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M10 12h10M7 18h13"/></svg></span>
+          <span class="mq-label">오른쪽</span>
+        </button>
+        <button type="button" class="mq-btn" id="mq-btn-bold" title="볼드">
+          <span class="mq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/><path d="M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z"/></svg></span>
+          <span class="mq-label">볼드</span>
+        </button>
+        <button type="button" class="mq-btn" id="mq-btn-italic" title="이탤릭">
+          <span class="mq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="4" x2="10" y2="4"/><line x1="14" y1="20" x2="5" y2="20"/><line x1="15" y1="4" x2="9" y2="20"/></svg></span>
+          <span class="mq-label">기울임</span>
+        </button>
+        <button type="button" class="mq-btn" id="mq-btn-underline" title="밑줄">
+          <span class="mq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v7a6 6 0 0 0 12 0V3"/><line x1="4" y1="21" x2="20" y2="21"/></svg></span>
+          <span class="mq-label">밑줄</span>
+        </button>
+        <button type="button" class="mq-btn" id="mq-btn-strike" title="취소선">
+          <span class="mq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><path d="M17.5 7.5a4.5 4.5 0 0 0-7.8-3.2 4.3 4.3 0 0 0-.7 5.2"/><path d="M6.5 16.5a4.5 4.5 0 0 0 7.8 3.2 4.3 4.3 0 0 0 .7-5.2"/></svg></span>
+          <span class="mq-label">취소선</span>
+        </button>
+        <button type="button" class="mq-btn" id="mq-btn-vertical-rtl" title="세로쓰기 (우→좌)">
+          <span class="mq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 4v16M13 4v11M8 4v16"/><path d="M4 20l-1-2 1-2" opacity=".7"/></svg></span>
+          <span class="mq-label">세로(우→좌)</span>
+        </button>
+        <button type="button" class="mq-btn" id="mq-btn-vertical-ltr" title="세로쓰기 (좌→우)">
+          <span class="mq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 4v16M11 4v11M16 4v16"/><path d="M20 20l1-2-1-2" opacity=".7"/></svg></span>
+          <span class="mq-label">세로(좌→우)</span>
+        </button>
+        <button type="button" class="mq-btn" id="mq-btn-spacing" title="자간 조절">
+          <span class="mq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"/><path d="M6 7l-4 5 4 5"/><path d="M18 7l4 5-4 5"/></svg></span>
+          <span class="mq-label">자간</span>
+        </button>
+        <button type="button" class="mq-btn" id="mq-btn-lineheight" title="행간 조절">
+          <span class="mq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M7 6l5-4 5 4"/><path d="M7 18l5 4 5-4"/></svg></span>
+          <span class="mq-label">행간</span>
+        </button>
+        <button type="button" class="mq-btn" id="mq-btn-scalex" title="장평 조절">
+          <span class="mq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16"/><path d="M7 8L3 12l4 4"/><path d="M17 8l4 4-4 4"/><line x1="3" y1="4" x2="3" y2="20"/><line x1="21" y1="4" x2="21" y2="20"/></svg></span>
+          <span class="mq-label">장평</span>
+        </button>
+        <button type="button" class="mq-btn" id="mq-btn-rotate" title="회전 조절">
+          <span class="mq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6"/><path d="M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg></span>
+          <span class="mq-label">회전</span>
+        </button>
+        <button type="button" class="mq-btn" id="mq-btn-stroke" title="1차 테두리">
+          <span class="mq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><rect x="7" y="7" width="10" height="10" rx="2" stroke-dasharray="2 2"/></svg></span>
+          <span class="mq-label">1차테두리</span>
+        </button>
+        <button type="button" class="mq-btn" id="mq-btn-doublestroke" title="2차 외곽선">
+          <span class="mq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="4"/><rect x="6" y="6" width="12" height="12" rx="2"/></svg></span>
+          <span class="mq-label">2차외곽선</span>
+        </button>
+        <button type="button" class="mq-btn" id="mq-btn-3d" title="3D 입체">
+          <span class="mq-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></span>
+          <span class="mq-label">3D입체</span>
+        </button>
+      </div>
+
+      <!-- MOBILE FLOATING MINI-MODAL: 텍스트 내용 수정 -->
+      <div id="mobile-text-edit-modal" class="mobile-floating-mini-modal" style="display:none;">
+        <div class="mini-modal-header">
+          <span>✏️ 텍스트 내용 수정</span>
+          <button type="button" class="mini-modal-close-btn" id="mq-text-close-btn">✕</button>
+        </div>
+        <div class="mini-modal-body" style="display:flex; flex-direction:column; gap:8px;">
+          <textarea id="mq-text-input-field" rows="2" class="mq-text-area" placeholder="문구를 입력하세요" style="width:100%; box-sizing:border-box; background:#1e293b; border:1px solid rgba(255,255,255,0.2); border-radius:10px; color:#ffffff; padding:8px 10px; font-size:13px; resize:none; outline:none;"></textarea>
+          <div style="display:flex; justify-content:flex-end;">
+            <button type="button" id="mq-text-confirm-btn" class="mq-confirm-btn" style="background:#ff7828; color:#ffffff; border:none; border-radius:8px; padding:6px 14px; font-size:12px; font-weight:800; cursor:pointer;">확인 [✓]</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MOBILE FLOATING MINI-MODAL: 서체 선택 -->
+      <div id="mobile-font-picker-modal" class="mobile-floating-mini-modal" style="display:none;">
+        <div class="mini-modal-header" style="justify-content:flex-end;">
+          <button type="button" class="mini-modal-close-btn" id="mq-font-close-btn">✕</button>
+        </div>
+        <div class="mini-modal-body font-picker-body" style="max-height:180px; overflow-y:auto;">
+          <div class="mq-font-grid" id="mq-font-options-grid" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:6px;"></div>
+        </div>
+      </div>
+
+      <!-- MOBILE COMPACT NON-BLOCKING SLIDER BAR (Floating above Quick Ribbon) -->
+      <div id="mobile-compact-slider-bar" class="mobile-compact-slider-container" style="display:none;">
+        <div style="display:flex; align-items:center; justify-content:flex-end; width:100%; margin-bottom:2px;">
+          <span id="mc-slider-title" style="display:none;"></span>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <!-- Extra Color Picker for Stroke/DoubleStroke/3D -->
+            <button type="button" id="mc-extra-color-btn" style="display:none; align-items:center; gap:4px; background:#f1f5f9; border:1px solid #cbd5e1; padding:2px 8px; border-radius:6px; cursor:pointer; position:relative;">
+              <div id="mc-extra-color-preview" style="width:12px; height:12px; border-radius:50%; border:1px solid #cbd5e1; background:#0f172a;"></div>
+              <span style="font-size:11px; font-weight:700; color:#334155;">색상</span>
+              <input type="color" id="mc-extra-color-picker" value="#ffffff" style="opacity:0; position:absolute; inset:0; width:100%; height:100%; cursor:pointer;">
+            </button>
+            <span id="mc-slider-value" style="font-size:12px; font-weight:800; color:#ff7828;">0</span>
+          </div>
+        </div>
+        <!-- 3D direction buttons row (Only visible for 3d mode) -->
+        <div id="mc-3d-presets-row" style="display:none; align-items:center; gap:4px; margin-bottom:4px;">
+          <button type="button" class="mc-3d-dir-btn active" data-angle="45" style="flex:1; padding:4px 0; font-size:10.5px; font-weight:700; background:#ff7828; color:#ffffff; border:none; border-radius:6px; cursor:pointer;">↘ 우하</button>
+          <button type="button" class="mc-3d-dir-btn" data-angle="135" style="flex:1; padding:4px 0; font-size:10.5px; font-weight:700; background:#f1f5f9; color:#334155; border:none; border-radius:6px; cursor:pointer;">↙ 좌하</button>
+          <button type="button" class="mc-3d-dir-btn" data-angle="90" style="flex:1; padding:4px 0; font-size:10.5px; font-weight:700; background:#f1f5f9; color:#334155; border:none; border-radius:6px; cursor:pointer;">↓ 직하</button>
+          <button type="button" class="mc-3d-dir-btn" data-angle="-45" style="flex:1; padding:4px 0; font-size:10.5px; font-weight:700; background:#f1f5f9; color:#334155; border:none; border-radius:6px; cursor:pointer;">↗ 우상</button>
+        </div>
+        <div style="display:flex; align-items:center; gap:10px; width:100%;">
+          <input type="range" id="mc-slider-range" class="slider-range-input" min="-50" max="300" value="0" style="flex:1; cursor:pointer;" />
+          <button type="button" id="mc-slider-close" style="width:24px; height:24px; border:none; background:#f1f5f9; color:#64748b; border-radius:50%; font-size:11px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
+        </div>
       </div>
 
       <!-- 3D PREVIEW MODAL -->
@@ -739,7 +1131,7 @@ function getAppSkeletonHtml(productConfig) {
                 <span>🔍 패턴/이미지 크기</span>
                 <span id="val-mask-scale">100%</span>
               </div>
-              <input type="range" id="slider-mask-scale" min="30" max="300" value="100" style="width:100%; accent-color:#2563eb; cursor:pointer;" />
+              <input type="range" id="slider-mask-scale" min="30" max="300" value="100" style="width:100%; accent-color:#0f172a; cursor:pointer;" />
             </div>
 
             <div style="display:flex; flex-direction:column; gap:4px;">
@@ -747,7 +1139,7 @@ function getAppSkeletonHtml(productConfig) {
                 <span>🔄 회전 각도</span>
                 <span id="val-mask-rotation">0°</span>
               </div>
-              <input type="range" id="slider-mask-rotation" min="-180" max="180" value="0" style="width:100%; accent-color:#2563eb; cursor:pointer;" />
+              <input type="range" id="slider-mask-rotation" min="-180" max="180" value="0" style="width:100%; accent-color:#0f172a; cursor:pointer;" />
             </div>
 
             <div style="display:flex; justify-content:flex-end;">
@@ -759,13 +1151,136 @@ function getAppSkeletonHtml(productConfig) {
 
           <div style="display:flex; items-center; justify-content:flex-end; gap:8px;">
             <button type="button" id="btn-cancel-masking-modal" style="padding:8px 16px; background:#e2e8f0; border:none; border-radius:10px; font-size:12.5px; font-weight:700; color:#475569; cursor:pointer;">취소</button>
-            <button type="button" id="btn-apply-masking-modal" style="padding:8px 18px; background:#2563eb; border:none; border-radius:10px; font-size:12.5px; font-weight:800; color:#ffffff; cursor:pointer; box-shadow:0 4px 12px rgba(37,99,235,0.3);">확인 (마스킹 적용)</button>
+            <button type="button" id="btn-apply-masking-modal" style="padding:8px 18px; background:#0f172a; border:none; border-radius:10px; font-size:12.5px; font-weight:800; color:#ffffff; cursor:pointer; box-shadow:0 4px 12px rgba(15,23,42,0.25);">확인 (마스킹 적용)</button>
           </div>
 
         </div>
       </div>
     </div>
   `;
+}
+
+function removeBackgroundFromFabricImage(fabricImg, tolerance = 45) {
+  if (!fabricImg) return;
+  const currentElement = fabricImg._element || (fabricImg.getElement && fabricImg.getElement());
+  if (!currentElement) return;
+
+  if (!fabricImg._originalSrc) {
+    fabricImg._originalSrc = currentElement.src || (fabricImg.toDataURL && fabricImg.toDataURL());
+  }
+
+  const processImageElement = (elementToProcess) => {
+    const canvas = document.createElement('canvas');
+    const w = elementToProcess.naturalWidth || elementToProcess.width || 300;
+    const h = elementToProcess.naturalHeight || elementToProcess.height || 300;
+    canvas.width = w;
+    canvas.height = h;
+
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(elementToProcess, 0, 0, w, h);
+
+    const imgData = ctx.getImageData(0, 0, w, h);
+    const data = imgData.data;
+
+    const cornerCoords = [[0, 0], [w - 1, 0], [0, h - 1], [w - 1, h - 1]];
+    const cornerColors = cornerCoords.map(([cx, cy]) => {
+      const idx = (cy * w + cx) * 4;
+      return { r: data[idx], g: data[idx + 1], b: data[idx + 2], a: data[idx + 3] };
+    }).filter(c => c.a > 10);
+
+    if (cornerColors.length === 0) return;
+
+    const getMinColorDist = (r, g, b) => {
+      let minDist = Infinity;
+      for (let i = 0; i < cornerColors.length; i++) {
+        const c = cornerColors[i];
+        const d = Math.sqrt((r - c.r) ** 2 + (g - c.g) ** 2 + (b - c.b) ** 2);
+        if (d < minDist) minDist = d;
+      }
+      return minDist;
+    };
+
+    const visited = new Uint8Array(w * h);
+    const queue = [];
+
+    for (let x = 0; x < w; x++) {
+      queue.push(x, 0);
+      queue.push(x, h - 1);
+    }
+    for (let y = 1; y < h - 1; y++) {
+      queue.push(0, y);
+      queue.push(w - 1, y);
+    }
+
+    let qIdx = 0;
+    while (qIdx < queue.length) {
+      const x = queue[qIdx++];
+      const y = queue[qIdx++];
+      const pixIdx = y * w + x;
+
+      if (visited[pixIdx]) continue;
+      visited[pixIdx] = 1;
+
+      const dataIdx = pixIdx * 4;
+      const r = data[dataIdx];
+      const g = data[dataIdx + 1];
+      const b = data[dataIdx + 2];
+      const a = data[dataIdx + 3];
+
+      if (a === 0) continue;
+
+      const dist = getMinColorDist(r, g, b);
+      if (dist <= tolerance) {
+        data[dataIdx + 3] = 0;
+
+        if (x > 0 && !visited[pixIdx - 1]) queue.push(x - 1, y);
+        if (x < w - 1 && !visited[pixIdx + 1]) queue.push(x + 1, y);
+        if (y > 0 && !visited[pixIdx - w]) queue.push(x, y - 1);
+        if (y < h - 1 && !visited[pixIdx + w]) queue.push(x, y + 1);
+      }
+    }
+
+    ctx.putImageData(imgData, 0, 0);
+
+    const transparentDataUrl = canvas.toDataURL('image/png');
+    const newImgObj = new Image();
+    newImgObj.crossOrigin = 'anonymous';
+    newImgObj.onload = () => {
+      fabricImg.setElement(newImgObj);
+      if (fabricImg.canvas) {
+        fabricImg.canvas.renderAll();
+        fabricImg.canvas.fire('object:modified', { target: fabricImg });
+      }
+    };
+    newImgObj.src = transparentDataUrl;
+  };
+
+  if (fabricImg._originalSrc && fabricImg._originalSrc !== currentElement.src) {
+    const origImgObj = new Image();
+    origImgObj.crossOrigin = 'anonymous';
+    origImgObj.onload = () => {
+      processImageElement(origImgObj);
+    };
+    origImgObj.src = fabricImg._originalSrc;
+  } else {
+    processImageElement(currentElement);
+  }
+}
+
+function restoreOriginalImage(fabricImg) {
+  if (!fabricImg || !fabricImg._originalSrc) return;
+  const origImg = new Image();
+  origImg.crossOrigin = 'anonymous';
+  origImg.onload = () => {
+    fabricImg.setElement(origImg);
+    if (fabricImg.canvas) {
+      fabricImg.canvas.renderAll();
+      fabricImg.canvas.fire('object:modified', { target: fabricImg });
+    }
+    const thumbImg = document.getElementById('img-preview-thumbnail');
+    if (thumbImg) thumbImg.src = fabricImg._originalSrc;
+  };
+  origImg.src = fabricImg._originalSrc;
 }
 
 export class TShirtCustomizerApp {
@@ -833,6 +1348,7 @@ export class TShirtCustomizerApp {
         const secText = document.getElementById('section-text-controls');
         const secShape = document.getElementById('section-shape-controls');
         const secDesign = document.getElementById('section-design-controls');
+        const secImage = document.getElementById('section-image-controls');
         const secProd = document.getElementById('section-product-options');
 
         const activeRailBtn = document.querySelector('.tool-rail-btn.active');
@@ -894,13 +1410,23 @@ export class TShirtCustomizerApp {
           (obj.rawObject && obj.rawObject.patternTitle !== undefined && obj.rawObject.patternTitle !== '마스킹 레이어')
         ));
 
+        const isDesignElement = Boolean(obj && (
+          obj.isArtwork ||
+          obj.isDesignElement ||
+          obj.isIllustration ||
+          obj.isSticker ||
+          obj.isPattern ||
+          isPatternObj ||
+          (obj.rawObject && (obj.rawObject.isArtwork || obj.rawObject.isDesignElement || obj.rawObject.isIllustration || obj.rawObject.isSticker || obj.rawObject.isPattern))
+        ));
+
         const isText = Boolean(obj && (
           (obj.type && String(obj.type).toLowerCase().includes('text')) ||
           obj.text !== undefined ||
           (obj.rawObject && obj.rawObject.type && String(obj.rawObject.type).toLowerCase().includes('text'))
         ));
 
-        const isBasicShape = Boolean(obj && !isPatternObj && !isText && (
+        const isBasicShape = Boolean(obj && !isPatternObj && !isText && !isDesignElement && (
           obj.isShape ||
           obj.shapeType !== undefined ||
           obj.isCustomMasked ||
@@ -908,12 +1434,22 @@ export class TShirtCustomizerApp {
           (obj.rawObject && (obj.rawObject.isShape || obj.rawObject.shapeType !== undefined || obj.rawObject.isCustomMasked))
         ) && !obj.isGuideline && !obj.isPattern);
 
-        const isImage = Boolean(obj && !isText && !isBasicShape && !isPatternObj);
+        const isImage = Boolean(obj && !isText && !isBasicShape && !isDesignElement && (
+          obj.type === 'image' ||
+          obj.type === 'Image' ||
+          obj.isImage ||
+          obj.isImageLayer ||
+          Boolean(obj._element)
+        ));
 
         if (isText) {
+          if (window.innerWidth <= 768) {
+            showMobileQuickRibbon();
+          }
           if (secText) secText.style.display = 'flex';
           if (secShape) secShape.style.display = 'none';
           if (secDesign) secDesign.style.display = 'none';
+          if (secImage) secImage.style.display = 'none';
           if (secProd) secProd.style.display = 'none';
 
           document.querySelectorAll('.tool-rail-btn').forEach(btn => btn.classList.remove('active'));
@@ -975,6 +1511,80 @@ export class TShirtCustomizerApp {
             updateSliderProgress(scaleXSld);
           }
 
+          // Sync Text Stroke & Double Outline / Shadow Controls
+          const strokeInp = document.getElementById('slider-text-stroke');
+          const strokeLbl = document.getElementById('label-val-text-stroke');
+          const strokeColorInp = document.getElementById('input-text-stroke-color');
+          const strokeColorPrev = document.getElementById('preview-text-stroke-color');
+
+          const sWidth = Math.round(obj.strokeWidth || 0);
+          if (strokeInp) {
+            strokeInp.value = sWidth;
+            if (strokeLbl) strokeLbl.textContent = `${sWidth}px`;
+            updateSliderProgress(strokeInp);
+          }
+          if (strokeColorInp) strokeColorInp.value = obj.stroke || '#000000';
+          if (strokeColorPrev) strokeColorPrev.style.background = obj.stroke || '#000000';
+
+          const dCheck = document.getElementById('check-text-double-stroke');
+          const dContainer = document.getElementById('container-double-stroke-controls');
+          const dColorInp = document.getElementById('input-text-shadow-color');
+          const dColorPrev = document.getElementById('preview-text-shadow-color');
+          const dOffsetSld = document.getElementById('slider-text-shadow-offset');
+          const dOffsetLbl = document.getElementById('label-val-shadow-offset');
+
+          const hasOuter = Boolean(obj._hasOuterStroke);
+          if (dCheck) dCheck.checked = hasOuter;
+          if (dContainer) dContainer.style.display = hasOuter ? 'flex' : 'none';
+
+          if (dColorInp) dColorInp.value = obj._outerStrokeColor || '#000000';
+          if (dColorPrev) dColorPrev.style.background = obj._outerStrokeColor || '#000000';
+          if (dOffsetSld) {
+            const offVal = Math.round(obj._outerStrokeWidth !== undefined ? obj._outerStrokeWidth : 4);
+            dOffsetSld.value = offVal;
+            if (dOffsetLbl) dOffsetLbl.textContent = `${offVal}px`;
+            updateSliderProgress(dOffsetSld);
+          }
+          // 3D Effect UI Sync
+          const check3d = document.getElementById('check-text-3d-effect');
+          const container3d = document.getElementById('container-3d-effect-controls');
+          const colorInp3d = document.getElementById('input-text-3d-color');
+          const colorPrev3d = document.getElementById('preview-text-3d-color');
+          const depthSld3d = document.getElementById('slider-text-3d-depth');
+          const depthLbl3d = document.getElementById('label-val-text-3d-depth');
+          const angleSld3d = document.getElementById('slider-text-3d-angle');
+          const angleLbl3d = document.getElementById('label-val-text-3d-angle');
+
+          const has3d = Boolean(obj._has3dEffect);
+          if (check3d) check3d.checked = has3d;
+          if (container3d) container3d.style.display = has3d ? 'flex' : 'none';
+
+          if (colorInp3d) colorInp3d.value = obj._3dColor || '#000000';
+          if (colorPrev3d) colorPrev3d.style.background = obj._3dColor || '#000000';
+
+          if (depthSld3d) {
+            const dVal = Math.round(obj._3dDepth !== undefined ? obj._3dDepth : 6);
+            depthSld3d.value = dVal;
+            if (depthLbl3d) depthLbl3d.textContent = `${dVal}px`;
+            updateSliderProgress(depthSld3d);
+          }
+
+          if (angleSld3d) {
+            const aVal = Math.round(obj._3dAngle !== undefined ? obj._3dAngle : 45);
+            angleSld3d.value = aVal;
+            if (angleLbl3d) {
+              const formatAngleText = (a) => {
+                if (a === 45) return '우하단 (45°)';
+                if (a === 135) return '좌하단 (135°)';
+                if (a === 90) return '직하단 (90°)';
+                if (a === -45) return '우상단 (-45°)';
+                return `${a}°`;
+              };
+              angleLbl3d.textContent = formatAngleText(aVal);
+            }
+            updateSliderProgress(angleSld3d);
+          }
+
           // Sync Alignments
           const align = obj.textAlign || 'center';
           const alignMap = { left: 'btn-align-left', center: 'btn-align-center', right: 'btn-align-right' };
@@ -1032,8 +1642,9 @@ export class TShirtCustomizerApp {
         } else if (isBasicShape) {
           if (secText) secText.style.display = 'none';
           if (secShape) secShape.style.display = 'flex';
-          if (secDesign) secDesign.style.display = 'none';
-          if (secProd) secProd.style.display = 'none';
+            if (secDesign) secDesign.style.display = 'none';
+            if (secImage) secImage.style.display = 'none';
+            if (secProd) secProd.style.display = 'none';
 
           document.querySelectorAll('.tool-rail-btn').forEach(btn => btn.classList.remove('active'));
           const shapeRailBtn = document.getElementById('rail-btn-shape');
@@ -1148,13 +1759,106 @@ export class TShirtCustomizerApp {
               }
             }
           }
+        } else if (isDesignElement) {
+          if (secText) secText.style.display = 'none';
+          if (secShape) secShape.style.display = 'none';
+          if (secDesign) secDesign.style.display = 'flex';
+          if (secImage) secImage.style.display = 'none';
+          if (secProd) secProd.style.display = 'none';
+
+          document.querySelectorAll('.tool-rail-btn').forEach(btn => btn.classList.remove('active'));
+          const designRailBtn = document.getElementById('rail-btn-design');
+          if (designRailBtn) designRailBtn.classList.add('active');
         } else if (isImage) {
-          // EXPLICIT USER DIRECTIVE: ONLY WHEN AN IMAGE IS CLICKED, DO NOT AUTO-SWITCH PANELS OR RAIL BUTTONS!
-          // Maintain user's currently open right panel state fixed.
+          if (secText) secText.style.display = 'none';
+          if (secShape) secShape.style.display = 'none';
+          if (secDesign) secDesign.style.display = 'none';
+          if (secImage) secImage.style.display = 'flex';
+          if (secProd) secProd.style.display = 'none';
+
+          document.querySelectorAll('.tool-rail-btn').forEach(btn => btn.classList.remove('active'));
+          const imageRailBtn = document.getElementById('rail-btn-image');
+          if (imageRailBtn) imageRailBtn.classList.add('active');
+
+          if (obj) {
+            // Update Thumbnail & Title
+            const thumbImg = document.getElementById('img-preview-thumbnail');
+            const titleLbl = document.getElementById('img-preview-title');
+            if (thumbImg) {
+              try {
+                thumbImg.src = obj.toDataURL ? obj.toDataURL({ format: 'png', quality: 0.8 }) : (obj._element?.src || '');
+              } catch(e) {
+                thumbImg.src = obj._element?.src || '';
+              }
+            }
+            if (titleLbl) {
+              titleLbl.textContent = obj.title || obj.artworkTitle || '업로드 이미지';
+            }
+
+            // Sync Opacity Slider
+            const opSld = document.getElementById('slider-img-opacity');
+            const opLbl = document.getElementById('label-val-img-opacity');
+            const opVal = Math.round((obj.opacity !== undefined ? obj.opacity : 1.0) * 100);
+            if (opSld) {
+              opSld.value = opVal;
+              if (opLbl) opLbl.textContent = `${opVal}%`;
+              updateSliderProgress(opSld);
+            }
+
+            // Sync Rotation Slider
+            const rotSld = document.getElementById('slider-img-rotation');
+            const rotLbl = document.getElementById('label-val-img-rotation');
+            let normAngle = Math.round((obj.angle || 0) % 360);
+            if (normAngle > 180) normAngle -= 360;
+            if (normAngle < -180) normAngle += 360;
+            if (rotSld) {
+              rotSld.value = normAngle;
+              if (rotLbl) rotLbl.textContent = `${normAngle}°`;
+              updateSliderProgress(rotSld);
+            }
+
+            // Sync Flip Buttons State
+            const btnX = document.getElementById('btn-img-flip-x');
+            const btnY = document.getElementById('btn-img-flip-y');
+            if (btnX) {
+              btnX.style.background = obj.flipX ? '#0f172a' : '#ffffff';
+              btnX.style.borderColor = obj.flipX ? '#0f172a' : '#e2e8f0';
+              btnX.style.color = obj.flipX ? '#ffffff' : '#334155';
+            }
+            if (btnY) {
+              btnY.style.background = obj.flipY ? '#0f172a' : '#ffffff';
+              btnY.style.borderColor = obj.flipY ? '#0f172a' : '#e2e8f0';
+              btnY.style.color = obj.flipY ? '#ffffff' : '#334155';
+            }
+
+            // Sync Image Stroke Controls
+            const strokeChk = document.getElementById('chk-img-stroke-enable');
+            const strokeWrap = document.getElementById('wrapper-img-stroke-options');
+            const strokeColorPicker = document.getElementById('picker-img-stroke-color');
+            const strokeColorHex = document.getElementById('input-img-stroke-color-hex');
+            const strokeWidthSld = document.getElementById('slider-img-stroke-width');
+            const strokeWidthLbl = document.getElementById('label-val-img-stroke-width');
+
+            const hasStroke = Boolean(obj._hasImageStroke);
+            if (strokeChk) strokeChk.checked = hasStroke;
+            if (strokeWrap) strokeWrap.style.display = hasStroke ? 'flex' : 'none';
+
+            const strokeColor = obj._imageStrokeColor || '#ffffff';
+            if (strokeColorPicker) strokeColorPicker.value = strokeColor;
+            if (strokeColorHex) strokeColorHex.value = strokeColor;
+
+            const strokeWidth = obj._imageStrokeWidth !== undefined ? obj._imageStrokeWidth : 4;
+            if (strokeWidthSld) {
+              strokeWidthSld.value = strokeWidth;
+              if (strokeWidthLbl) strokeWidthLbl.textContent = `${strokeWidth}px`;
+              updateSliderProgress(strokeWidthSld);
+            }
+          }
         } else if (obj) {
           if (secText) secText.style.display = 'none';
           if (secShape) secShape.style.display = 'none';
           if (secDesign) secDesign.style.display = 'flex';
+          if (secImage) secImage.style.display = 'none';
           if (secProd) secProd.style.display = 'none';
 
           document.querySelectorAll('.tool-rail-btn').forEach(btn => btn.classList.remove('active'));
@@ -1218,27 +1922,44 @@ export class TShirtCustomizerApp {
               if (cellPoint) cellPoint.style.display = 'flex';
               if (pickerPoint) pickerPoint.value = cPoint.toLowerCase();
               if (labelPoint) labelPoint.textContent = cPoint;
+            } else {
+              if (cellPoint) cellPoint.style.display = 'none';
             }
           } else {
+          if (window.innerWidth <= 768) {
+            hideMobileQuickRibbon();
+            hideMobileSheet();
+            closeMobileSubControls();
+          }
           if (activeRailId === 'rail-btn-text') {
             if (secText) secText.style.display = 'flex';
             if (secShape) secShape.style.display = 'none';
             if (secDesign) secDesign.style.display = 'none';
+            if (secImage) secImage.style.display = 'none';
             if (secProd) secProd.style.display = 'none';
           } else if (activeRailId === 'rail-btn-shape') {
             if (secText) secText.style.display = 'none';
             if (secShape) secShape.style.display = 'flex';
             if (secDesign) secDesign.style.display = 'none';
+            if (secImage) secImage.style.display = 'none';
             if (secProd) secProd.style.display = 'none';
           } else if (activeRailId === 'rail-btn-design') {
             if (secText) secText.style.display = 'none';
             if (secShape) secShape.style.display = 'none';
             if (secDesign) secDesign.style.display = 'flex';
+            if (secImage) secImage.style.display = 'none';
+            if (secProd) secProd.style.display = 'none';
+          } else if (activeRailId === 'rail-btn-image') {
+            if (secText) secText.style.display = 'none';
+            if (secShape) secShape.style.display = 'none';
+            if (secDesign) secDesign.style.display = 'none';
+            if (secImage) secImage.style.display = 'flex';
             if (secProd) secProd.style.display = 'none';
           } else {
             if (secText) secText.style.display = 'none';
             if (secShape) secShape.style.display = 'none';
             if (secDesign) secDesign.style.display = 'none';
+            if (secImage) secImage.style.display = 'none';
             if (secProd) secProd.style.display = 'flex';
           }
         }
@@ -1570,40 +2291,57 @@ export class TShirtCustomizerApp {
       const textSec = document.getElementById('section-text-controls');
       const shapeSec = document.getElementById('section-shape-controls');
       const designSec = document.getElementById('section-design-controls');
+      const imageSec = document.getElementById('section-image-controls');
       const productSec = document.getElementById('section-product-options');
       if (textSec) textSec.style.display = 'flex';
       if (shapeSec) shapeSec.style.display = 'none';
       if (designSec) designSec.style.display = 'none';
+      if (imageSec) imageSec.style.display = 'none';
       if (productSec) productSec.style.display = 'none';
 
       const active = editor && editor.canvas ? editor.canvas.getActiveObject() : null;
       if (!active || !(active.type && String(active.type).toLowerCase().includes('text'))) {
         const textObj = editor.addText('SUMMER 2026', { fontSize: 28, fontFamily: "'Pretendard Variable',Pretendard,sans-serif" });
-      }
-      setTimeout(() => {
-        const txtInp = document.getElementById('input-text-content');
-        if (txtInp) {
-          txtInp.focus();
-          txtInp.select();
+        if (textObj && editor.canvas) {
+          editor.canvas.setActiveObject(textObj);
+          editor.canvas.renderAll();
         }
-      }, 50);
+      }
+
+      if (window.innerWidth <= 768) {
+        hideMobileSheet();
+        showMobileQuickRibbon();
+      } else {
+        const rightPanel = document.getElementById('right-floating-panel');
+        if (rightPanel) rightPanel.classList.add('active');
+      }
     });
 
     safeAddListener('rail-btn-image', 'click', (e) => {
       if (e) e.stopPropagation();
-      // EXPLICIT USER DIRECTIVE: Clicking the Image button MUST NOT change/switch the right panel!
-      // Keep user's currently open right panel state fixed.
+      // Trigger Native Mobile Photo Gallery / File Chooser Sheet
       const fileInp = document.createElement('input');
       fileInp.type = 'file';
-      fileInp.accept = 'image/*';
+      fileInp.accept = 'image/*,image/heic,image/heif';
+      fileInp.style.display = 'none';
+      document.body.appendChild(fileInp);
+
       fileInp.onchange = (ev) => {
-        const file = ev.target.files[0];
+        const file = ev.target.files && ev.target.files[0];
         if (file) {
           const reader = new FileReader();
-          reader.onload = (f) => editor.addImageUrl(f.target.result);
+          reader.onload = (f) => {
+            if (editor && typeof editor.addImageUrl === 'function') {
+              editor.addImageUrl(f.target.result);
+            }
+          };
           reader.readAsDataURL(file);
         }
+        if (fileInp.parentNode) {
+          fileInp.parentNode.removeChild(fileInp);
+        }
       };
+
       fileInp.click();
     });
 
@@ -1655,7 +2393,29 @@ export class TShirtCustomizerApp {
       const formatted = formatVerticalText(rawVal, vMode, vAlign);
       editor.updateActiveObject({ text: formatted });
     });
-    safeAddListener('select-font-family', 'change', (e) => editor.updateActiveObject({ fontFamily: e.target.value }));
+    const applyFontWithLoading = async (fontFamily) => {
+      if (!fontFamily) return;
+      const overlay = document.getElementById('font-loading-overlay');
+      if (overlay) overlay.style.display = 'flex';
+
+      try {
+        if (document.fonts && document.fonts.load) {
+          await Promise.race([
+            document.fonts.load(`16px ${fontFamily}`),
+            new Promise(resolve => setTimeout(resolve, 1200))
+          ]);
+        }
+      } catch (err) {
+        console.warn('[FontLoader] Error preloading font:', err);
+      } finally {
+        if (editor) {
+          editor.updateActiveObject({ fontFamily });
+        }
+        if (overlay) overlay.style.display = 'none';
+      }
+    };
+
+    safeAddListener('select-font-family', 'change', (e) => applyFontWithLoading(e.target.value));
     safeAddListener('input-font-size', 'input', (e) => editor.updateActiveObject({ fontSize: parseFloat(e.target.value) || 28 }));
 
     safeAddListener('btn-size-up', 'click', () => {
@@ -1686,9 +2446,274 @@ export class TShirtCustomizerApp {
     };
 
     // Initialize all sliders' initial progress background
-    ['slider-rotation', 'slider-letter-spacing', 'slider-line-height', 'slider-scale-x', 'slider-pattern-scale', 'slider-pattern-angle', 'slider-pattern-opacity'].forEach(id => {
+    ['slider-rotation', 'slider-letter-spacing', 'slider-line-height', 'slider-scale-x', 'slider-text-stroke', 'slider-text-shadow-offset', 'slider-pattern-scale', 'slider-pattern-angle', 'slider-pattern-opacity'].forEach(id => {
       const el = document.getElementById(id);
       if (el) updateSliderProgress(el);
+    });
+
+    // Text Stroke & Double Outline Event Listeners
+    safeAddListener('slider-text-stroke', 'input', (e) => {
+      const val = parseInt(e.target.value, 10);
+      const lbl = document.getElementById('label-val-text-stroke');
+      if (lbl) lbl.textContent = `${val}px`;
+      updateSliderProgress(e.target);
+      const strokeColor = document.getElementById('input-text-stroke-color')?.value || '#ffffff';
+      editor.updateActiveObject({ stroke: strokeColor, strokeWidth: val, paintFirst: 'stroke' });
+    });
+
+    const updateStrokeColor = (color) => {
+      const inp = document.getElementById('input-text-stroke-color');
+      const prev = document.getElementById('preview-text-stroke-color');
+      if (inp) inp.value = color;
+      if (prev) prev.style.background = color;
+      const val = parseInt(document.getElementById('slider-text-stroke')?.value || 0, 10);
+      editor.updateActiveObject({ stroke: color, strokeWidth: val, paintFirst: 'stroke' });
+    };
+
+    safeAddListener('input-text-stroke-color', 'input', (e) => updateStrokeColor(e.target.value));
+    safeAddListener('input-text-stroke-color', 'change', (e) => updateStrokeColor(e.target.value));
+
+    safeAddListener('btn-text-stroke-color', 'click', (e) => {
+      if (e.target.id === 'input-text-stroke-color') return;
+      const inp = document.getElementById('input-text-stroke-color');
+      if (inp) {
+        if (typeof inp.showPicker === 'function') {
+          try { inp.showPicker(); } catch (err) { inp.click(); }
+        } else {
+          inp.click();
+        }
+      }
+    });
+
+    document.querySelectorAll('.btn-swatch-stroke').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const color = btn.getAttribute('data-color');
+        if (color) updateStrokeColor(color);
+      });
+    });
+
+    const applyDoubleStrokeShadow = () => {
+      const isChecked = Boolean(document.getElementById('check-text-double-stroke')?.checked);
+      const container = document.getElementById('container-double-stroke-controls');
+      if (container) container.style.display = isChecked ? 'flex' : 'none';
+
+      const active = editor && editor.canvas ? editor.canvas.getActiveObject() : null;
+      if (!active) return;
+
+      const outerColor = document.getElementById('input-text-shadow-color')?.value || '#000000';
+      const outerWidth = parseInt(document.getElementById('slider-text-shadow-offset')?.value || 4, 10);
+
+      editor.syncOuterStrokeObject(active, {
+        enabled: isChecked,
+        color: outerColor,
+        width: outerWidth
+      });
+      editor.canvas.renderAll();
+    };
+
+    const updateShadowColor = (color) => {
+      const inp = document.getElementById('input-text-shadow-color');
+      const prev = document.getElementById('preview-text-shadow-color');
+      if (inp) inp.value = color;
+      if (prev) prev.style.background = color;
+      applyDoubleStrokeShadow();
+    };
+
+    safeAddListener('check-text-double-stroke', 'change', applyDoubleStrokeShadow);
+
+    safeAddListener('input-text-shadow-color', 'input', (e) => updateShadowColor(e.target.value));
+    safeAddListener('input-text-shadow-color', 'change', (e) => updateShadowColor(e.target.value));
+
+    safeAddListener('btn-text-shadow-color', 'click', (e) => {
+      if (e.target.id === 'input-text-shadow-color') return;
+      const inp = document.getElementById('input-text-shadow-color');
+      if (inp) {
+        if (typeof inp.showPicker === 'function') {
+          try { inp.showPicker(); } catch (err) { inp.click(); }
+        } else {
+          inp.click();
+        }
+      }
+    });
+
+    document.querySelectorAll('.btn-swatch-shadow').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const color = btn.getAttribute('data-color');
+        if (color) updateShadowColor(color);
+      });
+    });
+
+    safeAddListener('slider-text-shadow-offset', 'input', (e) => {
+      const val = parseInt(e.target.value, 10);
+      const lbl = document.getElementById('label-val-shadow-offset');
+      if (lbl) lbl.textContent = `${val}px`;
+      updateSliderProgress(e.target);
+      applyDoubleStrokeShadow();
+    });
+
+    // Unified Text Effect Tab Switcher
+    const fxTabs = [
+      { tabId: 'tab-fx-stroke', panelId: 'panel-fx-stroke' },
+      { tabId: 'tab-fx-double', panelId: 'panel-fx-double' },
+      { tabId: 'tab-fx-3d', panelId: 'panel-fx-3d' }
+    ];
+
+    fxTabs.forEach(({ tabId }) => {
+      safeAddListener(tabId, 'click', () => {
+        fxTabs.forEach(item => {
+          const tabEl = document.getElementById(item.tabId);
+          const panelEl = document.getElementById(item.panelId);
+          const isActive = item.tabId === tabId;
+          if (tabEl) {
+            tabEl.style.background = isActive ? '#ffffff' : 'transparent';
+            tabEl.style.color = isActive ? '#0f172a' : '#64748b';
+            tabEl.style.boxShadow = isActive ? '0 1px 2px rgba(0,0,0,0.05)' : 'none';
+          }
+          if (panelEl) {
+            panelEl.style.display = isActive ? 'flex' : 'none';
+          }
+        });
+      });
+    });
+
+    // 3D Effect Event Listeners
+    const apply3dEffectUI = () => {
+      const isChecked = Boolean(document.getElementById('check-text-3d-effect')?.checked);
+      const container = document.getElementById('container-3d-effect-controls');
+      if (container) container.style.display = isChecked ? 'flex' : 'none';
+
+      const active = editor && editor.canvas ? editor.canvas.getActiveObject() : null;
+      if (!active) return;
+
+      const color = document.getElementById('input-text-3d-color')?.value || '#000000';
+      const depth = parseInt(document.getElementById('slider-text-3d-depth')?.value || 6, 10);
+      const angle = parseInt(document.getElementById('slider-text-3d-angle')?.value || 45, 10);
+
+      if (editor.apply3dEffect) {
+        editor.apply3dEffect(active, {
+          enabled: isChecked,
+          color,
+          depth,
+          angle
+        });
+      }
+    };
+
+    safeAddListener('check-text-3d-effect', 'change', apply3dEffectUI);
+
+    const update3dColor = (color) => {
+      const inp = document.getElementById('input-text-3d-color');
+      const prev = document.getElementById('preview-text-3d-color');
+      if (inp) inp.value = color;
+      if (prev) prev.style.background = color;
+      apply3dEffectUI();
+    };
+
+    safeAddListener('input-text-3d-color', 'input', (e) => update3dColor(e.target.value));
+    safeAddListener('input-text-3d-color', 'change', (e) => update3dColor(e.target.value));
+
+    safeAddListener('btn-text-3d-color', 'click', (e) => {
+      if (e.target.id === 'input-text-3d-color') return;
+      const inp = document.getElementById('input-text-3d-color');
+      if (inp) {
+        if (typeof inp.showPicker === 'function') {
+          try { inp.showPicker(); } catch (err) { inp.click(); }
+        } else {
+          inp.click();
+        }
+      }
+    });
+
+    safeAddListener('slider-text-3d-depth', 'input', (e) => {
+      const val = parseInt(e.target.value, 10);
+      const lbl = document.getElementById('label-val-text-3d-depth');
+      if (lbl) lbl.textContent = `${val}px`;
+      updateSliderProgress(e.target);
+      apply3dEffectUI();
+    });
+
+    const format3dAngleText = (angle) => {
+      if (angle === 45) return '우하단 (45°)';
+      if (angle === 135) return '좌하단 (135°)';
+      if (angle === 90) return '직하단 (90°)';
+      if (angle === -45) return '우상단 (-45°)';
+      return `${angle}°`;
+    };
+
+    safeAddListener('slider-text-3d-angle', 'input', (e) => {
+      const val = parseInt(e.target.value, 10);
+      const lbl = document.getElementById('label-val-text-3d-angle');
+      if (lbl) lbl.textContent = format3dAngleText(val);
+      updateSliderProgress(e.target);
+      apply3dEffectUI();
+    });
+
+    document.querySelectorAll('.btn-3d-dir-preset').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        document.querySelectorAll('.btn-3d-dir-preset').forEach(b => {
+          b.style.background = '#f8fafc';
+          b.style.borderColor = '#cbd5e1';
+          b.style.color = '#334155';
+          b.classList.remove('active');
+        });
+        btn.style.background = '#0f172a';
+        btn.style.borderColor = '#0f172a';
+        btn.style.color = '#ffffff';
+        btn.classList.add('active');
+
+        const angle = parseInt(btn.getAttribute('data-angle'), 10);
+        const sld = document.getElementById('slider-text-3d-angle');
+        const lbl = document.getElementById('label-val-text-3d-angle');
+        if (sld) {
+          sld.value = angle;
+          updateSliderProgress(sld);
+        }
+        if (lbl) lbl.textContent = format3dAngleText(angle);
+        apply3dEffectUI();
+      });
+    });
+
+    // Quick Color Swatches Handlers
+    document.querySelectorAll('.btn-quick-stroke-swatch').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const hex = btn.getAttribute('data-color');
+        const inp = document.getElementById('input-text-stroke-color');
+        const prv = document.getElementById('preview-text-stroke-color');
+        if (inp) { inp.value = hex; }
+        if (prv) { prv.style.background = hex; }
+        if (editor) { editor.setTextStrokeColor(hex); }
+      });
+    });
+
+    document.querySelectorAll('.btn-quick-double-swatch').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const hex = btn.getAttribute('data-color');
+        const inp = document.getElementById('input-text-shadow-color');
+        const prv = document.getElementById('preview-text-shadow-color');
+        if (inp) { inp.value = hex; }
+        if (prv) { prv.style.background = hex; }
+        applyDoubleStrokeShadow();
+      });
+    });
+
+    document.querySelectorAll('.btn-quick-3d-swatch').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const hex = btn.getAttribute('data-color');
+        const inp = document.getElementById('input-text-3d-color');
+        const prv = document.getElementById('preview-text-3d-color');
+        if (inp) { inp.value = hex; }
+        if (prv) { prv.style.background = hex; }
+        apply3dEffectUI();
+      });
     });
 
     // Pattern Sliders
@@ -1697,7 +2722,10 @@ export class TShirtCustomizerApp {
       const lbl = document.getElementById('label-val-pattern-scale');
       if (lbl) lbl.textContent = `${val}%`;
       updateSliderProgress(e.target);
-      editor.updatePatternProperties({ scale: val / 100 });
+      editor.updatePatternProperties({ scale: val / 100 }, false);
+    });
+    safeAddListener('slider-pattern-scale', 'change', () => {
+      editor.triggerChange();
     });
 
     safeAddListener('slider-pattern-angle', 'input', (e) => {
@@ -1705,7 +2733,10 @@ export class TShirtCustomizerApp {
       const lbl = document.getElementById('label-val-pattern-angle');
       if (lbl) lbl.textContent = `${val}°`;
       updateSliderProgress(e.target);
-      editor.updatePatternProperties({ angle: val });
+      editor.updatePatternProperties({ angle: val }, false);
+    });
+    safeAddListener('slider-pattern-angle', 'change', () => {
+      editor.triggerChange();
     });
 
     safeAddListener('slider-pattern-opacity', 'input', (e) => {
@@ -1713,7 +2744,10 @@ export class TShirtCustomizerApp {
       const lbl = document.getElementById('label-val-pattern-opacity');
       if (lbl) lbl.textContent = `${val}%`;
       updateSliderProgress(e.target);
-      editor.updatePatternProperties({ opacity: val / 100 });
+      editor.updatePatternProperties({ opacity: val / 100 }, false);
+    });
+    safeAddListener('slider-pattern-opacity', 'change', () => {
+      editor.triggerChange();
     });
 
     // Pattern Color Pickers
@@ -1793,6 +2827,20 @@ export class TShirtCustomizerApp {
       updateZoomUI();
     });
 
+    const maskWrapper = document.getElementById('container-tb-mask-wrapper');
+    const maskTooltip = document.getElementById('tooltip-mask-info');
+    if (maskWrapper && maskTooltip) {
+      maskWrapper.addEventListener('mouseenter', () => {
+        const btnMask = document.getElementById('tb-mask-clip');
+        if (btnMask && btnMask.disabled) {
+          maskTooltip.style.display = 'flex';
+        }
+      });
+      maskWrapper.addEventListener('mouseleave', () => {
+        maskTooltip.style.display = 'none';
+      });
+    }
+
     safeAddListener('tb-mask-clip', 'click', () => {
       if (editor) editor.openMaskingModal();
     });
@@ -1863,13 +2911,17 @@ export class TShirtCustomizerApp {
     // Shape Rail Button Click (도형)
     safeAddListener('rail-btn-shape', 'click', (e) => {
       if (e) e.stopPropagation();
+      hideMobileQuickRibbon();
+      showMobileSheet('🔷 기본 도형 선택');
       const secText = document.getElementById('section-text-controls');
       const secShape = document.getElementById('section-shape-controls');
       const secDesign = document.getElementById('section-design-controls');
+      const secImage = document.getElementById('section-image-controls');
       const secProd = document.getElementById('section-product-options');
       if (secText) secText.style.display = 'none';
       if (secShape) secShape.style.display = 'flex';
       if (secDesign) secDesign.style.display = 'none';
+      if (secImage) secImage.style.display = 'none';
       if (secProd) secProd.style.display = 'none';
 
       document.querySelectorAll('.tool-rail-btn').forEach(btn => btn.classList.remove('active'));
@@ -1880,13 +2932,17 @@ export class TShirtCustomizerApp {
     // Design Rail Button Click (디자인: 스티커 & 패턴)
     safeAddListener('rail-btn-design', 'click', (e) => {
       if (e) e.stopPropagation();
+      hideMobileQuickRibbon();
+      showMobileSheet('✨ 스티커 & 디자인 선택');
       const secText = document.getElementById('section-text-controls');
       const secShape = document.getElementById('section-shape-controls');
       const secDesign = document.getElementById('section-design-controls');
+      const secImage = document.getElementById('section-image-controls');
       const secProd = document.getElementById('section-product-options');
       if (secText) secText.style.display = 'none';
       if (secShape) secShape.style.display = 'none';
       if (secDesign) secDesign.style.display = 'flex';
+      if (secImage) secImage.style.display = 'none';
       if (secProd) secProd.style.display = 'none';
 
       document.querySelectorAll('.tool-rail-btn').forEach(btn => btn.classList.remove('active'));
@@ -1896,61 +2952,173 @@ export class TShirtCustomizerApp {
       loadArtworksForCustomizer();
     });
 
-    // Design Subtab Toggling (Sticker vs Pattern)
+    // Design Subtab Toggling (Sticker vs Pattern vs Illustration)
     const btnTabSticker = document.getElementById('tab-design-sticker');
     const btnTabPattern = document.getElementById('tab-design-pattern');
-    const paneSticker = document.getElementById('pane-design-sticker');
-    const panePattern = document.getElementById('pane-design-pattern');
+    const btnTabIllu = document.getElementById('tab-design-illustration');
 
     window.switchToDesignSubtab = (tabName) => {
       const bSticker = document.getElementById('tab-design-sticker');
       const bPattern = document.getElementById('tab-design-pattern');
+      const bIllu = document.getElementById('tab-design-illustration');
+
       const pSticker = document.getElementById('pane-design-sticker');
       const pPattern = document.getElementById('pane-design-pattern');
+      const pIllu = document.getElementById('pane-design-illustration');
 
-      if (tabName === 'pattern') {
-        if (bPattern) {
-          bPattern.classList.add('active');
-          bPattern.style.background = '#ffffff';
-          bPattern.style.color = '#0f172a';
-          bPattern.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)';
+      const setSubtab = (btn, pane, active) => {
+        if (btn) {
+          if (active) {
+            btn.classList.add('active');
+            btn.style.background = '#ffffff';
+            btn.style.color = '#0f172a';
+            btn.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)';
+          } else {
+            btn.classList.remove('active');
+            btn.style.background = 'transparent';
+            btn.style.color = '#64748b';
+            btn.style.boxShadow = 'none';
+          }
         }
-        if (bSticker) {
-          bSticker.classList.remove('active');
-          bSticker.style.background = 'transparent';
-          bSticker.style.color = '#64748b';
-          bSticker.style.boxShadow = 'none';
+        if (pane) {
+          pane.style.display = active ? 'flex' : 'none';
         }
-        if (pPattern) pPattern.style.display = 'flex';
-        if (pSticker) pSticker.style.display = 'none';
-      } else {
-        if (bSticker) {
-          bSticker.classList.add('active');
-          bSticker.style.background = '#ffffff';
-          bSticker.style.color = '#0f172a';
-          bSticker.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)';
-        }
-        if (bPattern) {
-          bPattern.classList.remove('active');
-          bPattern.style.background = 'transparent';
-          bPattern.style.color = '#64748b';
-          bPattern.style.boxShadow = 'none';
-        }
-        if (pSticker) pSticker.style.display = 'flex';
-        if (pPattern) pPattern.style.display = 'none';
-      }
+      };
+
+      setSubtab(bSticker, pSticker, tabName === 'sticker');
+      setSubtab(bPattern, pPattern, tabName === 'pattern');
+      setSubtab(bIllu, pIllu, tabName === 'illustration');
     };
 
-    if (btnTabSticker && btnTabPattern) {
+    if (btnTabSticker) {
       btnTabSticker.addEventListener('click', () => {
         window.switchToDesignSubtab('sticker');
       });
-
+    }
+    if (btnTabPattern) {
       btnTabPattern.addEventListener('click', () => {
         window.switchToDesignSubtab('pattern');
         loadArtworksForCustomizer();
       });
     }
+    if (btnTabIllu) {
+      btnTabIllu.addEventListener('click', () => {
+        window.switchToDesignSubtab('illustration');
+        loadArtworksForCustomizer();
+      });
+    }
+
+    // Section Image Controls Listeners (배경 제거 및 이미지 세부 조정)
+    safeAddListener('btn-remove-bg-action', 'click', () => {
+      if (!editor || !editor.canvas) return;
+      const activeObj = editor.canvas.getActiveObject();
+      if (!activeObj) return;
+
+      removeBackgroundFromFabricImage(activeObj, 45);
+    });
+
+    safeAddListener('slider-img-opacity', 'input', (e) => {
+      const val = parseInt(e.target.value, 10);
+      const lbl = document.getElementById('label-val-img-opacity');
+      if (lbl) lbl.textContent = `${val}%`;
+      updateSliderProgress(e.target);
+      if (editor) editor.updateActiveObject({ opacity: val / 100 });
+    });
+
+    safeAddListener('slider-img-rotation', 'input', (e) => {
+      const val = parseInt(e.target.value, 10);
+      const lbl = document.getElementById('label-val-img-rotation');
+      if (lbl) lbl.textContent = `${val}°`;
+      updateSliderProgress(e.target);
+      if (editor) editor.updateActiveObject({ angle: val });
+    });
+
+    safeAddListener('btn-img-flip-x', 'click', () => {
+      if (!editor || !editor.canvas) return;
+      const activeObj = editor.canvas.getActiveObject();
+      if (activeObj) {
+        const newFlipX = !activeObj.flipX;
+        editor.updateActiveObject({ flipX: newFlipX });
+        const btnX = document.getElementById('btn-img-flip-x');
+        if (btnX) {
+          btnX.style.background = newFlipX ? '#0f172a' : '#ffffff';
+          btnX.style.borderColor = newFlipX ? '#0f172a' : '#e2e8f0';
+          btnX.style.color = newFlipX ? '#ffffff' : '#334155';
+        }
+      }
+    });
+
+    safeAddListener('btn-img-flip-y', 'click', () => {
+      if (!editor || !editor.canvas) return;
+      const activeObj = editor.canvas.getActiveObject();
+      if (activeObj) {
+        const newFlipY = !activeObj.flipY;
+        editor.updateActiveObject({ flipY: newFlipY });
+        const btnY = document.getElementById('btn-img-flip-y');
+        if (btnY) {
+          btnY.style.background = newFlipY ? '#0f172a' : '#ffffff';
+          btnY.style.borderColor = newFlipY ? '#0f172a' : '#e2e8f0';
+          btnY.style.color = newFlipY ? '#ffffff' : '#334155';
+        }
+      }
+    });
+
+    // Image Stroke / Border Control Handlers
+    safeAddListener('chk-img-stroke-enable', 'change', (e) => {
+      if (!editor || !editor.canvas) return;
+      const activeObj = editor.canvas.getActiveObject();
+      if (!activeObj) return;
+
+      const enabled = e.target.checked;
+      const wrap = document.getElementById('wrapper-img-stroke-options');
+      if (wrap) wrap.style.display = enabled ? 'flex' : 'none';
+
+      const colorInp = document.getElementById('picker-img-stroke-color');
+      const widthSld = document.getElementById('slider-img-stroke-width');
+
+      const color = colorInp ? colorInp.value : '#ffffff';
+      const width = widthSld ? parseInt(widthSld.value, 10) : 4;
+
+      editor.syncImageOuterStroke(activeObj, {
+        enabled,
+        color,
+        width
+      });
+    });
+
+    const updateImgStrokeColor = (colorHex) => {
+      if (!editor || !editor.canvas) return;
+      const activeObj = editor.canvas.getActiveObject();
+      if (!activeObj) return;
+
+      const picker = document.getElementById('picker-img-stroke-color');
+      const hexInp = document.getElementById('input-img-stroke-color-hex');
+      if (picker) picker.value = colorHex;
+      if (hexInp) hexInp.value = colorHex;
+
+      editor.syncImageOuterStroke(activeObj, { color: colorHex });
+    };
+
+    safeAddListener('picker-img-stroke-color', 'input', (e) => updateImgStrokeColor(e.target.value));
+    safeAddListener('picker-img-stroke-color', 'change', (e) => updateImgStrokeColor(e.target.value));
+    safeAddListener('input-img-stroke-color-hex', 'change', (e) => {
+      let val = e.target.value.trim();
+      if (!val.startsWith('#')) val = '#' + val;
+      updateImgStrokeColor(val);
+    });
+
+    safeAddListener('slider-img-stroke-width', 'input', (e) => {
+      if (!editor || !editor.canvas) return;
+      const activeObj = editor.canvas.getActiveObject();
+      if (!activeObj) return;
+
+      const val = parseInt(e.target.value, 10);
+      const lbl = document.getElementById('label-val-img-stroke-width');
+      if (lbl) lbl.textContent = `${val}px`;
+      updateSliderProgress(e.target);
+
+      editor.syncImageOuterStroke(activeObj, { width: val });
+    });
 
     const DEFAULT_FALLBACK_ARTWORKS = [
       { id: 'pat_checker', category: 'pattern', title: '체커보드 패턴', isVector: true, svgContent: `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><rect x="0" y="0" width="150" height="150" fill="#0f172a"/><rect x="150" y="0" width="150" height="150" fill="#ffffff"/><rect x="0" y="150" width="150" height="150" fill="#ffffff"/><rect x="150" y="150" width="150" height="150" fill="#0f172a"/><rect x="30" y="30" width="90" height="90" fill="#ffffff"/><rect x="180" y="30" width="90" height="90" fill="#0f172a"/><rect x="30" y="180" width="90" height="90" fill="#0f172a"/><rect x="180" y="180" width="90" height="90" fill="#ffffff"/></svg>` },
@@ -1960,14 +3128,17 @@ export class TShirtCustomizerApp {
       { id: 'art_1786588178970', title: '🌸 파스텔 데이지 패턴', category: 'pattern', isVector: true, svgContent: `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"><defs><pattern id="pat1" width="80" height="80" patternUnits="userSpaceOnUse"><rect width="80" height="80" fill="#fff0f5"/><circle cx="40" cy="40" r="15" fill="#f472b6"/></pattern></defs><rect width="100%" height="100%" fill="url(#pat1)"/></svg>` },
       { id: 'art_1786588422206', title: '💫 Y2K 핑크 글리터 스파클', category: 'pattern', isVector: true, svgContent: `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"><defs><pattern id="pat_sparkle" width="90" height="90" patternUnits="userSpaceOnUse"><rect width="90" height="90" fill="#fff0f5"/><g opacity="0.85"><path d="M 27 9 Q 27 27, 45 27 Q 27 27, 27 45 Q 27 27, 9 27 Q 27 27, 27 9 Z" fill="#f472b6"/><path d="M 67.5 54 Q 67.5 64.8, 78.3 64.8 Q 67.5 64.8, 67.5 75.6 Q 67.5 64.8, 56.7 64.8 Q 67.5 64.8, 67.5 54 Z" fill="#f59e0b"/></g></pattern></defs><rect width="100%" height="100%" fill="url(#pat_sparkle)"/></svg>` },
       { id: 'art_1786594313989', title: '트렌디 패턴', category: 'pattern', isVector: true, svgContent: `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="160"><defs><pattern id="pat_preview" width="30" height="30" patternUnits="userSpaceOnUse"><rect width="30" height="30" fill="#fff0f5"/><rect width="15" height="30" fill="#c0afb8" opacity="0.85"/></pattern></defs><rect width="100%" height="100%" fill="url(#pat_preview)"/></svg>` },
-      { id: 'art_badge_1', category: 'graphic', title: '빈티지 아웃도어 뱃지', isVector: true, svgContent: `<svg xmlns="http://www.w3.org/2000/svg" width="280" height="280" viewBox="0 0 280 280"><circle cx="140" cy="140" r="130" fill="#0f172a" stroke="#ff7828" stroke-width="8"/><circle cx="140" cy="140" r="110" fill="none" stroke="#ffffff" stroke-width="3" stroke-dasharray="6,4"/><polygon points="140,40 165,110 240,110 180,155 200,225 140,180 80,225 100,155 40,110 115,110" fill="#ff7828"/><text x="140" y="160" font-family="sans-serif" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">ORIGINAL</text></svg>` },
-      { id: 'art_label_1', category: 'label', title: '스트릿 케어 라벨', isVector: true, svgContent: `<svg xmlns="http://www.w3.org/2000/svg" width="240" height="320" viewBox="0 0 240 320"><rect x="10" y="10" width="220" height="300" rx="12" fill="#ffffff" stroke="#0f172a" stroke-width="5"/><line x1="10" y1="70" x2="230" y2="70" stroke="#0f172a" stroke-width="4"/><text x="120" y="50" font-family="monospace" font-size="20" font-weight="900" fill="#0f172a" text-anchor="middle">TATEE STUDIO</text><text x="120" y="110" font-family="sans-serif" font-size="14" font-weight="bold" fill="#ff7828" text-anchor="middle">100% COTTON</text><circle cx="60" cy="170" r="20" fill="none" stroke="#0f172a" stroke-width="3"/><circle cx="120" cy="170" r="20" fill="none" stroke="#0f172a" stroke-width="3"/><circle cx="180" cy="170" r="20" fill="none" stroke="#0f172a" stroke-width="3"/><path d="M 50 170 L 70 170" stroke="#0f172a" stroke-width="3"/><line x1="10" y1="230" x2="230" y2="230" stroke="#0f172a" stroke-width="2" stroke-dasharray="4,4"/><text x="120" y="270" font-family="sans-serif" font-size="12" fill="#64748b" text-anchor="middle">MADE IN KOREA</text></svg>` },
+      { id: 'art_badge_1', category: 'sticker', title: '빈티지 아웃도어 뱃지', isVector: true, svgContent: `<svg xmlns="http://www.w3.org/2000/svg" width="280" height="280" viewBox="0 0 280 280"><circle cx="140" cy="140" r="130" fill="#0f172a" stroke="#ff7828" stroke-width="8"/><circle cx="140" cy="140" r="110" fill="none" stroke="#ffffff" stroke-width="3" stroke-dasharray="6,4"/><polygon points="140,40 165,110 240,110 180,155 200,225 140,180 80,225 100,155 40,110 115,110" fill="#ff7828"/><text x="140" y="160" font-family="sans-serif" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">ORIGINAL</text></svg>` },
+      { id: 'art_label_1', category: 'sticker', title: '스트릿 케어 라벨', isVector: true, svgContent: `<svg xmlns="http://www.w3.org/2000/svg" width="240" height="320" viewBox="0 0 240 320"><rect x="10" y="10" width="220" height="300" rx="12" fill="#ffffff" stroke="#0f172a" stroke-width="5"/><line x1="10" y1="70" x2="230" y2="70" stroke="#0f172a" stroke-width="4"/><text x="120" y="50" font-family="monospace" font-size="20" font-weight="900" fill="#0f172a" text-anchor="middle">TATEE STUDIO</text><text x="120" y="110" font-family="sans-serif" font-size="14" font-weight="bold" fill="#ff7828" text-anchor="middle">100% COTTON</text><circle cx="60" cy="170" r="20" fill="none" stroke="#0f172a" stroke-width="3"/><circle cx="120" cy="170" r="20" fill="none" stroke="#0f172a" stroke-width="3"/><circle cx="180" cy="170" r="20" fill="none" stroke="#0f172a" stroke-width="3"/><path d="M 50 170 L 70 170" stroke="#0f172a" stroke-width="3"/><line x1="10" y1="230" x2="230" y2="230" stroke="#0f172a" stroke-width="2" stroke-dasharray="4,4"/><text x="120" y="270" font-family="sans-serif" font-size="12" fill="#64748b" text-anchor="middle">MADE IN KOREA</text></svg>` },
+      { id: 'art_illu_cat', category: 'illustration', title: '🖼️ 레트로 팝아트 캣 일러스트', isVector: true, svgContent: `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><circle cx="150" cy="150" r="140" fill="#fef08a"/><path d="M 90 90 L 60 30 L 120 70 Z" fill="#f97316"/><path d="M 210 90 L 240 30 L 180 70 Z" fill="#f97316"/><circle cx="150" cy="160" r="80" fill="#fb923c"/><ellipse cx="120" cy="140" rx="14" ry="20" fill="#0f172a"/><ellipse cx="180" cy="140" rx="14" ry="20" fill="#0f172a"/><circle cx="123" cy="135" r="5" fill="#ffffff"/><circle cx="183" cy="135" r="5" fill="#ffffff"/><polygon points="150,165 142,175 158,175" fill="#e11d48"/><path d="M 150 175 Q 135 190, 120 180 M 150 175 Q 165 190, 180 180" stroke="#0f172a" stroke-width="4" fill="none" stroke-linecap="round"/><line x1="70" y1="160" x2="110" y2="165" stroke="#0f172a" stroke-width="3"/><line x1="65" y1="175" x2="108" y2="173" stroke="#0f172a" stroke-width="3"/><line x1="230" y1="160" x2="190" y2="165" stroke="#0f172a" stroke-width="3"/><line x1="235" y1="175" x2="192" y2="173" stroke="#0f172a" stroke-width="3"/></svg>` },
+      { id: 'art_illu_flower', category: 'illustration', title: '🌸 Y2K 레트로 레코드 플라워', isVector: true, svgContent: `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><circle cx="150" cy="150" r="130" fill="#38bdf8"/><g fill="#f43f5e"><circle cx="150" cy="50" r="45"/><circle cx="150" cy="250" r="45"/><circle cx="50" cy="150" r="45"/><circle cx="250" cy="150" r="45"/><circle cx="79" cy="79" r="45"/><circle cx="221" cy="79" r="45"/><circle cx="79" cy="221" r="45"/><circle cx="221" cy="221" r="45"/></g><circle cx="150" cy="150" r="60" fill="#fbbf24"/><circle cx="150" cy="150" r="25" fill="#0f172a"/><circle cx="150" cy="150" r="8" fill="#ffffff"/></svg>` },
       { id: 'art_1', category: 'graphic', title: '로봇 스티커 1', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=tatee1' },
       { id: 'art_2', category: 'graphic', title: '로봇 스티커 2', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=tatee2' },
-      { id: 'art_3', category: 'graphic', title: '로봇 스티커 3', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=tatee3' }
+      { id: 'art_3', category: 'graphic', title: '로봇 스티커 3', url: 'https://api.dicebear.com/7.x/bottts/svg?seed=tatee3' },
+      { id: 'art_y2k_summer_bubble', category: 'graphic', title: '💭 Y2K 민트 픽셀 말풍선 (여름...★)', isVector: true, svgContent: `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="220" viewBox="0 0 320 220"><circle cx="50" cy="180" r="8" fill="#86efac"/><circle cx="70" cy="155" r="16" fill="#86efac"/><ellipse cx="180" cy="100" rx="130" ry="75" fill="#86efac"/><text x="180" y="112" font-family="monospace, sans-serif" font-size="28" font-weight="900" fill="#000000" text-anchor="middle" letter-spacing="2">여름... ★</text></svg>` }
     ];
 
-    // Load Artworks (Stickers & Patterns) for Design Panel
+    // Load Artworks (Stickers, Patterns & Illustrations) for Design Panel
     async function loadArtworksForCustomizer() {
       let artworks = [];
       try {
@@ -1986,106 +3157,221 @@ export class TShirtCustomizerApp {
 
       const stickersGrid = document.getElementById('user-stickers-grid');
       const patternsGrid = document.getElementById('user-patterns-grid');
+      const illuGrid = document.getElementById('user-illustrations-grid');
+
       const stickerTag = document.getElementById('sticker-count-tag');
       const patternTag = document.getElementById('pattern-count-tag');
+      const illuTag = document.getElementById('illustration-count-tag');
+
+      const stickerGroupContainer = document.getElementById('sticker-group-chips');
+      const illuGroupContainer = document.getElementById('illustration-group-chips');
+      const patternGroupContainer = document.getElementById('pattern-group-chips');
 
       const isPattern = (a) => {
         if (!a) return false;
         const cat = String(a.category || '').toLowerCase().trim();
-        const title = String(a.title || '').toLowerCase();
-        return cat === 'pattern' || cat === '패턴' || title.includes('패턴') || (a.svgContent && (a.svgContent.includes('<pattern') || a.svgContent.includes('patternUnits')));
+        return cat === 'pattern' || cat === '패턴';
       };
 
-      const patterns = artworks.filter(a => isPattern(a));
-      const stickers = artworks.filter(a => !isPattern(a));
+      const isIllustration = (a) => {
+        if (!a) return false;
+        const cat = String(a.category || '').toLowerCase().trim();
+        return cat === 'illustration' || cat === '일러스트';
+      };
 
-      if (stickerTag) stickerTag.textContent = `${stickers.length}개`;
-      if (patternTag) patternTag.textContent = `${patterns.length}개`;
+      const patternsAll = artworks.filter(a => isPattern(a));
+      const illustrationsAll = artworks.filter(a => isIllustration(a));
+      const stickersAll = artworks.filter(a => !isPattern(a) && !isIllustration(a));
 
-      // Render Stickers Grid
-      if (stickersGrid) {
+      let activeStickerGroup = 'all';
+      let activeIlluGroup = 'all';
+      let activePatternGroup = 'all';
+
+      // Helper function to render group chips
+      const renderGroupChips = (container, items, getActiveGroup, setActiveGroup, renderGridFn) => {
+        if (!container) return;
+        container.innerHTML = '';
+        const groups = Array.from(new Set(items.map(a => a.group || '기본'))).filter(Boolean);
+        const allList = ['all', ...groups];
+
+        allList.forEach(g => {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          const isActive = getActiveGroup() === g;
+          btn.style.cssText = `padding:4px 10px; font-size:11px; font-weight:700; border-radius:12px; border:1px solid ${isActive ? '#18181b' : '#cbd5e1'}; background:${isActive ? '#18181b' : '#ffffff'}; color:${isActive ? '#ffffff' : '#475569'}; cursor:pointer; white-space:nowrap; transition:all 0.15s ease;`;
+          btn.textContent = g === 'all' ? '전체' : g;
+
+          btn.addEventListener('click', (e) => {
+            if (e) e.stopPropagation();
+            setActiveGroup(g);
+            renderGroupChips(container, items, getActiveGroup, setActiveGroup, renderGridFn);
+            renderGridFn();
+          });
+
+          container.appendChild(btn);
+        });
+      };
+
+      // 1. Render Stickers
+      const renderStickersGrid = () => {
+        if (!stickersGrid) return;
         stickersGrid.innerHTML = '';
-        if (stickers.length === 0) {
-          stickersGrid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:12px; font-size:11.5px; color:#94a3b8;">등록된 스티커가 없습니다.</div>';
-        } else {
-          stickers.forEach((art, idx) => {
-            const item = document.createElement('div');
-            item.style.cssText = 'background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:6px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; transition:all 0.15s ease; box-shadow:0 1px 2px rgba(0,0,0,0.03);';
-            item.title = art.title;
+        const filtered = stickersAll.filter(s => activeStickerGroup === 'all' || (s.group || '기본') === activeStickerGroup);
+        if (stickerTag) stickerTag.textContent = `${filtered.length}개`;
 
-            let thumb = '';
-            if (art.svgContent) {
-              const scopedSvg = art.svgContent
-                .replace(/id="([^"]+)"/g, (m, id) => `id="${id}_s_${art.id || idx}"`)
-                .replace(/url\(#([^)]+)\)/g, (m, id) => `url(#${id}_s_${art.id || idx})`);
-              const svgDataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(scopedSvg);
-              thumb = `<img src="${svgDataUrl}" style="width:100%; height:54px; object-fit:contain;" alt="${art.title}">`;
-            } else if (art.url) {
-              thumb = `<img src="${art.url}" style="width:100%; height:54px; object-fit:contain;" alt="${art.title}">`;
-            } else {
-              thumb = `<div style="width:100%; height:54px; background:#f1f5f9; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:10px; color:#94a3b8;">스티커</div>`;
-            }
-
-            item.innerHTML = `
-              ${thumb}
-              <span style="font-size:10.5px; font-weight:700; color:#334155; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%;">${art.title}</span>
-            `;
-
-            item.addEventListener('click', (e) => {
-              if (e) e.stopPropagation();
-              if (art.svgContent) {
-                editor.addSvgString(art.svgContent);
-              } else if (art.url) {
-                editor.addImageUrl(art.url);
-              }
-            });
-
-            stickersGrid.appendChild(item);
-          });
+        if (filtered.length === 0) {
+          stickersGrid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:12px; font-size:11.5px; color:#94a3b8;">해당 그룹의 스티커가 없습니다.</div>';
+          return;
         }
-      }
 
-      // Render Patterns Grid
-      if (patternsGrid) {
+        filtered.forEach((art, idx) => {
+          const item = document.createElement('div');
+          item.style.cssText = 'background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:6px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; transition:all 0.15s ease; box-shadow:0 1px 2px rgba(0,0,0,0.03);';
+          item.title = art.title;
+
+          let thumb = '';
+          if (art.svgContent) {
+            const scopedSvg = art.svgContent
+              .replace(/id="([^"]+)"/g, (m, id) => `id="${id}_s_${art.id || idx}"`)
+              .replace(/url\(#([^)]+)\)/g, (m, id) => `url(#${id}_s_${art.id || idx})`);
+            const svgDataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(scopedSvg);
+            thumb = `<img src="${svgDataUrl}" style="width:100%; height:54px; object-fit:contain;" alt="${art.title}">`;
+          } else if (art.url) {
+            thumb = `<img src="${art.url}" style="width:100%; height:54px; object-fit:contain;" alt="${art.title}">`;
+          } else {
+            thumb = `<div style="width:100%; height:54px; background:#f1f5f9; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:10px; color:#94a3b8;">스티커</div>`;
+          }
+
+          item.innerHTML = `
+            ${thumb}
+            <span style="font-size:10.5px; font-weight:700; color:#334155; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%;">${art.title}</span>
+          `;
+
+          item.addEventListener('click', (e) => {
+            if (e) e.stopPropagation();
+            if (art.svgContent) {
+              editor.addSvgString(art.svgContent, { isArtwork: true, isSticker: true, isDesignElement: true, artworkTitle: art.title });
+            } else if (art.url) {
+              editor.addImageUrl(art.url, { isArtwork: true, isSticker: true, isDesignElement: true, artworkTitle: art.title });
+            }
+            if (window.innerWidth <= 768) {
+              hideMobileSheet();
+            }
+          });
+
+          stickersGrid.appendChild(item);
+        });
+      };
+
+      // 2. Render Illustrations
+      const renderIlluGrid = () => {
+        if (!illuGrid) return;
+        illuGrid.innerHTML = '';
+        const filtered = illustrationsAll.filter(i => activeIlluGroup === 'all' || (i.group || '기본') === activeIlluGroup);
+        if (illuTag) illuTag.textContent = `${filtered.length}개`;
+
+        if (filtered.length === 0) {
+          illuGrid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:12px; font-size:11.5px; color:#94a3b8;">해당 그룹의 일러스트가 없습니다.</div>';
+          return;
+        }
+
+        filtered.forEach((art, idx) => {
+          const item = document.createElement('div');
+          item.style.cssText = 'background:#ffffff; border:1px solid #e2e8f0; border-radius:8px; padding:6px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px; transition:all 0.15s ease; box-shadow:0 1px 2px rgba(0,0,0,0.03);';
+          item.title = art.title;
+
+          let thumb = '';
+          if (art.svgContent) {
+            const scopedSvg = art.svgContent
+              .replace(/id="([^"]+)"/g, (m, id) => `id="${id}_i_${art.id || idx}"`)
+              .replace(/url\(#([^)]+)\)/g, (m, id) => `url(#${id}_i_${art.id || idx})`);
+            const svgDataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(scopedSvg);
+            thumb = `<img src="${svgDataUrl}" style="width:100%; height:54px; object-fit:contain;" alt="${art.title}">`;
+          } else if (art.url) {
+            thumb = `<img src="${art.url}" style="width:100%; height:54px; object-fit:contain;" alt="${art.title}">`;
+          } else {
+            thumb = `<div style="width:100%; height:54px; background:#f1f5f9; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:10px; color:#94a3b8;">일러스트</div>`;
+          }
+
+          item.innerHTML = `
+            ${thumb}
+            <span style="font-size:10.5px; font-weight:700; color:#334155; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; width:100%;">${art.title}</span>
+          `;
+
+          item.addEventListener('click', (e) => {
+            if (e) e.stopPropagation();
+            if (art.svgContent) {
+              editor.addSvgString(art.svgContent, { isArtwork: true, isIllustration: true, isDesignElement: true, artworkTitle: art.title });
+            } else if (art.url) {
+              editor.addImageUrl(art.url, { isArtwork: true, isIllustration: true, isDesignElement: true, artworkTitle: art.title });
+            }
+            if (window.innerWidth <= 768) {
+              hideMobileSheet();
+            }
+          });
+
+          illuGrid.appendChild(item);
+        });
+      };
+
+      // 3. Render Patterns
+      const renderPatternsGrid = () => {
+        if (!patternsGrid) return;
         patternsGrid.innerHTML = '';
-        if (patterns.length === 0) {
-          patternsGrid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:18px; font-size:11.5px; color:#94a3b8;">등록된 패턴이 없습니다.</div>';
-        } else {
-          patterns.forEach((art, idx) => {
-            const card = document.createElement('div');
-            card.style.cssText = 'background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; padding:8px; cursor:pointer; display:flex; flex-direction:column; gap:6px; transition:all 0.15s ease; box-shadow:0 1px 3px rgba(0,0,0,0.04);';
-            card.title = art.title;
+        const filtered = patternsAll.filter(p => activePatternGroup === 'all' || (p.group || '기본') === activePatternGroup);
+        if (patternTag) patternTag.textContent = `${filtered.length}개`;
 
-            let thumb = '';
-            if (art.svgContent) {
-              const scopedSvg = art.svgContent
-                .replace(/id="([^"]+)"/g, (m, id) => `id="${id}_p_${art.id || idx}"`)
-                .replace(/url\(#([^)]+)\)/g, (m, id) => `url(#${id}_p_${art.id || idx})`);
-              const svgDataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(scopedSvg);
-              thumb = `<img src="${svgDataUrl}" style="width:100%; height:84px; object-fit:cover; border-radius:6px; border:1px solid #f1f5f9; background:#ffffff; display:block;" alt="${art.title}">`;
-            } else if (art.url) {
-              thumb = `<img src="${art.url}" style="width:100%; height:84px; object-fit:cover; border-radius:6px; border:1px solid #f1f5f9; display:block;" alt="${art.title}">`;
-            } else {
-              thumb = `<div style="width:100%; height:84px; background:#f1f5f9; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:11px; color:#94a3b8;">패턴 이미지</div>`;
-            }
-
-            card.innerHTML = `
-              ${thumb}
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="font-size:11.5px; font-weight:800; color:#1e293b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:90px;">${art.title}</span>
-                <span style="font-size:10px; font-weight:800; color:#d97706; background:#fffbeb; padding:2px 6px; border-radius:4px; border:1px solid #fef3c7;">패턴</span>
-              </div>
-            `;
-
-            card.addEventListener('click', (e) => {
-              if (e) e.stopPropagation();
-              editor.addPatternObject(art);
-            });
-
-            patternsGrid.appendChild(card);
-          });
+        if (filtered.length === 0) {
+          patternsGrid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:18px; font-size:11.5px; color:#94a3b8;">해당 그룹의 패턴이 없습니다.</div>';
+          return;
         }
-      }
+
+        filtered.forEach((art, idx) => {
+          const card = document.createElement('div');
+          card.style.cssText = 'background:#ffffff; border:1px solid #e2e8f0; border-radius:10px; padding:8px; cursor:pointer; display:flex; flex-direction:column; gap:6px; transition:all 0.15s ease; box-shadow:0 1px 3px rgba(0,0,0,0.04);';
+          card.title = art.title;
+
+          let thumb = '';
+          if (art.svgContent) {
+            const scopedSvg = art.svgContent
+              .replace(/id="([^"]+)"/g, (m, id) => `id="${id}_p_${art.id || idx}"`)
+              .replace(/url\(#([^)]+)\)/g, (m, id) => `url(#${id}_p_${art.id || idx})`);
+            const svgDataUrl = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(scopedSvg);
+            thumb = `<img src="${svgDataUrl}" style="width:100%; height:84px; object-fit:cover; border-radius:6px; border:1px solid #f1f5f9; background:#ffffff; display:block;" alt="${art.title}">`;
+          } else if (art.url) {
+            thumb = `<img src="${art.url}" style="width:100%; height:84px; object-fit:cover; border-radius:6px; border:1px solid #f1f5f9; display:block;" alt="${art.title}">`;
+          } else {
+            thumb = `<div style="width:100%; height:84px; background:#f1f5f9; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:11px; color:#94a3b8;">패턴 이미지</div>`;
+          }
+
+          card.innerHTML = `
+            ${thumb}
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:11.5px; font-weight:800; color:#1e293b; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:90px;">${art.title}</span>
+              <span style="font-size:10px; font-weight:800; color:#d97706; background:#fffbeb; padding:2px 6px; border-radius:4px; border:1px solid #fef3c7;">패턴</span>
+            </div>
+          `;
+
+          card.addEventListener('click', (e) => {
+            if (e) e.stopPropagation();
+            editor.addPatternObject(art);
+            if (window.innerWidth <= 768) {
+              hideMobileSheet();
+            }
+          });
+
+          patternsGrid.appendChild(card);
+        });
+      };
+
+      // Initial rendering for customizer artwork tabs
+      renderGroupChips(stickerGroupContainer, stickersAll, () => activeStickerGroup, (val) => activeStickerGroup = val, renderStickersGrid);
+      renderGroupChips(illuGroupContainer, illustrationsAll, () => activeIlluGroup, (val) => activeIlluGroup = val, renderIlluGrid);
+      renderGroupChips(patternGroupContainer, patternsAll, () => activePatternGroup, (val) => activePatternGroup = val, renderPatternsGrid);
+
+      renderStickersGrid();
+      renderIlluGrid();
+      renderPatternsGrid();
     }
 
     // Load artworks on startup
@@ -2099,6 +3385,9 @@ export class TShirtCustomizerApp {
         const openShapeBtn = document.getElementById('btn-open-shape-color-popover');
         const fill = (openShapeBtn ? openShapeBtn.style.background : '#17171a') || '#17171a';
         editor.addShape(shapeType, { fill: fill });
+        if (window.innerWidth <= 768) {
+          hideMobileSheet();
+        }
       });
     });
 
@@ -2530,7 +3819,7 @@ export class TShirtCustomizerApp {
     document.addEventListener('click', (e) => {
       if (popoverModal && popoverModal.style.display === 'flex') {
         const isInsidePopover = e.target.closest('#text-color-popover-modal');
-        const isInsideOpenBtn = e.target.closest('#btn-open-color-popover');
+        const isInsideOpenBtn = e.target.closest('#btn-open-color-popover') || e.target.closest('#mq-btn-color');
         if (!isInsidePopover && !isInsideOpenBtn) {
           popoverModal.style.display = 'none';
         }
@@ -2660,6 +3949,8 @@ export class TShirtCustomizerApp {
 
       document.getElementById('btn-vertical-ltr')?.classList.toggle('active', newMode === 'ltr');
       document.getElementById('btn-vertical-rtl')?.classList.toggle('active', newMode === 'rtl');
+      document.getElementById('mq-btn-vertical-ltr')?.classList.toggle('active', newMode === 'ltr');
+      document.getElementById('mq-btn-vertical-rtl')?.classList.toggle('active', newMode === 'rtl');
 
       const alignToHighlight = newMode !== 'none' ? currentVAlign : (active.textAlign || 'center');
       const btnAlignMap = { left: 'btn-align-left', center: 'btn-align-center', right: 'btn-align-right' };
@@ -2786,22 +4077,35 @@ export class TShirtCustomizerApp {
       });
     }
 
+
+
     // Deselect active layer when clicking anywhere on the stage/dashboard background
     document.addEventListener('click', (e) => {
       const activeObj = editor.canvas ? editor.canvas.getActiveObject() : null;
       if (!activeObj) return;
 
       const isInsideRightPanel = e.target.closest('.right-edit-panel');
-      const isInsideLeftLayers = e.target.closest('.left-floating-layers');
+      const isInsideLayerCard = e.target.closest('.floating-layer-card') || e.target.closest('.layer-card-item');
       const isInsideLeftRail = e.target.closest('.left-tools-rail') || e.target.closest('.left-tool-rail');
       const isInsideTopBar = e.target.closest('.top-action-bar');
+      const isPopover = e.target.closest('.surface-popover-card') ||
+        e.target.closest('#side-popover') ||
+        e.target.closest('#btn-toggle-side-popover') ||
+        e.target.closest('.color-popover-card') ||
+        e.target.closest('#text-color-popover-modal') ||
+        e.target.closest('#shape-color-popover-modal') ||
+        e.target.closest('#shape-stroke-color-popover-modal') ||
+        e.target.closest('.mobile-quick-ribbon') ||
+        e.target.closest('#mobile-quick-action-ribbon') ||
+        e.target.closest('.mobile-floating-mini-modal') ||
+        e.target.closest('#mobile-compact-slider-bar');
       const isInsideFabricCanvas = e.target.closest('.canvas-container');
-      const isPopover = e.target.closest('.surface-popover-card') || e.target.closest('#side-popover') || e.target.closest('#btn-toggle-side-popover');
 
-      if (!isInsideRightPanel && !isInsideLeftLayers && !isInsideLeftRail && !isInsideTopBar && !isInsideFabricCanvas && !isPopover) {
+      if (!isInsideRightPanel && !isInsideLayerCard && !isInsideLeftRail && !isInsideTopBar && !isPopover && !isInsideFabricCanvas) {
+        editor._explicitDeselect = true;
         editor.canvas.discardActiveObject();
         editor.canvas.renderAll();
-        if (editor.onSelectionChanged) editor.onSelectionChanged(null);
+        if (editor.onSelectionChanged) editor.onSelectionChanged(null, null);
       }
     });
 
@@ -2817,19 +4121,703 @@ export class TShirtCustomizerApp {
       }, 50);
     };
 
+    function showMobileSheet(titleText) {
+      const panel = document.querySelector('.right-edit-panel');
+      if (panel) panel.classList.remove('mobile-sheet-hidden');
+      const titleEl = document.getElementById('mobile-sheet-title');
+      if (titleEl && titleText) {
+        titleEl.textContent = titleText;
+      }
+    }
+
+    function hideMobileSheet() {
+      const panel = document.querySelector('.right-edit-panel');
+      if (panel) panel.classList.add('mobile-sheet-hidden');
+      document.querySelectorAll('.tool-rail-btn').forEach(btn => btn.classList.remove('active'));
+    }
+
+    // ==========================================================================
+    // MOBILE QUICK ACTION RIBBON & COMPACT NON-BLOCKING SLIDERS
+    // ==========================================================================
+    function showMobileQuickRibbon() {
+      if (window.innerWidth > 768) return;
+      const ribbon = document.getElementById('mobile-quick-action-ribbon');
+      const rail = document.querySelector('.left-tools-rail');
+      if (rail) rail.style.setProperty('display', 'none', 'important');
+      if (ribbon) {
+        ribbon.classList.add('active');
+        ribbon.style.display = 'flex';
+      }
+      hideMobileSheet();
+      const rightPanel = document.getElementById('right-floating-panel');
+      if (rightPanel) rightPanel.classList.remove('active');
+
+      const activeObj = editor && editor.canvas ? editor.canvas.getActiveObject() : null;
+      if (activeObj) {
+        const alignVal = (activeObj._verticalMode && activeObj._verticalMode !== 'none') ? (activeObj._verticalAlign || 'left') : (activeObj.textAlign || 'center');
+        const map = { left: 'mq-btn-align-left', center: 'mq-btn-align-center', right: 'mq-btn-align-right' };
+        ['mq-btn-align-left', 'mq-btn-align-center', 'mq-btn-align-right'].forEach(id => {
+          const btn = document.getElementById(id);
+          if (btn) btn.classList.toggle('active', map[alignVal] === id);
+        });
+
+        const isBold = activeObj.fontWeight === 'bold' || activeObj.fontWeight === 700 || activeObj.fontWeight === '900';
+        document.getElementById('mq-btn-bold')?.classList.toggle('active', isBold);
+        document.getElementById('mq-btn-italic')?.classList.toggle('active', activeObj.fontStyle === 'italic');
+        document.getElementById('mq-btn-underline')?.classList.toggle('active', Boolean(activeObj.underline));
+        document.getElementById('mq-btn-strike')?.classList.toggle('active', Boolean(activeObj.linethrough));
+        document.getElementById('mq-btn-vertical-rtl')?.classList.toggle('active', activeObj._verticalMode === 'rtl');
+        document.getElementById('mq-btn-vertical-ltr')?.classList.toggle('active', activeObj._verticalMode === 'ltr');
+      }
+    }
+
+    function hideMobileQuickRibbon() {
+      const ribbon = document.getElementById('mobile-quick-action-ribbon');
+      const rail = document.querySelector('.left-tools-rail');
+      const sliderBar = document.getElementById('mobile-compact-slider-bar');
+      const textModal = document.getElementById('mobile-text-edit-modal');
+      const fontModal = document.getElementById('mobile-font-picker-modal');
+      if (ribbon) {
+        ribbon.classList.remove('active');
+        ribbon.style.display = 'none';
+      }
+      if (rail && window.innerWidth <= 768) {
+        rail.style.removeProperty('display');
+      }
+      if (sliderBar) sliderBar.style.display = 'none';
+      if (textModal) textModal.style.display = 'none';
+      if (fontModal) fontModal.style.display = 'none';
+      document.querySelectorAll('.mq-btn').forEach(btn => btn.classList.remove('active'));
+    }
+
+    function closeMobileSubControls() {
+      const sliderBar = document.getElementById('mobile-compact-slider-bar');
+      const textModal = document.getElementById('mobile-text-edit-modal');
+      const fontModal = document.getElementById('mobile-font-picker-modal');
+      const colorPopover = document.getElementById('text-color-popover-modal');
+      if (sliderBar) sliderBar.style.display = 'none';
+      if (textModal) textModal.style.display = 'none';
+      if (fontModal) fontModal.style.display = 'none';
+      if (colorPopover) colorPopover.style.display = 'none';
+      document.querySelectorAll('.mq-btn').forEach(btn => btn.classList.remove('active'));
+    }
+
+    function showCompactSlider(type) {
+      closeMobileSubControls();
+      const sliderBar = document.getElementById('mobile-compact-slider-bar');
+      const sliderTitle = document.getElementById('mc-slider-title');
+      const sliderRange = document.getElementById('mc-slider-range');
+      const sliderVal = document.getElementById('mc-slider-value');
+      const extraColorBtn = document.getElementById('mc-extra-color-btn');
+      const extraColorPrev = document.getElementById('mc-extra-color-preview');
+      const extraColorPick = document.getElementById('mc-extra-color-picker');
+      const presets3dRow = document.getElementById('mc-3d-presets-row');
+
+      if (!sliderBar || !sliderRange || !editor || !editor.canvas) return;
+      const active = editor.canvas.getActiveObject();
+      if (!active) return;
+
+      sliderBar.style.display = 'flex';
+      sliderBar.dataset.type = type;
+
+      const activeBtn = document.getElementById(`mq-btn-${type}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      if (extraColorBtn) extraColorBtn.style.display = 'none';
+      if (presets3dRow) presets3dRow.style.display = 'none';
+
+      if (type === 'size') {
+        sliderTitle.textContent = '📐 폰트 크기';
+        sliderRange.min = '6';
+        sliderRange.max = '200';
+        sliderRange.step = '1';
+        const val = active.fontSize || 28;
+        sliderRange.value = val;
+        sliderVal.textContent = Math.round(val) + 'px';
+      } else if (type === 'spacing') {
+        sliderTitle.textContent = '↔️ 자간 조절';
+        sliderRange.min = '-20';
+        sliderRange.max = '60';
+        sliderRange.step = '1';
+        const val = active.charSpacing || 0;
+        sliderRange.value = val;
+        sliderVal.textContent = Math.round(val);
+      } else if (type === 'lineheight') {
+        sliderTitle.textContent = '↕️ 행간 조절';
+        sliderRange.min = '0.8';
+        sliderRange.max = '2.4';
+        sliderRange.step = '0.05';
+        const val = active.lineHeight || 1.16;
+        sliderRange.value = val;
+        sliderVal.textContent = Number(val).toFixed(2);
+      } else if (type === 'scalex') {
+        sliderTitle.textContent = '↔️ 장평 (가로 비율)';
+        sliderRange.min = '0.5';
+        sliderRange.max = '1.5';
+        sliderRange.step = '0.02';
+        const val = active.scaleX || 1.0;
+        sliderRange.value = val;
+        sliderVal.textContent = Math.round(val * 100) + '%';
+      } else if (type === 'rotate') {
+        sliderTitle.textContent = '🔄 회전 조절';
+        sliderRange.min = '-180';
+        sliderRange.max = '180';
+        sliderRange.step = '1';
+        const val = Math.round((active.angle || 0) % 360);
+        sliderRange.value = val;
+        sliderVal.textContent = val + '°';
+      } else if (type === 'stroke') {
+        sliderTitle.textContent = '🖼️ 1차 테두리';
+        sliderRange.min = '0';
+        sliderRange.max = '30';
+        sliderRange.step = '1';
+        const val = Math.round(active.strokeWidth || 0);
+        sliderRange.value = val;
+        sliderVal.textContent = val + 'px';
+        if (extraColorBtn && extraColorPrev && extraColorPick) {
+          extraColorBtn.style.display = 'inline-flex';
+          const strokeColor = active.stroke || '#ffffff';
+          extraColorPrev.style.background = strokeColor;
+          extraColorPick.value = strokeColor.length === 7 ? strokeColor : '#ffffff';
+        }
+      } else if (type === 'doublestroke') {
+        sliderTitle.textContent = '🖼️ 2차 외곽선';
+        sliderRange.min = '0';
+        sliderRange.max = '25';
+        sliderRange.step = '1';
+        const val = Math.round(active._outerStrokeWidth || 4);
+        sliderRange.value = val;
+        sliderVal.textContent = val + 'px';
+        if (extraColorBtn && extraColorPrev && extraColorPick) {
+          extraColorBtn.style.display = 'inline-flex';
+          const shadowColor = active._outerStrokeColor || '#000000';
+          extraColorPrev.style.background = shadowColor;
+          extraColorPick.value = shadowColor.length === 7 ? shadowColor : '#000000';
+        }
+      } else if (type === '3d') {
+        sliderTitle.textContent = '🧊 3D 입체 깊이';
+        sliderRange.min = '0';
+        sliderRange.max = '30';
+        sliderRange.step = '1';
+        const val = Math.round(active._3dDepth !== undefined ? active._3dDepth : 6);
+        sliderRange.value = val;
+        sliderVal.textContent = val + 'px';
+        if (extraColorBtn && extraColorPrev && extraColorPick) {
+          extraColorBtn.style.display = 'inline-flex';
+          const c3d = active._3dColor || '#000000';
+          extraColorPrev.style.background = c3d;
+          extraColorPick.value = c3d.length === 7 ? c3d : '#000000';
+        }
+        if (presets3dRow) presets3dRow.style.display = 'flex';
+      }
+
+      updateSliderTrackFill(sliderRange);
+    }
+
+    function updateSliderTrackFill(slider) {
+      if (!slider) return;
+      const min = parseFloat(slider.min) || 0;
+      const max = parseFloat(slider.max) || 100;
+      const val = parseFloat(slider.value) || 0;
+      const pct = Math.max(0, Math.min(100, ((val - min) / (max - min)) * 100));
+      slider.style.background = `linear-gradient(to right, #ff7828 0%, #ff7828 ${pct}%, #e2e8f0 ${pct}%, #e2e8f0 100%)`;
+    }
+
+    safeAddListener('mc-slider-range', 'input', (e) => {
+      updateSliderTrackFill(e.target);
+      const sliderBar = document.getElementById('mobile-compact-slider-bar');
+      const sliderVal = document.getElementById('mc-slider-value');
+      if (!sliderBar || !editor || !editor.canvas) return;
+
+      const type = sliderBar.dataset.type;
+      const val = parseFloat(e.target.value);
+      const active = editor.canvas.getActiveObject();
+      if (!active) return;
+
+      if (type === 'size') {
+        active.set('fontSize', val);
+        if (sliderVal) sliderVal.textContent = Math.round(val) + 'px';
+      } else if (type === 'spacing') {
+        active.set('charSpacing', val);
+        if (sliderVal) sliderVal.textContent = Math.round(val);
+      } else if (type === 'lineheight') {
+        active.set('lineHeight', val);
+        if (sliderVal) sliderVal.textContent = val.toFixed(2);
+      } else if (type === 'scalex') {
+        active.set('scaleX', val);
+        if (sliderVal) sliderVal.textContent = Math.round(val * 100) + '%';
+      } else if (type === 'rotate') {
+        active.set('angle', val);
+        if (sliderVal) sliderVal.textContent = Math.round(val) + '°';
+      } else if (type === 'stroke') {
+        const currentColor = document.getElementById('mc-extra-color-picker')?.value || active.stroke || '#ffffff';
+        if (val > 0) {
+          active.set({ stroke: currentColor, strokeWidth: val });
+        } else {
+          active.set({ stroke: null, strokeWidth: 0 });
+        }
+        if (sliderVal) sliderVal.textContent = val + 'px';
+      } else if (type === 'doublestroke') {
+        const currentColor = document.getElementById('mc-extra-color-picker')?.value || active._outerStrokeColor || '#000000';
+        editor.syncOuterStrokeObject(active, {
+          enabled: val > 0,
+          color: currentColor,
+          width: val
+        });
+        if (sliderVal) sliderVal.textContent = val + 'px';
+      } else if (type === '3d') {
+        const currentColor = document.getElementById('mc-extra-color-picker')?.value || active._3dColor || '#000000';
+        const currentAngle = active._3dAngle !== undefined ? active._3dAngle : 45;
+        if (editor.apply3dEffect) {
+          editor.apply3dEffect(active, {
+            enabled: val > 0,
+            color: currentColor,
+            depth: val,
+            angle: currentAngle
+          });
+        }
+        if (sliderVal) sliderVal.textContent = val + 'px';
+      }
+
+      active.setCoords();
+      editor.canvas.renderAll();
+    });
+
+    safeAddListener('mc-extra-color-picker', 'input', (e) => {
+      const color = e.target.value;
+      const prev = document.getElementById('mc-extra-color-preview');
+      if (prev) prev.style.background = color;
+
+      const sliderBar = document.getElementById('mobile-compact-slider-bar');
+      if (!sliderBar || !editor || !editor.canvas) return;
+      const type = sliderBar.dataset.type;
+      const active = editor.canvas.getActiveObject();
+      if (!active) return;
+
+      if (type === 'stroke') {
+        active.set('stroke', color);
+      } else if (type === 'doublestroke') {
+        const width = active._outerStrokeWidth || 4;
+        editor.syncOuterStrokeObject(active, { enabled: true, color, width });
+      } else if (type === '3d') {
+        const depth = active._3dDepth || 6;
+        const angle = active._3dAngle || 45;
+        if (editor.apply3dEffect) {
+          editor.apply3dEffect(active, { enabled: true, color, depth, angle });
+        }
+      }
+      editor.canvas.renderAll();
+    });
+
+    // 3D Direction Presets in Mobile Compact Slider
+    document.querySelectorAll('.mc-3d-dir-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        document.querySelectorAll('.mc-3d-dir-btn').forEach(b => {
+          b.style.background = '#334155';
+          b.classList.remove('active');
+        });
+        btn.style.background = '#ff7828';
+        btn.classList.add('active');
+
+        const angle = parseInt(btn.dataset.angle, 10);
+        if (editor && editor.canvas) {
+          const active = editor.canvas.getActiveObject();
+          if (active && editor.apply3dEffect) {
+            const depth = active._3dDepth || 6;
+            const color = active._3dColor || '#000000';
+            editor.apply3dEffect(active, { enabled: true, color, depth, angle });
+            editor.canvas.renderAll();
+          }
+        }
+      });
+    });
+
+    safeAddListener('mc-slider-close', 'click', () => {
+      closeMobileSubControls();
+    });
+
+    // Wire Floating Text Content Modal
+    safeAddListener('mq-btn-text', 'click', () => {
+      closeMobileSubControls();
+      const textModal = document.getElementById('mobile-text-edit-modal');
+      const inputField = document.getElementById('mq-text-input-field');
+      const activeBtn = document.getElementById('mq-btn-text');
+      if (activeBtn) activeBtn.classList.add('active');
+
+      if (textModal && inputField && editor && editor.canvas) {
+        textModal.style.display = 'block';
+        const active = editor.canvas.getActiveObject();
+        inputField.value = active ? (active.text || '') : '';
+        setTimeout(() => {
+          inputField.focus();
+          inputField.select();
+        }, 50);
+      }
+    });
+
+    safeAddListener('mq-text-input-field', 'input', (e) => {
+      if (!editor || !editor.canvas) return;
+      const active = editor.canvas.getActiveObject();
+      if (active) {
+        active.set('text', e.target.value);
+        editor.canvas.renderAll();
+      }
+    });
+
+    safeAddListener('mq-text-close-btn', 'click', closeMobileSubControls);
+    safeAddListener('mq-text-confirm-btn', 'click', closeMobileSubControls);
+
+    // Wire Floating Font Picker Modal
+    const FONT_OPTIONS_LIST = [
+      { name: '프리텐다드', family: "'Pretendard Variable',Pretendard,sans-serif" },
+      { name: '나눔명조', family: "'Nanum Myeongjo',serif" },
+      { name: '고운바탕', family: "'Gowun Batang',serif" },
+      { name: 'Georgia', family: 'Georgia,serif' },
+      { name: 'Courier', family: "'Courier New',monospace" },
+      { name: '블랙한산스', family: "'Black Han Sans',sans-serif" },
+      { name: '주아체', family: "'Jua',sans-serif" },
+      { name: '도현체', family: "'Do Hyeon',sans-serif" },
+      { name: '독도체', family: "'East Sea Dokdo',cursive" },
+      { name: '고딕 A1', family: "'Gothic A1',sans-serif" }
+    ];
+
+    const renderMobileFontGrid = () => {
+      const grid = document.getElementById('mq-font-options-grid');
+      if (!grid) return;
+      grid.innerHTML = FONT_OPTIONS_LIST.map(f => `
+        <button type="button" class="mq-font-option-btn" data-family="${f.family}" style="font-family:${f.family};">
+          ${f.name}
+        </button>
+      `).join('');
+
+      grid.querySelectorAll('.mq-font-option-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          const fontFam = btn.dataset.family;
+          if (editor) {
+            let active = editor.canvas ? editor.canvas.getActiveObject() : null;
+            if (!active && editor.canvas) {
+              const textObj = editor.canvas.getObjects().find(o => o.isText || o.type === 'i-text' || o.type === 'text' || o.type === 'textbox');
+              if (textObj) {
+                editor.canvas.setActiveObject(textObj);
+                active = textObj;
+              }
+            }
+            if (active) {
+              await applyFontWithLoading(fontFam);
+            }
+          }
+          grid.querySelectorAll('.mq-font-option-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+      });
+    };
+
+    safeAddListener('mq-btn-font', 'click', () => {
+      closeMobileSubControls();
+      renderMobileFontGrid();
+      const fontModal = document.getElementById('mobile-font-picker-modal');
+      const activeBtn = document.getElementById('mq-btn-font');
+      if (activeBtn) activeBtn.classList.add('active');
+      if (fontModal) fontModal.style.display = 'block';
+
+      if (editor && editor.canvas) {
+        let active = editor.canvas.getActiveObject();
+        if (!active) {
+          const textObj = editor.canvas.getObjects().find(o => o.isText || o.type === 'i-text' || o.type === 'text' || o.type === 'textbox');
+          if (textObj) {
+            editor.canvas.setActiveObject(textObj);
+            active = textObj;
+          }
+        }
+        if (active && active.fontFamily) {
+          const grid = document.getElementById('mq-font-options-grid');
+          if (grid) {
+            grid.querySelectorAll('.mq-font-option-btn').forEach(b => {
+              b.classList.toggle('active', b.dataset.family === active.fontFamily);
+            });
+          }
+        }
+      }
+    });
+
+    safeAddListener('mq-font-close-btn', 'click', closeMobileSubControls);
+
+    // Wire Floating Color Picker
+    safeAddListener('mq-btn-color', 'click', (e) => {
+      if (e && e.stopPropagation) e.stopPropagation();
+      closeMobileSubControls();
+      const activeBtn = document.getElementById('mq-btn-color');
+      if (activeBtn) activeBtn.classList.add('active');
+      const popover = document.getElementById('text-color-popover-modal');
+      const app = document.getElementById('tatee-customizer-app') || document.body;
+      if (popover) {
+        if (popover.parentElement !== app) {
+          app.appendChild(popover);
+        }
+        popover.style.display = 'flex';
+        popover.style.position = 'fixed';
+        popover.style.bottom = '58px';
+        popover.style.left = '14px';
+        popover.style.right = '14px';
+        popover.style.top = 'auto';
+        popover.style.zIndex = '970';
+      }
+    });
+
+    // Wire Quick Ribbon Action Buttons
+    safeAddListener('mq-btn-size', 'click', () => showCompactSlider('size'));
+    safeAddListener('mq-btn-spacing', 'click', () => showCompactSlider('spacing'));
+    safeAddListener('mq-btn-lineheight', 'click', () => showCompactSlider('lineheight'));
+    safeAddListener('mq-btn-scalex', 'click', () => showCompactSlider('scalex'));
+    safeAddListener('mq-btn-rotate', 'click', () => showCompactSlider('rotate'));
+    safeAddListener('mq-btn-stroke', 'click', () => showCompactSlider('stroke'));
+    safeAddListener('mq-btn-doublestroke', 'click', () => showCompactSlider('doublestroke'));
+    safeAddListener('mq-btn-3d', 'click', () => showCompactSlider('3d'));
+
+    const mqAlignBtns = ['mq-btn-align-left', 'mq-btn-align-center', 'mq-btn-align-right'];
+    const mqAlignVals = {
+      'mq-btn-align-left': 'left',
+      'mq-btn-align-center': 'center',
+      'mq-btn-align-right': 'right'
+    };
+
+    mqAlignBtns.forEach(id => {
+      safeAddListener(id, 'click', () => {
+        const alignVal = mqAlignVals[id];
+        const active = editor ? editor.canvas.getActiveObject() : null;
+        if (active) {
+          active._verticalAlign = alignVal;
+          if (active._verticalMode && active._verticalMode !== 'none') {
+            const vAlignMap = { left: 'top', center: 'middle', right: 'bottom' };
+            const vAlign = vAlignMap[alignVal] || 'top';
+            const formatted = formatVerticalText(active._rawHorizontalText || '', active._verticalMode, vAlign);
+            const tabW = Math.max(20, Math.round((active.fontSize || 28) * 1.25));
+            editor.updateActiveObject({ text: formatted, tabWidth: tabW, textAlign: 'left' });
+          } else {
+            editor.updateActiveObject({ textAlign: alignVal });
+          }
+        }
+
+        // Highlight active ribbon align button
+        mqAlignBtns.forEach(bId => {
+          const btn = document.getElementById(bId);
+          if (btn) btn.classList.toggle('active', bId === id);
+        });
+
+        // Sync desktop align buttons
+        const desktopMap = { 'mq-btn-align-left': 'btn-align-left', 'mq-btn-align-center': 'btn-align-center', 'mq-btn-align-right': 'btn-align-right' };
+        ['btn-align-left', 'btn-align-center', 'btn-align-right'].forEach(bId => {
+          const btn = document.getElementById(bId);
+          if (btn) btn.classList.toggle('active', desktopMap[id] === bId);
+        });
+      });
+    });
+
+    safeAddListener('mq-btn-bold', 'click', (e) => {
+      if (!editor || !editor.canvas) return;
+      const active = editor.canvas.getActiveObject();
+      if (!active) return;
+      const isBold = active.fontWeight === 'bold' || active.fontWeight === 700 || active.fontWeight === '900';
+      const nextWeight = isBold ? 'normal' : 'bold';
+      editor.updateActiveObject({ fontWeight: nextWeight });
+      if (e && e.currentTarget) e.currentTarget.classList.toggle('active', !isBold);
+      const btn = document.getElementById('btn-style-bold');
+      if (btn) btn.classList.toggle('active', !isBold);
+    });
+
+    safeAddListener('mq-btn-italic', 'click', (e) => {
+      if (!editor || !editor.canvas) return;
+      const active = editor.canvas.getActiveObject();
+      if (!active) return;
+      const isItalic = active.fontStyle === 'italic';
+      const nextStyle = isItalic ? 'normal' : 'italic';
+      editor.updateActiveObject({ fontStyle: nextStyle });
+      if (e && e.currentTarget) e.currentTarget.classList.toggle('active', !isItalic);
+      const btn = document.getElementById('btn-style-italic');
+      if (btn) btn.classList.toggle('active', !isItalic);
+    });
+
+    safeAddListener('mq-btn-underline', 'click', (e) => {
+      if (!editor || !editor.canvas) return;
+      const active = editor.canvas.getActiveObject();
+      if (!active) return;
+      const isUnderline = Boolean(active.underline);
+      editor.updateActiveObject({ underline: !isUnderline });
+      if (e && e.currentTarget) e.currentTarget.classList.toggle('active', !isUnderline);
+      const btn = document.getElementById('btn-style-underline');
+      if (btn) btn.classList.toggle('active', !isUnderline);
+    });
+
+    safeAddListener('mq-btn-strike', 'click', (e) => {
+      if (!editor || !editor.canvas) return;
+      const active = editor.canvas.getActiveObject();
+      if (!active) return;
+      const isStrike = Boolean(active.linethrough);
+      editor.updateActiveObject({ linethrough: !isStrike });
+      if (e && e.currentTarget) e.currentTarget.classList.toggle('active', !isStrike);
+      const btn = document.getElementById('btn-style-strike');
+      if (btn) btn.classList.toggle('active', !isStrike);
+    });
+
+    safeAddListener('mq-btn-vertical-rtl', 'click', () => {
+      if (!editor || !editor.canvas) return;
+      const active = editor.canvas.getActiveObject();
+      if (!active) return;
+      const curMode = active._verticalMode || 'none';
+      const newMode = curMode === 'rtl' ? 'none' : 'rtl';
+      applyVerticalMode(active, newMode);
+    });
+
+    safeAddListener('mq-btn-vertical-ltr', 'click', () => {
+      if (!editor || !editor.canvas) return;
+      const active = editor.canvas.getActiveObject();
+      if (!active) return;
+      const curMode = active._verticalMode || 'none';
+      const newMode = curMode === 'ltr' ? 'none' : 'ltr';
+      applyVerticalMode(active, newMode);
+    });
+
+    safeAddListener('mq-btn-back', 'click', () => {
+      hideMobileQuickRibbon();
+    });
+
+    safeAddListener('mq-btn-close', 'click', () => {
+      hideMobileQuickRibbon();
+      if (editor && editor.canvas) {
+        editor.canvas.discardActiveObject();
+        editor.canvas.renderAll();
+      }
+    });
+
+    // Handle window resize between mobile and desktop viewports
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 768) {
+        hideMobileQuickRibbon();
+        const rail = document.querySelector('.left-tools-rail');
+        if (rail) rail.style.removeProperty('display');
+      } else {
+        hideMobileSheet();
+        const rightPanel = document.getElementById('right-floating-panel');
+        if (rightPanel) rightPanel.classList.remove('active');
+        const activeObj = editor && editor.canvas ? editor.canvas.getActiveObject() : null;
+        const secTextDisplay = document.getElementById('section-text-props')?.style.display;
+        const textRailActive = document.getElementById('rail-btn-text')?.classList.contains('active');
+        const isTextActive = Boolean(
+          (activeObj && ((activeObj.type && String(activeObj.type).toLowerCase().includes('text')) || activeObj.text !== undefined)) ||
+          secTextDisplay === 'flex' ||
+          secTextDisplay === 'block' ||
+          textRailActive
+        );
+        if (isTextActive) {
+          showMobileQuickRibbon();
+        }
+      }
+    });
+
+    // Hide mobile modal on load so screen displays full canvas view
+    if (window.innerWidth <= 768) {
+      hideMobileSheet();
+    }
+
+    // Top Action Toolbar Horizontal Scroll Indicator Toggle
+    const topToolbarEl = document.querySelector('.top-action-toolbar');
+    const topToolbarWrapperEl = document.querySelector('.top-action-toolbar-wrapper');
+    if (topToolbarEl && topToolbarWrapperEl) {
+      topToolbarEl.scrollLeft = 0;
+      topToolbarEl.addEventListener('scroll', () => {
+        const isAtEnd = topToolbarEl.scrollLeft + topToolbarEl.clientWidth >= topToolbarEl.scrollWidth - 12;
+        if (isAtEnd) {
+          topToolbarWrapperEl.classList.add('scrolled-end');
+        } else {
+          topToolbarWrapperEl.classList.remove('scrolled-end');
+        }
+      });
+
+      // Mouse Drag-to-Scroll Support
+      let isMouseDown = false;
+      let startX = 0;
+      let scrollLeftPos = 0;
+      let isDraggingMoved = false;
+
+      topToolbarEl.addEventListener('mousedown', (e) => {
+        isMouseDown = true;
+        isDraggingMoved = false;
+        startX = e.pageX - topToolbarEl.offsetLeft;
+        scrollLeftPos = topToolbarEl.scrollLeft;
+        topToolbarEl.style.cursor = 'grabbing';
+      });
+
+      topToolbarEl.addEventListener('mouseleave', () => {
+        isMouseDown = false;
+        topToolbarEl.style.cursor = 'grab';
+      });
+
+      topToolbarEl.addEventListener('mouseup', () => {
+        isMouseDown = false;
+        topToolbarEl.style.cursor = 'grab';
+      });
+
+      topToolbarEl.addEventListener('mousemove', (e) => {
+        if (!isMouseDown) return;
+        const x = e.pageX - topToolbarEl.offsetLeft;
+        const walk = (x - startX) * 1.5;
+        if (Math.abs(walk) > 4) {
+          isDraggingMoved = true;
+        }
+        topToolbarEl.scrollLeft = scrollLeftPos - walk;
+      });
+
+      topToolbarEl.addEventListener('click', (e) => {
+        if (isDraggingMoved) {
+          e.stopPropagation();
+          e.preventDefault();
+        }
+      }, true);
+
+      const scrollHintBtn = document.getElementById('mobile-toolbar-scroll-hint');
+      if (scrollHintBtn) {
+        scrollHintBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          topToolbarEl.scrollBy({ left: 160, behavior: 'smooth' });
+        });
+      }
+    }
+
+    const editPanelOverlay = document.querySelector('.right-edit-panel');
+    if (editPanelOverlay) {
+      editPanelOverlay.addEventListener('click', (e) => {
+        if (window.innerWidth <= 768 && e.target === editPanelOverlay) {
+          editPanelOverlay.classList.add('mobile-sheet-hidden');
+          document.querySelectorAll('.tool-rail-btn').forEach(btn => btn.classList.remove('active'));
+        }
+      });
+    }
+
+    safeAddListener('btn-confirm-mobile-sheet', 'click', hideMobileSheet);
+    safeAddListener('btn-close-mobile-sheet', 'click', hideMobileSheet);
+
     safeAddListener('btn-header-3d', 'click', open3dModal);
     safeAddListener('rail-btn-3d', 'click', open3dModal);
 
     // Left Rail: [색상/면] Button Listener
     safeAddListener('rail-btn-color', 'click', (e) => {
       if (e) e.stopPropagation();
+      hideMobileQuickRibbon();
+      showMobileSheet('🎨 색상 & 인쇄 면 선택');
       document.querySelectorAll('.tool-rail-btn').forEach(btn => btn.classList.remove('active'));
       const btnColor = document.getElementById('rail-btn-color');
       if (btnColor) btnColor.classList.add('active');
 
-      if (editor && editor.canvas) {
-        editor.canvas.discardActiveObject();
-        editor.canvas.renderAll();
+      if (editor) {
+        editor._explicitDeselect = true;
+        editor._lastSelectedObject = null;
+        if (editor.canvas) {
+          editor.canvas.discardActiveObject();
+          editor.canvas.renderAll();
+        }
       }
 
       const textSec = document.getElementById('section-text-controls');
@@ -2841,8 +4829,10 @@ export class TShirtCustomizerApp {
       if (designSec) designSec.style.display = 'none';
       if (productSec) productSec.style.display = 'flex';
 
-      const openSideBtn = document.getElementById('btn-open-side-popover');
-      if (openSideBtn) openSideBtn.click();
+      if (window.innerWidth > 768) {
+        const openSideBtn = document.getElementById('btn-open-side-popover');
+        if (openSideBtn) openSideBtn.click();
+      }
     });
 
     safeAddListener('btn-close-3d', 'click', () => {

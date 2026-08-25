@@ -332,7 +332,7 @@ router.delete('/fonts/:index', (req, res) => {
 
 const ARTWORKS_JSON_PATH = path.resolve(process.cwd(), 'src/backend/public/artworks.json');
 
-function loadArtworksFromDisk() {
+export function loadArtworksFromDisk() {
   try {
     if (fs.existsSync(ARTWORKS_JSON_PATH)) {
       const raw = fs.readFileSync(ARTWORKS_JSON_PATH, 'utf-8');
@@ -355,15 +355,16 @@ function saveArtworksToDisk(artworksArr) {
   }
 }
 
-export const artworksDb = loadArtworksFromDisk();
+export let artworksDb = loadArtworksFromDisk();
 
 /**
  * GET /api/admin/artworks
  */
 router.get('/artworks', (req, res) => {
+  const currentArtworks = loadArtworksFromDisk();
   res.json({
-    total: artworksDb.length,
-    artworks: artworksDb
+    total: currentArtworks.length,
+    artworks: currentArtworks
   });
 });
 
@@ -371,19 +372,34 @@ router.get('/artworks', (req, res) => {
  * POST /api/admin/artworks
  */
 router.post('/artworks', (req, res) => {
-  const { title, url, svgContent, category, isVector } = req.body;
+  artworksDb = loadArtworksFromDisk();
+  categoriesDb = loadCategoriesFromDisk();
+  const { title, url, svgContent, category, group, isVector } = req.body;
   if (!url && !svgContent) {
     return res.status(400).json({ error: 'Artwork URL or svgContent is required.' });
   }
+
+  let cat = (category || 'sticker').toLowerCase();
+  if (cat !== 'pattern' && cat !== 'illustration') cat = 'sticker';
+  const gName = (group || '기본').trim();
 
   const newArt = {
     id: `art_${Date.now()}`,
     title: title || '새 스티커/패턴',
     url: url || '',
     svgContent: svgContent || null,
-    category: category || 'sticker',
+    category: cat,
+    group: gName,
     isVector: !!isVector
   };
+
+  if (gName) {
+    if (!categoriesDb[cat]) categoriesDb[cat] = ['기본'];
+    if (!categoriesDb[cat].includes(gName)) {
+      categoriesDb[cat].push(gName);
+      saveCategoriesToDisk(categoriesDb);
+    }
+  }
 
   artworksDb.push(newArt);
   saveArtworksToDisk(artworksDb);
@@ -394,6 +410,7 @@ router.post('/artworks', (req, res) => {
  * DELETE /api/admin/artworks/:id
  */
 router.delete('/artworks/:id', (req, res) => {
+  artworksDb = loadArtworksFromDisk();
   const id = req.params.id;
   const idx = artworksDb.findIndex(a => a.id === id);
   if (idx !== -1) {
@@ -402,6 +419,243 @@ router.delete('/artworks/:id', (req, res) => {
     return res.json({ success: true, artworks: artworksDb });
   }
   res.status(404).json({ error: 'Artwork not found.' });
+});
+
+/**
+ * PUT/POST /api/admin/artworks/:id
+ * Update artwork category (group) or title
+ */
+const handleArtworkUpdate = (req, res) => {
+  artworksDb = loadArtworksFromDisk();
+  categoriesDb = loadCategoriesFromDisk();
+  const id = req.params.id || req.body.id;
+  const { group, title } = req.body;
+
+  const art = artworksDb.find(a => String(a.id) === String(id));
+  if (!art) {
+    return res.status(404).json({ success: false, error: 'Artwork not found.' });
+  }
+
+  if (group !== undefined) {
+    const gName = (group || '기본').trim();
+    art.group = gName;
+    let cat = (art.category || 'sticker').toLowerCase().trim();
+    if (cat.includes('pattern') || cat.includes('패턴')) cat = 'pattern';
+    else if (cat.includes('illustration') || cat.includes('일러스트')) cat = 'illustration';
+    else cat = 'sticker';
+
+    if (gName) {
+      if (!categoriesDb[cat]) categoriesDb[cat] = ['기본'];
+      if (!categoriesDb[cat].includes(gName)) {
+        categoriesDb[cat].push(gName);
+        saveCategoriesToDisk(categoriesDb);
+      }
+    }
+  }
+
+  if (title !== undefined) {
+    art.title = title.trim();
+  }
+
+  saveArtworksToDisk(artworksDb);
+  res.json({ success: true, artwork: art });
+};
+
+router.put('/artworks/:id', handleArtworkUpdate);
+router.post('/artworks/:id', handleArtworkUpdate);
+router.post('/artworks/update', handleArtworkUpdate);
+
+const CATEGORIES_JSON_PATH = path.resolve(process.cwd(), 'src/backend/public/categories.json');
+
+const defaultCategoriesDb = {
+  sticker: ['기본'],
+  pattern: ['기본'],
+  illustration: ['기본']
+};
+
+function loadCategoriesFromDisk() {
+  try {
+    let cats = defaultCategoriesDb;
+    if (fs.existsSync(CATEGORIES_JSON_PATH)) {
+      const raw = fs.readFileSync(CATEGORIES_JSON_PATH, 'utf-8');
+      cats = JSON.parse(raw);
+    }
+    // Ensure all 3 keys exist
+    if (!cats.sticker) cats.sticker = [...defaultCategoriesDb.sticker];
+    if (!cats.pattern) cats.pattern = [...defaultCategoriesDb.pattern];
+    if (!cats.illustration) cats.illustration = [...defaultCategoriesDb.illustration];
+
+    // Ensure '기본' is always present
+    ['sticker', 'pattern', 'illustration'].forEach(t => {
+      if (!cats[t].includes('기본')) cats[t].push('기본');
+    });
+
+    // Merge any artwork groups into their matching category array
+    artworksDb.forEach(art => {
+      const g = (art.group || '기본').trim();
+      let type = (art.category || 'sticker').toLowerCase();
+      if (type !== 'pattern' && type !== 'illustration') type = 'sticker';
+      if (g && !cats[type].includes(g)) {
+        cats[type].push(g);
+      }
+    });
+
+    return cats;
+  } catch (err) {
+    console.warn('⚠️ Could not load categories.json, using defaults:', err);
+    return defaultCategoriesDb;
+  }
+}
+
+function saveCategoriesToDisk(catsObj) {
+  try {
+    fs.writeFileSync(CATEGORIES_JSON_PATH, JSON.stringify(catsObj, null, 2), 'utf-8');
+    console.log('💾 Successfully saved categories.json to disk!');
+  } catch (err) {
+    console.error('❌ Failed to save categories.json:', err);
+  }
+}
+
+let categoriesDb = loadCategoriesFromDisk();
+
+/**
+ * GET /api/admin/groups
+ */
+router.get('/groups', (req, res) => {
+  artworksDb = loadArtworksFromDisk();
+  categoriesDb = loadCategoriesFromDisk();
+  
+  // Calculate group stats per type
+  const groupStats = [];
+  const types = ['sticker', 'pattern', 'illustration'];
+
+  types.forEach(t => {
+    const typeList = categoriesDb[t] || [];
+    typeList.forEach(gName => {
+      const matchingArts = artworksDb.filter(art => {
+        let cat = (art.category || 'sticker').toLowerCase();
+        if (cat !== 'pattern' && cat !== 'illustration') cat = 'sticker';
+        return cat === t && (art.group || '기본') === gName;
+      });
+
+      const sample = matchingArts.find(a => a.url || a.svgContent);
+      groupStats.push({
+        name: gName,
+        type: t,
+        total: matchingArts.length,
+        sampleThumb: sample ? (sample.url || sample.svgContent) : null
+      });
+    });
+  });
+
+  res.json({
+    success: true,
+    categories: categoriesDb,
+    groups: groupStats,
+    artworks: artworksDb
+  });
+});
+
+/**
+ * POST /api/admin/groups
+ * Create a new category for specific type (sticker | pattern | illustration | all)
+ */
+router.post('/groups', (req, res) => {
+  const { groupName, categoryType } = req.body;
+  const cleanName = (groupName || '').trim();
+  if (!cleanName) {
+    return res.status(400).json({ error: 'Group name is required.' });
+  }
+
+  categoriesDb = loadCategoriesFromDisk();
+  const targetTypes = (categoryType === 'all' || !categoryType) 
+    ? ['sticker', 'pattern', 'illustration'] 
+    : [categoryType.toLowerCase()];
+
+  targetTypes.forEach(t => {
+    if (categoriesDb[t] && !categoriesDb[t].includes(cleanName)) {
+      categoriesDb[t].push(cleanName);
+    }
+  });
+
+  saveCategoriesToDisk(categoriesDb);
+  res.json({ success: true, categories: categoriesDb });
+});
+
+/**
+ * POST /api/admin/groups/rename
+ */
+router.post('/groups/rename', (req, res) => {
+  const { oldGroup, newGroup, categoryType } = req.body;
+  if (!oldGroup || !newGroup) {
+    return res.status(400).json({ error: 'oldGroup and newGroup are required.' });
+  }
+
+  const cleanOld = oldGroup.trim();
+  const cleanNew = newGroup.trim();
+  categoriesDb = loadCategoriesFromDisk();
+
+  const targetTypes = (categoryType && categoryType !== 'all') 
+    ? [categoryType.toLowerCase()] 
+    : ['sticker', 'pattern', 'illustration'];
+
+  targetTypes.forEach(t => {
+    if (categoriesDb[t]) {
+      const idx = categoriesDb[t].indexOf(cleanOld);
+      if (idx !== -1) {
+        categoriesDb[t][idx] = cleanNew;
+      }
+    }
+  });
+
+  // Update matching artworks
+  let count = 0;
+  artworksDb.forEach(art => {
+    let cat = (art.category || 'sticker').toLowerCase();
+    if (cat !== 'pattern' && cat !== 'illustration') cat = 'sticker';
+    if (targetTypes.includes(cat) && (art.group || '기본') === cleanOld) {
+      art.group = cleanNew;
+      count += 1;
+    }
+  });
+
+  saveCategoriesToDisk(categoriesDb);
+  saveArtworksToDisk(artworksDb);
+  res.json({ success: true, updatedCount: count, categories: categoriesDb, artworks: artworksDb });
+});
+
+/**
+ * DELETE /api/admin/groups/:groupName
+ */
+router.delete('/groups/:groupName', (req, res) => {
+  const groupName = decodeURIComponent(req.params.groupName);
+  const categoryType = req.query.type || 'all';
+
+  categoriesDb = loadCategoriesFromDisk();
+
+  const targetTypes = (categoryType && categoryType !== 'all') 
+    ? [categoryType.toLowerCase()] 
+    : ['sticker', 'pattern', 'illustration'];
+
+  targetTypes.forEach(t => {
+    if (categoriesDb[t] && groupName !== '기본') {
+      categoriesDb[t] = categoriesDb[t].filter(g => g !== groupName);
+    }
+  });
+
+  let count = 0;
+  artworksDb.forEach(art => {
+    let cat = (art.category || 'sticker').toLowerCase();
+    if (cat !== 'pattern' && cat !== 'illustration') cat = 'sticker';
+    if (targetTypes.includes(cat) && (art.group || '기본') === groupName) {
+      art.group = '기본';
+      count += 1;
+    }
+  });
+
+  saveCategoriesToDisk(categoriesDb);
+  saveArtworksToDisk(artworksDb);
+  res.json({ success: true, resetCount: count, categories: categoriesDb, artworks: artworksDb });
 });
 
 export default router;

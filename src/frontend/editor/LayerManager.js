@@ -156,16 +156,29 @@ export class LayerManager {
         titleText = obj.isPattern ? '패턴 레이어' : (obj.isSticker ? '스티커 레이어' : (obj.type === 'group' ? '디자인 레이어' : '이미지 레이어'));
         let imgSrc = '';
 
-        // 1. Try direct element src or getSrc first (gives untransformed, complete original image)
-        try {
-          if (obj._element && obj._element.src) {
-            imgSrc = obj._element.src;
-          } else if (typeof obj.getSrc === 'function') {
-            imgSrc = obj.getSrc();
+        // 1. For pattern layers, use the vector tile source or raw SVG so it centers perfectly in 32x32 cell
+        if (obj.isPattern) {
+          if (obj.rawSvgContent) {
+            imgSrc = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(obj.rawSvgContent);
+          } else if (obj.patternSourceImg && obj.patternSourceImg.src) {
+            imgSrc = obj.patternSourceImg.src;
+          } else if (obj.fill && typeof obj.fill === 'object' && obj.fill.source && obj.fill.source.src) {
+            imgSrc = obj.fill.source.src;
           }
-        } catch (e) {}
+        }
 
-        // 2. Fallback to toDataURL with withoutTransform: true so canvas left/top offsets are ignored
+        // 2. Try direct element src or getSrc (gives untransformed, complete original image)
+        if (!imgSrc) {
+          try {
+            if (obj._element && obj._element.src) {
+              imgSrc = obj._element.src;
+            } else if (typeof obj.getSrc === 'function') {
+              imgSrc = obj.getSrc();
+            }
+          } catch (e) {}
+        }
+
+        // 3. Fallback to toDataURL with withoutTransform: true
         if (!imgSrc) {
           try {
             if (typeof obj.toDataURL === 'function') {
@@ -182,7 +195,7 @@ export class LayerManager {
 
         thumbHtml = `
           <div class="layer-thumb-box img-type" style="display:flex; align-items:center; justify-content:center; overflow:hidden; background:#f8fafc; border-radius:6px; border:1px solid #e2e8f0; width:32px; height:32px; padding:2px;">
-            ${imgSrc ? `<img src="${imgSrc}" class="layer-thumb-preview-img" style="width:100%; height:100%; object-fit:contain; border-radius:4px; display:block;" alt="미리보기">` : '🎨'}
+            ${imgSrc ? `<img src="${imgSrc}" class="layer-thumb-preview-img" style="max-width:100%; max-height:100%; width:auto; height:auto; object-fit:contain; object-position:center; border-radius:4px; display:block; margin:auto;" alt="미리보기">` : '🎨'}
           </div>
         `;
       } else if (obj.isShape || ['rect', 'circle', 'triangle', 'path', 'polygon'].includes(obj.type)) {

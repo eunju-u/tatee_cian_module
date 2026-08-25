@@ -36,10 +36,16 @@ export class HistoryManager {
     this.redoStack.push(currentState);
 
     const previousState = this.undoStack[this.undoStack.length - 1];
-    this.canvasEditor.loadCanvasJson(JSON.parse(previousState), () => {
+    try {
+      this.canvasEditor.loadCanvasJson(JSON.parse(previousState), () => {
+        this.isStateProcessing = false;
+        if (onComplete) onComplete();
+      });
+    } catch (e) {
+      console.error('History undo error:', e);
       this.isStateProcessing = false;
       if (onComplete) onComplete();
-    });
+    }
   }
 
   redo(onComplete) {
@@ -49,10 +55,16 @@ export class HistoryManager {
     const nextState = this.redoStack.pop();
     this.undoStack.push(nextState);
 
-    this.canvasEditor.loadCanvasJson(JSON.parse(nextState), () => {
+    try {
+      this.canvasEditor.loadCanvasJson(JSON.parse(nextState), () => {
+        this.isStateProcessing = false;
+        if (onComplete) onComplete();
+      });
+    } catch (e) {
+      console.error('History redo error:', e);
       this.isStateProcessing = false;
       if (onComplete) onComplete();
-    });
+    }
   }
 
   reset() {

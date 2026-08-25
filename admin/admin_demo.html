@@ -6,9 +6,9 @@
   <title>TATEE 관리자 대시보드</title>
   <style>
     :root {
-      --primary: rgba(249, 115, 22, 0.85);
-      --primary-hover: rgba(234, 88, 12, 0.9);
-      --primary-light: rgba(255, 247, 237, 0.9);
+      --primary: #f97316;
+      --primary-hover: #ea580c;
+      --primary-light: #fff7ed;
       --primary-bg: #fffbf7;
       --primary-border: #ffedd5;
       --slate-900: #0f172a;
@@ -24,8 +24,8 @@
       --radius-xl: 16px;
       --radius-lg: 12px;
       --radius-md: 8px;
-      --shadow-subtle: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.03);
-      --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+      --shadow-subtle: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+      --shadow-card: 0 2px 8px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
       --shadow-popover: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     }
 
@@ -37,7 +37,7 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Pretendard Variable", Pretendard, sans-serif;
-      background-color: var(--slate-50);
+      background-color: #ffffff;
       color: var(--slate-800);
       height: 100vh;
       overflow: hidden;
@@ -50,24 +50,37 @@
       height: 100vh;
     }
 
-    /* SIDEBAR (LNB) - IMAGE 1 REPLICA STYLE */
+    #sticker-library-grid svg,
+    #pattern-library-grid svg,
+    #illustration-library-grid svg,
+    #builder-sticker-preview-box svg,
+    #builder-illu-preview-box svg {
+      max-width: 100% !important;
+      max-height: 100% !important;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain;
+    }
+
+    /* SIDEBAR (LNB) - ELEGANT SOFT APRICOT / PEACH LIGHT THEME */
     .sidebar {
-      width: 250px;
-      min-width: 250px;
-      background-color: #ffffff;
-      border-right: 1px solid #e2e8f0;
+      width: 240px;
+      min-width: 240px;
+      background-color: #fff6f0;
+      border-right: 1px solid #fce3d7;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 28px 16px 20px 16px;
+      padding: 24px 14px 20px 14px;
+      color: #7c2d12;
     }
 
     .brand-header {
-      padding: 0 8px 24px 8px;
+      padding: 0 8px 20px 8px;
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: 1px solid #fce3d7;
       margin-bottom: 16px;
     }
 
@@ -79,11 +92,12 @@
     }
 
     .nav-group-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: #94a3b8;
-      margin: 18px 0 6px 12px;
-      letter-spacing: -0.01em;
+      font-size: 11px;
+      font-weight: 800;
+      color: #ea580c;
+      margin: 18px 0 6px 10px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
     }
 
     .nav-item {
@@ -91,16 +105,16 @@
       align-items: center;
       gap: 12px;
       width: 100%;
-      padding: 12px 16px;
-      border-radius: 12px;
+      padding: 10px 14px;
+      border-radius: 10px;
       border: none;
       background: transparent;
-      color: #475569;
-      font-size: 15px;
-      font-weight: 600;
+      color: #9a3412;
+      font-size: 14px;
+      font-weight: 700;
       cursor: pointer;
       text-align: left;
-      transition: all 0.15s ease;
+      transition: all 0.2s ease;
       position: relative;
     }
 
@@ -108,44 +122,43 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
       color: inherit;
     }
 
-    .nav-item:hover {
-      background-color: #f8fafc;
-      color: #0f172a;
+    .nav-icon svg {
+      width: 18px !important;
+      height: 18px !important;
+      stroke-width: 2.2px !important;
     }
 
-    /* ACTIVE ITEM: LEFT BAR INDICATOR (ORIGINAL STYLE) */
+    .nav-item:hover {
+      background-color: #ffedd5;
+      color: #ea580c;
+      transform: translateX(3px);
+    }
+
+    /* ACTIVE ITEM: HIGH VISIBILITY BRAND VIBRANT ORANGE PILL */
     .nav-item.active {
-      background-color: var(--primary-light);
-      color: var(--primary-hover);
-      font-weight: 700;
-      box-shadow: none;
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      color: #ffffff;
+      font-weight: 800;
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
     }
 
     .nav-item.active .nav-icon {
-      color: var(--primary-hover);
+      color: #ffffff;
     }
 
     .nav-item.active::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 10%;
-      bottom: 10%;
-      width: 4px;
-      background-color: var(--primary);
-      border-radius: 0 4px 4px 0;
-      display: block;
+      display: none;
     }
 
     .kpi-card:hover {
-      transform: translateY(-2px);
+      transform: translateY(-3px);
       border-color: var(--primary) !important;
-      box-shadow: 0 8px 16px -2px rgba(249, 115, 22, 0.15) !important;
+      box-shadow: 0 10px 20px -3px rgba(249, 115, 22, 0.15) !important;
     }
 
     .preview-card-btn {
@@ -153,21 +166,23 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 12px;
+      padding: 12px 14px;
       border-radius: 12px;
-      background-color: #f8fafc;
-      color: #334155;
+      background: #ffffff;
+      color: #ea580c;
       text-decoration: none;
       font-size: 13px;
-      font-weight: 700;
-      border: 1px solid #e2e8f0;
-      transition: all 0.15s ease;
+      font-weight: 800;
+      border: 1px solid #fed7aa;
+      box-shadow: 0 2px 6px rgba(234, 88, 12, 0.08);
+      transition: all 0.2s ease;
     }
 
     .preview-card-btn:hover {
       background-color: var(--primary);
-      color: var(--white);
+      color: #ffffff;
       border-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
     }
 
     /* MAIN CONTENT */
@@ -176,6 +191,7 @@
       height: 100vh;
       overflow-y: auto;
       padding: 32px 40px;
+      background-color: #ffffff;
     }
 
     .header-bar {
@@ -425,7 +441,7 @@
           </button>
 
           <!-- 상품 그룹 -->
-          <div class="nav-group-title">상품</div>
+          <div class="nav-group-title">상품 설정</div>
 
           <button type="button" class="nav-item active" data-tab="tab-products">
             <span class="nav-icon">
@@ -449,18 +465,51 @@
             <span>웹폰트 관리</span>
           </button>
 
+          <!-- 그래픽 소재 그룹 -->
+          <div class="nav-group-title">디자인 소재 라이브러리</div>
+
+          <button type="button" class="nav-item" data-tab="tab-art-groups">
+            <span class="nav-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                <line x1="12" y1="11" x2="12" y2="17"></line>
+                <line x1="9" y1="14" x2="15" y2="14"></line>
+              </svg>
+            </span>
+            <span>카테고리 / 그룹 관리</span>
+          </button>
+
+          <button type="button" class="nav-item" data-tab="tab-stickers">
+            <span class="nav-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </span>
+            <span>스티커 관리</span>
+          </button>
+
           <button type="button" class="nav-item" data-tab="tab-patterns">
             <span class="nav-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="8" y1="6" x2="21" y2="6"/>
-                <line x1="8" y1="12" x2="21" y2="12"/>
-                <line x1="8" y1="18" x2="21" y2="18"/>
-                <line x1="3" y1="6" x2="3.01" y2="6"/>
-                <line x1="3" y1="12" x2="3.01" y2="12"/>
-                <line x1="3" y1="18" x2="3.01" y2="18"/>
+                <rect x="3" y="3" width="7" height="7"/>
+                <rect x="14" y="3" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/>
               </svg>
             </span>
-            <span>스티커/패턴 관리</span>
+            <span>패턴 관리</span>
+          </button>
+
+          <button type="button" class="nav-item" data-tab="tab-illustrations">
+            <span class="nav-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+            </span>
+            <span>일러스트 관리</span>
           </button>
 
           <!-- 주문 그룹 -->
@@ -490,21 +539,25 @@
     <main class="main-area">
       
       <header class="header-bar">
-        <div>
-          <h1 class="page-title" id="page-main-title">상품 목록</h1>
-          <p class="page-subtitle" id="page-main-subtitle" style="display:none;"></p>
+        <div style="display:flex; align-items:center; gap:14px;">
+          <div>
+            <h1 class="page-title" id="page-main-title">상품 목록</h1>
+            <p class="page-subtitle" id="page-main-subtitle" style="display:none;"></p>
+          </div>
         </div>
 
         <div id="header-action-products" class="tab-header-action">
-          <button type="button" onclick="window.location.href='/admin/product_detail.html?productNo=new'" class="btn-primary">
-            ➕ 신규 상품 등록
+          <button type="button" onclick="window.location.href='/admin/product_detail.html?productNo=new'" class="btn-primary" style="display:inline-flex; align-items:center; gap:6px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>신규 상품 등록</span>
           </button>
         </div>
 
         <div id="header-action-fonts" class="tab-header-action" style="display:none;">
           <div id="font-action-buttons-normal" style="display:flex; gap:8px;">
-            <button type="button" id="btn-open-font-modal" class="btn-primary">
-              ➕ 폰트 등록
+            <button type="button" id="btn-open-font-modal" class="btn-primary" style="display:inline-flex; align-items:center; gap:6px;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span>폰트 등록</span>
             </button>
             <button type="button" id="btn-enter-delete-mode" class="btn-outline" style="border-color:var(--slate-300); color:var(--slate-700);">
               🗑️ 삭제
@@ -539,182 +592,577 @@
 
       <!-- TAB 0: DASHBOARD -->
       <div class="tab-pane" id="tab-dashboard">
-        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:16px; margin-bottom:24px;">
+        <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:16px; margin-bottom:28px;">
           <!-- KPI 1: 상품 갯수 -->
-          <div class="kpi-card" data-target-tab="tab-products" style="background:#ffffff; border:1px solid var(--slate-200); border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow-card); cursor:pointer; transition:all 0.2s ease;">
-            <span style="font-size:13px; font-weight:700; color:var(--slate-500); display:flex; justify-content:space-between; align-items:center;">
-              📦 등록된 상품 갯수 <span style="font-size:11px; color:var(--primary); font-weight:800;">이동 ➔</span>
-            </span>
-            <span id="stat-count-products" style="font-size:28px; font-weight:900; color:var(--slate-900);">0개</span>
+          <div class="kpi-card" data-target-tab="tab-products" style="background:#ffffff; border:1px solid var(--slate-200); border-radius:14px; padding:20px 22px; display:flex; flex-direction:column; gap:10px; box-shadow:var(--shadow-card); cursor:pointer; transition:all 0.2s ease;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:13px; font-weight:700; color:var(--slate-600); display:flex; align-items:center; gap:6px;">
+                <span style="font-size:15px;">📦</span> 등록된 상품
+              </span>
+              <span style="font-size:11px; color:var(--primary); font-weight:800; background:var(--primary-light); padding:3px 8px; border-radius:12px; border:1px solid var(--primary-border);">이동 ➔</span>
+            </div>
+            <div id="stat-count-products" style="font-size:32px; font-weight:900; color:var(--slate-900); letter-spacing:-0.03em;">0개</div>
           </div>
           <!-- KPI 2: 폰트 갯수 -->
-          <div class="kpi-card" data-target-tab="tab-fonts" style="background:#ffffff; border:1px solid var(--slate-200); border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow-card); cursor:pointer; transition:all 0.2s ease;">
-            <span style="font-size:13px; font-weight:700; color:var(--slate-500); display:flex; justify-content:space-between; align-items:center;">
-              🔤 사용 가능한 폰트 갯수 <span style="font-size:11px; color:var(--primary); font-weight:800;">이동 ➔</span>
-            </span>
-            <span id="stat-count-fonts" style="font-size:28px; font-weight:900; color:var(--slate-900);">0개</span>
+          <div class="kpi-card" data-target-tab="tab-fonts" style="background:#ffffff; border:1px solid var(--slate-200); border-radius:14px; padding:20px 22px; display:flex; flex-direction:column; gap:10px; box-shadow:var(--shadow-card); cursor:pointer; transition:all 0.2s ease;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:13px; font-weight:700; color:var(--slate-600); display:flex; align-items:center; gap:6px;">
+                <span style="font-size:15px;">🔤</span> 폰트 라이브러리
+              </span>
+              <span style="font-size:11px; color:var(--primary); font-weight:800; background:var(--primary-light); padding:3px 8px; border-radius:12px; border:1px solid var(--primary-border);">이동 ➔</span>
+            </div>
+            <div id="stat-count-fonts" style="font-size:32px; font-weight:900; color:var(--slate-900); letter-spacing:-0.03em;">0개</div>
           </div>
           <!-- KPI 3: 지시서 갯수 -->
-          <div class="kpi-card" data-target-tab="tab-orders" style="background:#ffffff; border:1px solid var(--slate-200); border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow-card); cursor:pointer; transition:all 0.2s ease;">
-            <span style="font-size:13px; font-weight:700; color:var(--slate-500); display:flex; justify-content:space-between; align-items:center;">
-              📄 접수된 작업지시서 갯수 <span style="font-size:11px; color:var(--primary); font-weight:800;">이동 ➔</span>
-            </span>
-            <span id="stat-count-orders" style="font-size:28px; font-weight:900; color:var(--slate-900);">0개</span>
+          <div class="kpi-card" data-target-tab="tab-orders" style="background:#ffffff; border:1px solid var(--slate-200); border-radius:14px; padding:20px 22px; display:flex; flex-direction:column; gap:10px; box-shadow:var(--shadow-card); cursor:pointer; transition:all 0.2s ease;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:13px; font-weight:700; color:var(--slate-600); display:flex; align-items:center; gap:6px;">
+                <span style="font-size:15px;">📄</span> 접수된 작업지시서
+              </span>
+              <span style="font-size:11px; color:var(--primary); font-weight:800; background:var(--primary-light); padding:3px 8px; border-radius:12px; border:1px solid var(--primary-border);">이동 ➔</span>
+            </div>
+            <div id="stat-count-orders" style="font-size:32px; font-weight:900; color:var(--slate-900); letter-spacing:-0.03em;">0개</div>
           </div>
           <!-- KPI 4: 스티커/패턴 갯수 -->
-          <div class="kpi-card" data-target-tab="tab-patterns" style="background:#ffffff; border:1px solid var(--slate-200); border-radius:12px; padding:20px; display:flex; flex-direction:column; gap:8px; box-shadow:var(--shadow-card); cursor:pointer; transition:all 0.2s ease;">
-            <span style="font-size:13px; font-weight:700; color:var(--slate-500); display:flex; justify-content:space-between; align-items:center;">
-              🎨 스티커/패턴 갯수 <span style="font-size:11px; color:var(--primary); font-weight:800;">이동 ➔</span>
-            </span>
-            <span id="stat-count-patterns" style="font-size:28px; font-weight:900; color:var(--slate-900);">0개</span>
+          <div class="kpi-card" data-target-tab="tab-patterns" style="background:#ffffff; border:1px solid var(--slate-200); border-radius:14px; padding:20px 22px; display:flex; flex-direction:column; gap:10px; box-shadow:var(--shadow-card); cursor:pointer; transition:all 0.2s ease;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:13px; font-weight:700; color:var(--slate-600); display:flex; align-items:center; gap:6px;">
+                <span style="font-size:15px;">🎨</span> 스티커/패턴 소재
+              </span>
+              <span style="font-size:11px; color:var(--primary); font-weight:800; background:var(--primary-light); padding:3px 8px; border-radius:12px; border:1px solid var(--primary-border);">이동 ➔</span>
+            </div>
+            <div id="stat-count-patterns" style="font-size:32px; font-weight:900; color:var(--slate-900); letter-spacing:-0.03em;">0개</div>
+          </div>
+        </div>
+
+        <!-- QUICK ACTION CARDS SECTION -->
+        <div class="card-panel">
+          <div class="card-header">
+            <div class="card-title">🚀 자주 사용하는 메뉴</div>
+            <span style="font-size:12px; color:var(--slate-500); font-weight:600;">원하시는 작업을 클릭하시면 즉시 해당 화면으로 이동합니다.</span>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:16px;">
+            <a href="/admin/product_detail.html?productNo=new" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:18px; text-decoration:none; display:flex; flex-direction:column; gap:8px; transition:all 0.2s ease;">
+              <div style="font-size:22px;">➕</div>
+              <div style="font-size:14.5px; font-weight:800; color:#0f172a;">신규 상품 등록</div>
+              <div style="font-size:12px; color:#64748b; line-height:1.4;">의류 베이스 및 2D/3D 시뮬레이션 상품 등록</div>
+            </a>
+            <div class="kpi-card" data-target-tab="tab-stickers" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:18px; display:flex; flex-direction:column; gap:8px; cursor:pointer; transition:all 0.2s ease;">
+              <div style="font-size:22px;">🖼️</div>
+              <div style="font-size:14.5px; font-weight:800; color:#0f172a;">소재 관리</div>
+              <div style="font-size:12px; color:#64748b; line-height:1.4;">스티커, 패턴, 일러스트 디자인 소재 등록</div>
+            </div>
+            <div class="kpi-card" data-target-tab="tab-orders" style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:18px; display:flex; flex-direction:column; gap:8px; cursor:pointer; transition:all 0.2s ease;">
+              <div style="font-size:22px;">📄</div>
+              <div style="font-size:14.5px; font-weight:800; color:#0f172a;">작업지시서 확인</div>
+              <div style="font-size:12px; color:#64748b; line-height:1.4;">접수된 고객 커스텀 주문 및 PDF 다운로드</div>
+            </div>
+            <a href="/demo/detail_demo.html" target="_blank" style="background:#fff7ed; border:1px solid #ffedd5; border-radius:12px; padding:18px; text-decoration:none; display:flex; flex-direction:column; gap:8px; transition:all 0.2s ease;">
+              <div style="font-size:22px;">🛍️</div>
+              <div style="font-size:14.5px; font-weight:800; color:#ea580c;">자사몰 에디터 미리보기 ➔</div>
+              <div style="font-size:12px; color:#c2410c; line-height:1.4;">고객 실물 커스텀 화면 시뮬레이션 테스트</div>
+            </a>
           </div>
         </div>
       </div>
 
-      <!-- TAB 1: PRODUCTS (ONLY PRODUCT LIST: PRODUCT NO & TITLE) -->
+      <!-- TAB 1: PRODUCTS -->
       <div class="tab-pane active" id="tab-products">
-        <table class="data-table" style="background:#ffffff; border:1px solid var(--slate-200); border-radius:var(--radius-xl); overflow:hidden; border-spacing:0; box-shadow:var(--shadow-card);">
-          <thead>
-            <tr>
-              <th style="width: 30%;">상품 번호</th>
-              <th>상품명</th>
-            </tr>
-          </thead>
-          <tbody id="registered-products-list">
-            <tr>
-              <td colspan="2" style="text-align:center; padding:24px; color:var(--slate-500);">로딩 중...</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="card-panel" style="padding:0; overflow:hidden;">
+          <div style="padding:18px 24px; border-bottom:1px solid var(--slate-200); display:flex; justify-content:space-between; align-items:center; background:var(--slate-50);">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:16px; font-weight:800; color:var(--slate-900);">📦 등록된 커스텀 상품 목록</span>
+            </div>
+            <a href="/admin/product_detail.html?productNo=new" class="btn-primary" style="font-size:12.5px; padding:7px 14px; text-decoration:none;">
+              ➕ 신규 상품 등록
+            </a>
+          </div>
+          <table class="data-table" style="border-spacing:0; width:100%;">
+            <thead>
+              <tr>
+                <th style="width: 28%;">상품 번호</th>
+                <th>상품명</th>
+                <th style="width: 15%;">상태</th>
+                <th style="width: 15%; text-align:right;">관리</th>
+              </tr>
+            </thead>
+            <tbody id="registered-products-list">
+              <tr>
+                <td colspan="4" style="text-align:center; padding:28px; color:var(--slate-500);">로딩 중...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <!-- TAB 2: FONTS (LIST ONLY + REGISTER/EDIT MODAL + MULTI DELETE MODE) -->
+      <!-- TAB 2: FONTS -->
       <div class="tab-pane" id="tab-fonts">
-        <table class="data-table" style="background:#ffffff; border:1px solid var(--slate-200); border-radius:var(--radius-xl); overflow:hidden; border-spacing:0; box-shadow:var(--shadow-card);">
-          <thead>
-            <tr id="font-table-header-tr">
-              <!-- Dynamically populated header -->
-            </tr>
-          </thead>
-          <tbody id="registered-fonts-tbody">
-            <tr>
-              <td colspan="5" style="text-align:center; padding:24px; color:var(--slate-500);">로딩 중...</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="card-panel" style="padding:0; overflow:hidden;">
+          <div style="padding:18px 24px; border-bottom:1px solid var(--slate-200); display:flex; justify-content:space-between; align-items:center; background:var(--slate-50);">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:16px; font-weight:800; color:var(--slate-900);">🔤 상업용 무료 웹폰트 라이브러리</span>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button type="button" onclick="document.getElementById('btn-open-font-modal').click()" class="btn-primary" style="font-size:12.5px; padding:7px 14px;">
+                ➕ 폰트 등록
+              </button>
+            </div>
+          </div>
+          <table class="data-table" style="border-spacing:0; width:100%;">
+            <thead>
+              <tr id="font-table-header-tr">
+                <!-- Dynamically populated header -->
+              </tr>
+            </thead>
+            <tbody id="registered-fonts-tbody">
+              <tr>
+                <td colspan="5" style="text-align:center; padding:28px; color:var(--slate-500);">로딩 중...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- TAB 3: ORDERS -->
       <div class="tab-pane" id="tab-orders">
-        <div id="admin-orders-list-table"></div>
+        <div class="card-panel" style="padding:0; overflow:hidden;">
+          <div style="padding:18px 24px; border-bottom:1px solid var(--slate-200); display:flex; justify-content:space-between; align-items:center; background:var(--slate-50);">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <span style="font-size:16px; font-weight:800; color:var(--slate-900);">📄 접수된 커스텀 주문 & 작업지시서</span>
+            </div>
+            <span style="font-size:12px; font-weight:700; color:var(--slate-500);">실시간 주문건 자동 동기화</span>
+          </div>
+          <div id="admin-orders-list-table"></div>
+        </div>
       </div>
 
-      <!-- TAB 4: STICKER & PATTERN LIBRARY -->
-      <div class="tab-pane" id="tab-patterns">
-        <div style="display:grid; grid-template-columns:360px 1fr; gap:24px;">
-          <!-- LEFT: PATTERN BUILDER FORM -->
-          <div style="background:#ffffff; border:1px solid var(--slate-200); border-radius:var(--radius-xl); padding:20px; box-shadow:var(--shadow-card); display:flex; flex-direction:column; gap:16px;">
-            <div style="font-size:16px; font-weight:800; color:var(--slate-900); display:flex; align-items:center; gap:8px;">
-              <span>✨</span> <span>신규 스티커/패턴 생성</span>
+      <!-- TAB 4-1: STICKERS MANAGEMENT -->
+      <div class="tab-pane" id="tab-stickers">
+        <div style="display:flex; flex-direction:column; gap:20px;">
+          <!-- TOOLBAR HEADER -->
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; padding-bottom:12px; border-bottom:1px solid var(--slate-200);">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="font-size:16px; font-weight:800; color:var(--slate-900);">스티커 라이브러리</span>
+              <span id="sticker-count-badge" style="font-size:12px; font-weight:800; color:var(--slate-800); background:#f1f5f9; padding:3px 10px; border-radius:12px; border:1px solid #cbd5e1;">총 0개</span>
             </div>
 
-            <form id="form-pattern-builder" style="display:flex; flex-direction:column; gap:14px;">
-              <div class="form-group">
-                <label class="form-label">패턴 명칭</label>
-                <input type="text" id="builder-pattern-title" class="form-input" value="트렌디 패턴" required>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">패턴 스타일 종류</label>
-                <select id="builder-pattern-shape" class="form-input" style="cursor:pointer;">
-                  <option value="sparkle_y2k">💫 Y2K 글리터 스파클</option>
-                  <option value="terrazzo_modern">🎨 세이지 모던 테라조</option>
-                  <option value="flower_daisy">🌸 감성 파스텔 데이지</option>
-                  <option value="wavy_checker">🏁 웨이브 체커</option>
-                  <option value="leopard_chic">🐆 쉬크 모카 레오파드</option>
-                  <option value="memphis_abstract">📐 멤피스 팝아트</option>
-                  <option value="heart_pastel">💖 파스텔 러블리 하트</option>
-                  <option value="cherry_retro">🍒 레트로 체리</option>
-                  <option value="grid">📐 체크 선 패턴</option>
-                  <option value="checkerboard">🏁 클래식 체커보드</option>
-                  <option value="stripe">💈 클래식 스트라이프</option>
-                  <option value="dot_aesthetic">⚪ 포카 도트</option>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+                <span style="font-size:12px; font-weight:700; color:var(--slate-500); white-space:nowrap; flex-shrink:0;">카테고리:</span>
+                <select id="sticker-group-filter" class="form-input lib-group-filter-select" style="padding:6px 12px; font-size:12.5px; font-weight:700; border-radius:8px; background:#ffffff; border:1px solid var(--slate-300); cursor:pointer; min-width:140px; color:var(--slate-800);">
+                  <option value="all">📂 전체 카테고리</option>
                 </select>
               </div>
 
-              <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
-                <div class="form-group">
-                  <label class="form-label" style="font-size:11px;">도형 색상</label>
-                  <input type="color" id="builder-color-fg" value="#f472b6" style="width:100%; height:36px; border-radius:8px; border:1px solid var(--slate-300); cursor:pointer; padding:0; background:none;">
-                </div>
-                <div class="form-group">
-                  <label class="form-label" style="font-size:11px;">포인트 색상</label>
-                  <input type="color" id="builder-color-accent" value="#f59e0b" style="width:100%; height:36px; border-radius:8px; border:1px solid var(--slate-300); cursor:pointer; padding:0; background:none;">
-                </div>
-                <div class="form-group">
-                  <label class="form-label" style="font-size:11px;">배경 색상</label>
-                  <input type="color" id="builder-color-bg" value="#fff0f5" style="width:100%; height:36px; border-radius:8px; border:1px solid var(--slate-300); cursor:pointer; padding:0; background:none;">
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label" style="display:flex; justify-content:space-between;">
-                  <span>패턴 밀도/크기 (Scale)</span>
-                  <span id="label-builder-scale" style="color:var(--primary); font-weight:800;">1.0x</span>
-                </label>
-                <input type="range" id="builder-slider-scale" min="0.5" max="3.0" step="0.1" value="1.0" style="width:100%; cursor:pointer;">
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">회전 각도</label>
-                <select id="builder-pattern-angle" class="form-input" style="cursor:pointer;">
-                  <option value="0">0° (정방향)</option>
-                  <option value="15">15° (살짝 기움)</option>
-                  <option value="30">30°</option>
-                  <option value="45">45° (사선 각도)</option>
-                </select>
-              </div>
-
-              <div class="form-group">
-                <label class="form-label">투명도</label>
-                <select id="builder-pattern-opacity" class="form-input" style="cursor:pointer;">
-                  <option value="1.0">100% (선명함)</option>
-                  <option value="0.85" selected>85% (자연스러움)</option>
-                  <option value="0.6">60% (은은함)</option>
-                  <option value="0.35">35% (파스텔 은은)</option>
-                </select>
-              </div>
-
-              <!-- PREVIEW BOX -->
-              <div class="form-group">
-                <label class="form-label">실시간 패턴 미리보기</label>
-                <div id="builder-pattern-preview-box" style="width:100%; height:160px; border-radius:12px; border:1px solid var(--slate-300); overflow:hidden; display:flex; align-items:center; justify-content:center; background:#fafafa;">
-                </div>
-              </div>
-
-              <button type="submit" class="btn-primary" style="width:100%; padding:12px; font-size:14px; font-weight:800; border-radius:10px;">
-                ✨ 이 패턴 라이브러리에 저장하기
+              <button type="button" id="btn-open-add-sticker-modal" class="btn-primary" style="padding:8px 16px; font-size:13px; font-weight:800; border-radius:9px; background:var(--primary); display:inline-flex; align-items:center; gap:6px; cursor:pointer; box-shadow:0 2px 4px rgba(79,70,229,0.2); color:#ffffff;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span>신규 스티커 등록</span>
               </button>
-            </form>
+            </div>
           </div>
 
-          <!-- RIGHT: PATTERN LIBRARY GRID -->
-          <div style="background:#ffffff; border:1px solid var(--slate-200); border-radius:var(--radius-xl); padding:20px; box-shadow:var(--shadow-card); display:flex; flex-direction:column; gap:16px;">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <div style="font-size:16px; font-weight:800; color:var(--slate-900); display:flex; align-items:center; gap:8px;">
-                <span>🖼️</span> <span>등록된 스티커 & 패턴 라이브러리</span>
-              </div>
-              <span id="pattern-count-badge" style="font-size:12px; font-weight:700; color:var(--slate-500); background:var(--slate-100); padding:4px 10px; border-radius:20px;">총 0개 등록됨</span>
-            </div>
-
-            <div id="pattern-library-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:16px; max-height:620px; overflow-y:auto; padding-right:4px;">
-              <div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--slate-400); font-size:13px;">
-                등록된 패턴/스티커가 없습니다. Left 폼에서 패턴을 생성 후 저장하세요.
-              </div>
+          <!-- STICKER GRID -->
+          <div id="sticker-library-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:16px; max-height:680px; overflow-y:auto; padding-right:4px;">
+            <div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--slate-400); font-size:13px;">
+              등록된 스티커가 없습니다. 상단 '➕ 신규 스티커 등록' 버튼을 눌러 등록해보세요.
             </div>
           </div>
         </div>
       </div>
+
+      <!-- TAB 4-2: PATTERN MANAGEMENT -->
+      <div class="tab-pane" id="tab-patterns">
+        <div style="display:flex; flex-direction:column; gap:20px;">
+          <!-- TOOLBAR HEADER -->
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; padding-bottom:12px; border-bottom:1px solid var(--slate-200);">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="font-size:16px; font-weight:800; color:var(--slate-900);">패턴 라이브러리</span>
+              <span id="pattern-count-badge" style="font-size:12px; font-weight:800; color:var(--slate-800); background:#f1f5f9; padding:3px 10px; border-radius:12px; border:1px solid #cbd5e1;">총 0개</span>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+                <span style="font-size:12px; font-weight:700; color:var(--slate-500); white-space:nowrap; flex-shrink:0;">카테고리:</span>
+                <select id="pattern-group-filter" class="form-input lib-group-filter-select" style="padding:6px 12px; font-size:12.5px; font-weight:700; border-radius:8px; background:#ffffff; border:1px solid var(--slate-300); cursor:pointer; min-width:140px; color:var(--slate-800);">
+                  <option value="all">📂 전체 카테고리</option>
+                </select>
+              </div>
+
+              <button type="button" id="btn-open-add-pattern-modal" class="btn-primary" style="padding:8px 16px; font-size:13px; font-weight:800; border-radius:9px; background:var(--primary); display:inline-flex; align-items:center; gap:6px; cursor:pointer; box-shadow:0 2px 4px rgba(79,70,229,0.2); color:#ffffff;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span>신규 패턴 등록</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- PATTERN GRID -->
+          <div id="pattern-library-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:16px; max-height:680px; overflow-y:auto; padding-right:4px;">
+            <div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--slate-400); font-size:13px;">
+              등록된 패턴이 없습니다. 상단 '➕ 신규 패턴 등록' 버튼을 눌러 등록해보세요.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4-3: ILLUSTRATION MANAGEMENT -->
+      <div class="tab-pane" id="tab-illustrations">
+        <div style="display:flex; flex-direction:column; gap:20px;">
+          <!-- TOOLBAR HEADER -->
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; padding-bottom:12px; border-bottom:1px solid var(--slate-200);">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span style="font-size:16px; font-weight:800; color:var(--slate-900);">일러스트 라이브러리</span>
+              <span id="illustration-count-badge" style="font-size:12px; font-weight:800; color:var(--slate-800); background:#f1f5f9; padding:3px 10px; border-radius:12px; border:1px solid #cbd5e1;">총 0개</span>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
+                <span style="font-size:12px; font-weight:700; color:var(--slate-500); white-space:nowrap; flex-shrink:0;">카테고리:</span>
+                <select id="illustration-group-filter" class="form-input lib-group-filter-select" style="padding:6px 12px; font-size:12.5px; font-weight:700; border-radius:8px; background:#ffffff; border:1px solid var(--slate-300); cursor:pointer; min-width:140px; color:var(--slate-800);">
+                  <option value="all">📂 전체 카테고리</option>
+                </select>
+              </div>
+
+              <button type="button" id="btn-open-add-illustration-modal" class="btn-primary" style="padding:8px 16px; font-size:13px; font-weight:800; border-radius:9px; background:var(--primary); display:inline-flex; align-items:center; gap:6px; cursor:pointer; box-shadow:0 2px 4px rgba(79,70,229,0.2); color:#ffffff;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                <span>신규 일러스트 등록</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- ILLUSTRATION GRID -->
+          <div id="illustration-library-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:16px; max-height:680px; overflow-y:auto; padding-right:4px;">
+            <div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--slate-400); font-size:13px;">
+              등록된 일러스트가 없습니다. 상단 '➕ 신규 일러스트 등록' 버튼을 눌러 등록해보세요.
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- TAB 5: CATEGORY / GROUP MANAGER -->
+      <div class="tab-pane" id="tab-art-groups">
+        <div style="display:flex; flex-direction:column; gap:20px;">
+          
+          <!-- TOP SUB-TABS & ACTION TOOLBAR -->
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; padding-bottom:12px; border-bottom:1px solid var(--slate-200);">
+            
+            <!-- SEGMENTED CONTROL TABS -->
+            <div style="display:inline-flex; gap:4px; background:#f1f5f9; padding:4px; border-radius:12px; border:1px solid #e2e8f0;">
+              <button type="button" class="group-tab-btn active" data-type="sticker" style="padding:8px 18px; border:none; border-radius:8px; font-size:13.5px; font-weight:800; cursor:pointer; background:#ffffff; color:#0f172a; box-shadow:0 1px 3px rgba(0,0,0,0.08); transition:all 0.15s ease;">스티커</button>
+              <button type="button" class="group-tab-btn" data-type="pattern" style="padding:8px 18px; border:none; border-radius:8px; font-size:13.5px; font-weight:700; cursor:pointer; background:transparent; color:#64748b; transition:all 0.15s ease;">패턴</button>
+              <button type="button" class="group-tab-btn" data-type="illustration" style="padding:8px 18px; border:none; border-radius:8px; font-size:13.5px; font-weight:700; cursor:pointer; background:transparent; color:#64748b; transition:all 0.15s ease;">일러스트</button>
+            </div>
+
+            <!-- ACTION BUTTON -->
+            <button type="button" id="btn-open-add-group-modal" class="btn-primary" style="padding:9px 16px; font-size:13px; font-weight:800; border-radius:9px; background:var(--primary); display:inline-flex; align-items:center; gap:6px; cursor:pointer; box-shadow:0 2px 4px rgba(79,70,229,0.2); color:#ffffff;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span id="label-btn-add-category">스티커 카테고리 추가</span>
+            </button>
+          </div>
+
+          <!-- CATEGORY LIST TABLE CARD -->
+          <div class="card-panel" style="padding:0; overflow:hidden;">
+            <div style="padding:18px 24px; border-bottom:1px solid var(--slate-200); display:flex; justify-content:space-between; align-items:center; background:var(--slate-50);">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <span id="label-active-tab-title" style="font-size:16px; font-weight:800; color:var(--slate-900);">등록된 스티커 카테고리 목록</span>
+                <span id="badge-active-tab-count" style="font-size:12px; font-weight:800; color:var(--slate-800); background:#f1f5f9; padding:3px 10px; border-radius:12px; border:1px solid #cbd5e1;">총 0개</span>
+              </div>
+              <span style="font-size:12px; color:var(--slate-500); font-weight:600;">💡 수정/삭제 시 에디터 필터 및 소재 등록 폼에 즉시 반영됩니다.</span>
+            </div>
+
+            <table class="data-table" style="border-spacing:0; width:100%;">
+              <thead>
+                <tr>
+                  <th style="width:35%;">카테고리 명칭</th>
+                  <th style="width:35%;">속한 소재 수량</th>
+                  <th style="width:30%; text-align:right;">관리</th>
+                </tr>
+              </thead>
+              <tbody id="art-groups-list-grid">
+                <tr>
+                  <td colspan="3" style="text-align:center; padding:32px; color:var(--slate-400);">
+                    등록된 카테고리 목록을 로딩 중입니다...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- CREATE CATEGORY MODAL -->
+  <div id="modal-add-group" class="modal-backdrop" style="display:none;">
+    <div class="modal-card" style="max-width:440px;">
+      <div class="modal-header">
+        <div id="modal-add-group-title" style="font-size:16px; font-weight:800; color:var(--slate-900);">신규 스티커 카테고리 추가</div>
+        <button type="button" id="btn-close-add-group-modal" style="background:transparent; border:none; font-size:18px; cursor:pointer; color:var(--slate-500); font-weight:700;">✕</button>
+      </div>
+      <form id="form-create-art-group">
+        <div class="modal-body" style="display:flex; flex-direction:column; gap:16px;">
+          <div id="group-form-status" style="display:none; padding:10px 14px; border-radius:8px; font-size:13px; font-weight:700; text-align:center;"></div>
+
+          <div class="form-group">
+            <label class="form-label">카테고리 명칭</label>
+            <input type="text" id="input-new-art-group-name" class="form-input" placeholder="예: 키치, Y2K, 캐릭터, 팝아트" required autofocus>
+            <span style="font-size:11.5px; color:var(--slate-500); margin-top:4px; display:block;">
+              💡 선택한 소재 종류에 카테고리가 생성되며, 등록 폼 및 에디터 화면에 즉시 동기화됩니다.
+            </span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="btn-cancel-add-group-modal" class="btn-outline">취소</button>
+          <button type="submit" id="btn-submit-create-group" class="btn-primary" style="padding:9px 18px; font-size:13.5px; font-weight:800; display:inline-flex; align-items:center; gap:6px; color:#ffffff;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block; vertical-align:middle;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            <span>카테고리 등록하기</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CREATE STICKER MODAL -->
+  <div id="modal-add-sticker" class="modal-backdrop" style="display:none;">
+    <div class="modal-card" style="max-width:520px; max-height:90vh; overflow-y:auto;">
+      <div class="modal-header">
+        <div style="font-size:16px; font-weight:800; color:var(--slate-900);">🎨 신규 스티커 등록</div>
+        <button type="button" id="btn-close-add-sticker-modal" class="btn-close-modal" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--slate-400);">&times;</button>
+      </div>
+
+      <form id="form-sticker-builder" style="padding:20px; display:flex; flex-direction:column; gap:16px;">
+        <div class="form-group">
+          <label class="form-label">스티커 명칭</label>
+          <input type="text" id="builder-sticker-title" class="form-input" placeholder="예: 빈티지 스티커" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">스티커 카테고리</label>
+          <select id="builder-sticker-group" class="form-input select-art-group-dropdown" style="cursor:pointer; width:100%;">
+            <option value="기본" selected>📂 기본 (Default)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">스티커 생성 방식</label>
+          <select id="builder-sticker-type" class="form-input" style="cursor:pointer;">
+            <option value="file_upload" selected>📁 PNG/JPG/WEBP/SVG 스티커 이미지 파일 직접 업로드</option>
+            <option value="y2k_bubble">💭 Y2K 픽셀 말풍선 템플릿 생성기</option>
+          </select>
+        </div>
+
+        <!-- FILE UPLOAD SUB-SECTION (DEFAULT) -->
+        <div id="section-sticker-file" style="display:flex; flex-direction:column; gap:8px;">
+          <label class="form-label">PNG / JPG / WEBP / SVG 스티커 이미지 파일 선택</label>
+          <input type="file" id="builder-sticker-file-input" accept="image/png, image/jpeg, image/webp, image/svg+xml" class="form-input" style="padding:6px;">
+          <div style="display:flex; align-items:center; gap:8px; margin-top:2px; background:#f8fafc; padding:8px 12px; border-radius:8px; border:1px solid #e2e8f0;">
+            <input type="checkbox" id="chk-sticker-remove-bg" style="width:16px; height:16px; accent-color:#0f172a; cursor:pointer;">
+            <label for="chk-sticker-remove-bg" style="font-size:12px; font-weight:700; color:#334155; cursor:pointer;">
+              ✨ 등록 시 배경 자동 제거 (투명 누끼 처리)
+            </label>
+          </div>
+        </div>
+
+        <!-- TEMPLATE SUB-SECTION -->
+        <div id="section-sticker-template" style="display:none; flex-direction:column; gap:12px;">
+          <div class="form-group">
+            <label class="form-label">말풍선 내부 문구</label>
+            <input type="text" id="builder-sticker-text" class="form-input" value="여름... ★">
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <div class="form-group">
+              <label class="form-label" style="font-size:11px;">말풍선 색상</label>
+              <input type="color" id="builder-sticker-bg" value="#86efac" style="width:100%; height:36px; border-radius:8px; border:1px solid var(--slate-300); cursor:pointer; padding:0; background:none;">
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="font-size:11px;">글자 색상</label>
+              <input type="color" id="builder-sticker-fg" value="#000000" style="width:100%; height:36px; border-radius:8px; border:1px solid var(--slate-300); cursor:pointer; padding:0; background:none;">
+            </div>
+          </div>
+        </div>
+
+        <!-- PREVIEW BOX -->
+        <div class="form-group">
+          <label class="form-label">실시간 미리보기</label>
+          <div id="builder-sticker-preview-box" style="width:100%; height:140px; border-radius:12px; border:1px solid var(--slate-300); overflow:hidden; display:flex; align-items:center; justify-content:center; background:#fafafa; padding:12px;">
+            <div style="display:flex; flex-direction:column; align-items:center; gap:6px; color:#94a3b8;"><span style="font-size:24px;">🖼️</span><span style="font-size:12px; font-weight:700;">PNG / JPG / WEBP / SVG 스티커 이미지를 선택하세요.</span></div>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:8px;">
+          <button type="button" id="btn-cancel-add-sticker-modal" style="padding:9px 16px; border:1px solid var(--slate-300); border-radius:8px; background:#fff; color:var(--slate-700); font-weight:700; cursor:pointer;">취소</button>
+          <button type="submit" class="btn-primary" style="padding:9px 20px; font-weight:800; border-radius:8px;">🎨 등록 완료</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CREATE PATTERN MODAL -->
+  <div id="modal-add-pattern" class="modal-backdrop" style="display:none;">
+    <div class="modal-card" style="max-width:520px; max-height:90vh; overflow-y:auto;">
+      <div class="modal-header">
+        <div style="font-size:16px; font-weight:800; color:var(--slate-900);">🏁 신규 패턴 생성 & 등록</div>
+        <button type="button" id="btn-close-add-pattern-modal" class="btn-close-modal" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--slate-400);">&times;</button>
+      </div>
+
+      <form id="form-pattern-builder" style="padding:20px; display:flex; flex-direction:column; gap:16px;">
+        <div class="form-group">
+          <label class="form-label">패턴 명칭</label>
+          <input type="text" id="builder-pattern-title" class="form-input" placeholder="예: 트렌디 패턴" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">패턴 카테고리</label>
+          <select id="builder-pattern-group" class="form-input select-art-group-dropdown" style="cursor:pointer; width:100%;">
+            <option value="기본" selected>📂 기본 (Default)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">패턴 생성 방식</label>
+          <select id="builder-pattern-type" class="form-input" style="cursor:pointer;">
+            <option value="file_upload" selected>📁 PNG/JPG/WEBP/SVG 패턴 타일 이미지 파일 직접 업로드</option>
+            <option value="template">🎨 SVG 벡터 패턴 템플릿 생성기</option>
+          </select>
+        </div>
+
+        <!-- FILE UPLOAD SUB-SECTION (DEFAULT) -->
+        <div id="section-pattern-file" style="display:flex; flex-direction:column; gap:8px;">
+          <label class="form-label">패턴 타일 이미지 파일 선택 (PNG / JPG / WEBP / SVG)</label>
+          <input type="file" id="builder-pattern-file-input" accept="image/png, image/jpeg, image/webp, image/svg+xml" class="form-input" style="padding:6px;">
+        </div>
+
+        <!-- TEMPLATE SUB-SECTION -->
+        <div id="section-pattern-template" style="display:none; flex-direction:column; gap:16px;">
+          <div class="form-group">
+            <label class="form-label">패턴 스타일 종류</label>
+            <select id="builder-pattern-shape" class="form-input" style="cursor:pointer;">
+              <option value="sparkle_y2k">💫 Y2K 글리터 스파클</option>
+              <option value="terrazzo_modern">🎨 세이지 모던 테라조</option>
+              <option value="flower_daisy">🌸 감성 파스텔 데이지</option>
+              <option value="wavy_checker">🏁 웨이브 체커</option>
+              <option value="leopard_chic">🐆 쉬크 모카 레오파드</option>
+              <option value="memphis_abstract">📐 멤피스 팝아트</option>
+              <option value="heart_pastel">💖 파스텔 러블리 하트</option>
+              <option value="cherry_retro">🍒 레트로 체리</option>
+              <option value="grid">📐 체크 선 패턴</option>
+              <option value="checkerboard">🏁 클래식 체커보드</option>
+              <option value="stripe">💈 클래식 스트라이프</option>
+              <option value="dot_aesthetic">⚪ 포카 도트</option>
+            </select>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;">
+            <div class="form-group">
+              <label class="form-label" style="font-size:11px;">도형 색상</label>
+              <input type="color" id="builder-color-fg" value="#f472b6" style="width:100%; height:36px; border-radius:8px; border:1px solid var(--slate-300); cursor:pointer; padding:0; background:none;">
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="font-size:11px;">포인트 색상</label>
+              <input type="color" id="builder-color-accent" value="#f59e0b" style="width:100%; height:36px; border-radius:8px; border:1px solid var(--slate-300); cursor:pointer; padding:0; background:none;">
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="font-size:11px;">배경 색상</label>
+              <input type="color" id="builder-color-bg" value="#fff0f5" style="width:100%; height:36px; border-radius:8px; border:1px solid var(--slate-300); cursor:pointer; padding:0; background:none;">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" style="display:flex; justify-content:space-between;">
+              <span>패턴 밀도/크기 (Scale)</span>
+              <span id="label-builder-scale" style="color:var(--primary); font-weight:800;">1.0x</span>
+            </label>
+            <input type="range" id="builder-slider-scale" min="0.5" max="3.0" step="0.1" value="1.0" style="width:100%; cursor:pointer;">
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="form-group">
+              <label class="form-label">회전 각도</label>
+              <select id="builder-pattern-angle" class="form-input" style="cursor:pointer;">
+                <option value="0">0° (정방향)</option>
+                <option value="15">15° (살짝 기움)</option>
+                <option value="30">30°</option>
+                <option value="45">45° (사선 각도)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">투명도</label>
+              <select id="builder-pattern-opacity" class="form-input" style="cursor:pointer;">
+                <option value="1.0">100% (선명함)</option>
+                <option value="0.85" selected>85% (자연스러움)</option>
+                <option value="0.6">60% (은은함)</option>
+                <option value="0.35">35% (파스텔 은은)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- PREVIEW BOX -->
+        <div class="form-group">
+          <label class="form-label">실시간 패턴 미리보기</label>
+          <div id="builder-pattern-preview-box" style="width:100%; height:140px; border-radius:12px; border:1px solid var(--slate-300); overflow:hidden; display:flex; align-items:center; justify-content:center; background:#fafafa;">
+            <div style="display:flex; flex-direction:column; align-items:center; gap:6px; color:#94a3b8;"><span style="font-size:24px;">🏁</span><span style="font-size:12px; font-weight:700;">PNG / JPG / WEBP / SVG 패턴 타일 이미지를 선택하세요.</span></div>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:8px;">
+          <button type="button" id="btn-cancel-add-pattern-modal" style="padding:9px 16px; border:1px solid var(--slate-300); border-radius:8px; background:#fff; color:var(--slate-700); font-weight:700; cursor:pointer;">취소</button>
+          <button type="submit" class="btn-primary" style="padding:9px 20px; font-weight:800; border-radius:8px;">✨ 등록 완료</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- CREATE ILLUSTRATION MODAL -->
+  <div id="modal-add-illustration" class="modal-backdrop" style="display:none;">
+    <div class="modal-card" style="max-width:500px;">
+      <div class="modal-header">
+        <div style="font-size:16px; font-weight:800; color:var(--slate-900);">🖼️ 신규 일러스트 등록</div>
+        <button type="button" id="btn-close-add-illustration-modal" class="btn-close-modal" style="background:none; border:none; font-size:20px; cursor:pointer; color:var(--slate-400);">&times;</button>
+      </div>
+
+      <form id="form-illustration-builder" style="padding:20px; display:flex; flex-direction:column; gap:16px;">
+        <div class="form-group">
+          <label class="form-label">일러스트 명칭</label>
+          <input type="text" id="builder-illu-title" class="form-input" placeholder="예: 레트로 팝아트 캣 일러스트" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">일러스트 카테고리</label>
+          <select id="builder-illu-group" class="form-input select-art-group-dropdown" style="cursor:pointer; width:100%;">
+            <option value="기본" selected>📂 기본 (Default)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">일러스트 이미지 파일 선택 (PNG / SVG / WEBP / JPG)</label>
+          <input type="file" id="builder-illu-file-input" accept="image/png, image/jpeg, image/svg+xml, image/webp" class="form-input" style="padding:6px;" required>
+          <div style="display:flex; align-items:center; gap:8px; margin-top:6px; background:#f8fafc; padding:8px 12px; border-radius:8px; border:1px solid #e2e8f0;">
+            <input type="checkbox" id="chk-illu-remove-bg" style="width:16px; height:16px; accent-color:#0f172a; cursor:pointer;">
+            <label for="chk-illu-remove-bg" style="font-size:12px; font-weight:700; color:#334155; cursor:pointer;">
+              ✨ 등록 시 배경 자동 제거 (투명 누끼 처리)
+            </label>
+          </div>
+        </div>
+
+        <!-- PREVIEW BOX -->
+        <div class="form-group">
+          <label class="form-label">실시간 미리보기</label>
+          <div id="builder-illu-preview-box" style="width:100%; height:140px; border-radius:12px; border:1px solid var(--slate-300); overflow:hidden; display:flex; align-items:center; justify-content:center; background:#fafafa; padding:12px;">
+            <span style="font-size:12px; color:#94a3b8;">이미지 파일을 선택하시면 미리보기가 표시됩니다.</span>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:8px;">
+          <button type="button" id="btn-cancel-add-illustration-modal" style="padding:9px 16px; border:1px solid var(--slate-300); border-radius:8px; background:#fff; color:var(--slate-700); font-weight:700; cursor:pointer;">취소</button>
+          <button type="submit" class="btn-primary" style="padding:9px 20px; font-weight:800; border-radius:8px;">🖼️ 등록 완료</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
     </main>
 
@@ -797,8 +1245,81 @@
       </div>
     </div>
   </div>
+  <!-- RENAME CATEGORY MODAL -->
+  <div id="modal-rename-category" class="modal-backdrop" style="display:none;">
+    <div class="modal-card" style="max-width:420px;">
+      <div class="modal-header">
+        <div style="font-size:16px; font-weight:800; color:var(--slate-900);">✏️ 카테고리명 수정</div>
+        <button type="button" id="btn-close-rename-category-modal" style="background:transparent; border:none; font-size:16px; cursor:pointer; color:var(--slate-500);">✕</button>
+      </div>
+      <div class="modal-body" style="display:flex; flex-direction:column; gap:12px;">
+        <div>
+          <label class="form-label" style="font-size:12px; font-weight:700; color:var(--slate-600); margin-bottom:6px; display:block;">현재 카테고리명</label>
+          <input type="text" id="input-rename-old-name" class="form-input" readonly style="background:#f1f5f9; color:#64748b; font-weight:700;">
+        </div>
+        <div>
+          <label class="form-label" style="font-size:12px; font-weight:700; color:var(--slate-900); margin-bottom:6px; display:block;">변경할 카테고리명</label>
+          <input type="text" id="input-rename-new-name" class="form-input" placeholder="예: 빈티지 스티커" required style="font-weight:800; color:#0f172a;">
+        </div>
+        <p style="font-size:11.5px; color:#64748b; margin:0; line-height:1.5;">
+          ※ 변경 시 해당 카테고리에 속한 기존 소재들도 자동으로 새 카테고리로 업데이트됩니다.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btn-cancel-rename-category-modal" class="btn-outline">취소</button>
+        <button type="button" id="btn-execute-rename-category" style="background-color:var(--primary); color:white; border:none; padding:8px 18px; border-radius:var(--radius-md); font-size:13px; font-weight:800; cursor:pointer;">✏️ 저장하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DELETE CATEGORY CONFIRM MODAL -->
+  <div id="modal-delete-category" class="modal-backdrop" style="display:none;">
+    <div class="modal-card" style="max-width:420px;">
+      <div class="modal-header">
+        <div style="font-size:16px; font-weight:800; color:#ef4444;">🗑️ 카테고리 삭제 확인</div>
+        <button type="button" id="btn-close-delete-category-modal" style="background:transparent; border:none; font-size:16px; cursor:pointer; color:var(--slate-500);">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:14px; color:var(--slate-800); line-height:1.6; margin-bottom:12px;">
+          '<b id="delete-category-target-name" style="color:#ef4444;"></b>' 카테고리를 삭제하시겠습니까?
+        </p>
+        <div style="background:#fef2f2; border:1px solid #fecaca; border-radius:10px; padding:12px; font-size:12.5px; color:#991b1b; line-height:1.5;">
+          🛡️ <b>안전 이동 안내</b><br>
+          카테고리가 삭제되더라도 속해 있는 소재들은 삭제되지 않으며, <b>'기본'</b> 카테고리로 안전하게 이동됩니다.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btn-cancel-delete-category-modal" class="btn-outline">취소</button>
+        <button type="button" id="btn-execute-delete-category" style="background-color:#ef4444; color:white; border:none; padding:8px 18px; border-radius:var(--radius-md); font-size:13px; font-weight:800; cursor:pointer;">🗑️ 삭제하기</button>
+      </div>
+    </div>
+  </div>
 
   <script>
+    function getApiUrl(endpoint) {
+      if (!endpoint) return '';
+      if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) return endpoint;
+      if (window.location.protocol === 'file:' || (window.location.port && window.location.port !== '4000')) {
+        const host = window.location.hostname || 'localhost';
+        return `http://${host}:4000${endpoint}`;
+      }
+      return endpoint;
+    }
+
+    async function safeFetchJson(url, options = {}) {
+      const fullUrl = getApiUrl(url);
+      const res = await fetch(fullUrl, options);
+      const contentType = res.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        if (res.status === 404) {
+          throw new Error('백엔드 서버(Node.js)가 연결되지 않았거나 API 라우트를 찾을 수 없습니다.');
+        }
+        const text = await res.text();
+        throw new Error(`HTTP ${res.status}: ${text.slice(0, 100)}`);
+      }
+      return await res.json();
+    }
+
     let globalLoadedFonts = [];
     let isFontDeleteMode = false;
     let selectedIndicesToDelete = [];
@@ -815,6 +1336,14 @@
           if (targetTab) {
             targetTab.classList.add('active');
           }
+
+          // Persist active tab state to URL hash & localStorage
+          if (history.replaceState) {
+            history.replaceState(null, null, '#' + targetTabId);
+          } else {
+            window.location.hash = targetTabId;
+          }
+          localStorage.setItem('activeAdminTab', targetTabId);
 
           const pageTitle = document.getElementById('page-main-title');
           const pageSubtitle = document.getElementById('page-main-subtitle');
@@ -836,24 +1365,58 @@
               pageSubtitle.textContent = '';
               pageSubtitle.style.display = 'none';
               if (actProd) actProd.style.display = 'block';
+              loadProducts();
             } else if (targetTabId === 'tab-fonts') {
               pageTitle.textContent = '웹폰트 관리';
               pageSubtitle.textContent = '고객 에디터에서 사용 가능한 상업용 무료 웹폰트 목록입니다.';
               pageSubtitle.style.display = 'block';
               if (actFont) actFont.style.display = 'block';
+              loadFonts();
             } else if (targetTabId === 'tab-orders') {
               pageTitle.textContent = '작업지시서';
               pageSubtitle.textContent = '';
               pageSubtitle.style.display = 'none';
               if (actOrder) actOrder.style.display = 'block';
-            } else if (targetTabId === 'tab-patterns') {
-              pageTitle.textContent = '스티커 & 패턴 관리';
-              pageSubtitle.textContent = '고객 에디터에서 사용할 수 있는 그래픽 스티커 및 패턴 소재를 생성하고 관리합니다.';
+              loadAdminOrders();
+            } else if (targetTabId === 'tab-stickers') {
+              pageTitle.textContent = '스티커 관리';
+              pageSubtitle.textContent = '고객 커스텀 에디터에서 사용할 픽셀/그래픽 스티커를 등록하고 관리합니다.';
               pageSubtitle.style.display = 'block';
+              loadArtworksLibrary();
+            } else if (targetTabId === 'tab-patterns') {
+              pageTitle.textContent = '패턴 관리';
+              pageSubtitle.textContent = '고객 에디터에서 의류 전체에 반복 적용할 수 있는 그래픽 패턴을 생성하고 관리합니다.';
+              pageSubtitle.style.display = 'block';
+              loadArtworksLibrary();
+            } else if (targetTabId === 'tab-illustrations') {
+              pageTitle.textContent = '일러스트 관리';
+              pageSubtitle.textContent = '고객 에디터에서 커스텀에 활용할 고화질 아트 일러스트 이미지를 등록하고 관리합니다.';
+              pageSubtitle.style.display = 'block';
+              loadArtworksLibrary();
+            } else if (targetTabId === 'tab-art-groups') {
+              pageTitle.textContent = '카테고리 / 그룹 관리';
+              pageSubtitle.textContent = '디자인 그래픽 소재(스티커, 패턴, 일러스트)에 적용할 서브 카테고리(그룹)를 생성하고 관리합니다.';
+              pageSubtitle.style.display = 'block';
+              loadArtGroupsManager();
             }
           }
         });
       });
+
+      // Pre-load artworks library and sticker preview on page startup
+      loadArtworksLibrary();
+      updateStickerPreview();
+
+      // Restore active tab from URL hash or localStorage on page load/refresh
+      const currentHash = window.location.hash.replace('#', '');
+      const savedTab = localStorage.getItem('activeAdminTab');
+      const initialTabId = currentHash || savedTab || 'tab-dashboard';
+      const initialNavBtn = document.querySelector(`.nav-item[data-tab="${initialTabId}"]`) || document.querySelector('.nav-item');
+      if (initialNavBtn) {
+        initialNavBtn.click();
+      }
+
+
 
       // KPI Card Click Navigation to corresponding tab
       document.querySelectorAll('.kpi-card').forEach(card => {
@@ -869,7 +1432,9 @@
 
     async function loadProducts() {
       try {
-        const res = await fetch('/api/admin/products');
+        const res = await fetch(getApiUrl('/api/admin/products'));
+        const contentType = res.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) return;
         const data = await res.json();
 
         const statProd = document.getElementById('stat-count-products');
@@ -881,7 +1446,7 @@
         if (!data.products || data.products.length === 0) {
           tbody.innerHTML = `
             <tr>
-              <td colspan="2" style="text-align:center; padding:24px; color:var(--slate-400);">
+              <td colspan="4" style="text-align:center; padding:28px; color:var(--slate-400);">
                 등록된 상품이 없습니다. 상단의 [➕ 신규 상품 등록] 버튼을 눌러 상품을 추가하세요.
               </td>
             </tr>
@@ -891,8 +1456,17 @@
 
         tbody.innerHTML = data.products.map(p => `
           <tr class="product-row-clickable" onclick="window.location.href='/admin/product_detail.html?productNo=${encodeURIComponent(p.productNo)}'">
-            <td><b style="color:var(--primary-hover); font-size:14px;">${p.productNo}</b></td>
+            <td><b style="color:var(--primary); font-size:13.5px; font-family:monospace;">${p.productNo}</b></td>
             <td><b style="color:var(--slate-900); font-size:14.5px;">${p.title}</b></td>
+            <td><span style="font-size:12px; font-weight:700; color:#047857; background:#ecfdf5; border:1px solid #a7f3d0; padding:3px 10px; border-radius:12px; display:inline-block;">🟢 판매중</span></td>
+            <td style="text-align:right;">
+              <a href="/admin/product_detail.html?productNo=${encodeURIComponent(p.productNo)}" title="상품 설정/수정" style="width:30px; height:30px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#475569; display:inline-flex; align-items:center; justify-content:center; text-decoration:none; transition:all 0.15s ease;" onmouseover="this.style.background='#f1f5f9'; this.style.color='#0f172a';" onmouseout="this.style.background='#ffffff'; this.style.color='#475569';">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 20h9"></path>
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                </svg>
+              </a>
+            </td>
           </tr>
         `).join('');
 
@@ -977,7 +1551,12 @@
             <span style="font-family:'${f.family}', sans-serif; font-size:15px; font-weight:700;">가나다라 ABC 123</span>
           </td>
           <td style="text-align:center; white-space:nowrap;">
-            <button type="button" class="btn-outline" onclick="openEditFontModal(${idx})" style="padding:4px 10px; font-size:12px;">✏️ 수정</button>
+            <button type="button" onclick="openEditFontModal(${idx})" title="폰트 정보 수정" style="width:30px; height:30px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#475569; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.15s ease;" onmouseover="this.style.background='#f1f5f9'; this.style.color='#0f172a';" onmouseout="this.style.background='#ffffff'; this.style.color='#475569';">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20h9"></path>
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+              </svg>
+            </button>
           </td>
         </tr>
       `).join('');
@@ -985,18 +1564,21 @@
 
     async function loadFonts() {
       try {
-        const res = await fetch('/api/admin/fonts');
-        const data = await res.json();
-        globalLoadedFonts = data.fonts || [];
+        const res = await fetch(getApiUrl('/api/admin/fonts'));
+        const contentType = res.headers.get('content-type') || '';
+        if (contentType.includes('application/json')) {
+          const data = await res.json();
+          globalLoadedFonts = data.fonts || [];
+        }
       } catch (err) {
         console.error('Error loading fonts:', err);
-        if (globalLoadedFonts.length === 0) {
-          globalLoadedFonts = [
-            { name: 'Pretendard (기본)', family: 'Pretendard', url: '' },
-            { name: 'Gmarket Sans (눈누 상업용)', family: 'Gmarket Sans', url: 'https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff' },
-            { name: 'Black Han Sans (굵은 한글)', family: 'Black Han Sans', url: 'https://fonts.gstatic.com/s/blackhansans/v17/ea8A42B3z23p8i071M89BsB4_YptA_0.woff2' }
-          ];
-        }
+      }
+      if (!globalLoadedFonts || globalLoadedFonts.length === 0) {
+        globalLoadedFonts = [
+          { name: 'Pretendard (기본)', family: 'Pretendard', url: '' },
+          { name: 'Gmarket Sans (눈누 상업용)', family: 'Gmarket Sans', url: 'https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff' },
+          { name: 'Black Han Sans (굵은 한글)', family: 'Black Han Sans', url: 'https://fonts.gstatic.com/s/blackhansans/v17/ea8A42B3z23p8i071M89BsB4_YptA_0.woff2' }
+        ];
       }
 
       const statFont = document.getElementById('stat-count-fonts');
@@ -1054,7 +1636,7 @@
         const payload = { name, family, url };
         if (index >= 0) payload.index = index;
 
-        const res = await fetch('/api/admin/fonts', {
+        const res = await fetch(getApiUrl('/api/admin/fonts'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -1152,12 +1734,9 @@
       if (!container) return;
 
       try {
-        let res;
-        try {
-          res = await fetch('/api/admin/orders');
-        } catch (e) {
-          res = await fetch('http://localhost:4000/api/admin/orders');
-        }
+        const res = await fetch(getApiUrl('/api/admin/orders'));
+        const contentType = res.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) return;
         const data = await res.json();
 
         const statOrd = document.getElementById('stat-count-orders');
@@ -1427,10 +2006,510 @@
       const labelScale = document.getElementById('label-builder-scale');
       if (labelScale) labelScale.textContent = `${scale.toFixed(1)}x`;
 
+      const type = document.getElementById('builder-pattern-type')?.value || 'template';
       const previewBox = document.getElementById('builder-pattern-preview-box');
       if (previewBox) {
-        previewBox.innerHTML = generatePatternSvgCode(shape, fg, accent, bg, scale, angle, opacity);
+        if (type === 'file_upload') {
+          if (uploadedPatternFileUrl) {
+            previewBox.innerHTML = `<div style="width:100%; height:100%; background-image:url('${uploadedPatternFileUrl}'); background-repeat:repeat; background-size:80px 80px; border-radius:8px;"></div>`;
+          } else {
+            previewBox.innerHTML = `<div style="display:flex; flex-direction:column; align-items:center; gap:6px; color:#94a3b8;"><span style="font-size:24px;">🏁</span><span style="font-size:12px; font-weight:700;">PNG / JPG / SVG 패턴 타일 이미지를 선택하세요.</span></div>`;
+          }
+        } else {
+          previewBox.innerHTML = generatePatternSvgCode(shape, fg, accent, bg, scale, angle, opacity);
+        }
       }
+    }
+
+    let uploadedPatternFileUrl = null;
+
+    const patternTypeSelect = document.getElementById('builder-pattern-type');
+    const secPatternTemplate = document.getElementById('section-pattern-template');
+    const secPatternFile = document.getElementById('section-pattern-file');
+
+    if (patternTypeSelect) {
+      patternTypeSelect.addEventListener('change', () => {
+        const val = patternTypeSelect.value;
+        if (val === 'file_upload') {
+          if (secPatternTemplate) secPatternTemplate.style.display = 'none';
+          if (secPatternFile) secPatternFile.style.display = 'flex';
+        } else {
+          if (secPatternTemplate) secPatternTemplate.style.display = 'flex';
+          if (secPatternFile) secPatternFile.style.display = 'none';
+        }
+        updatePatternPreview();
+      });
+    }
+
+    const patternFileInput = document.getElementById('builder-pattern-file-input');
+    if (patternFileInput) {
+      patternFileInput.addEventListener('change', async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        try {
+          const previewBox = document.getElementById('builder-pattern-preview-box');
+          if (previewBox) {
+            previewBox.innerHTML = '<span style="font-size:12px; color:#0284c7; font-weight:700;">이미지 변환 및 업로드 중...</span>';
+          }
+          const base64 = await fileToBase64(file);
+          const res = await fetch(getApiUrl('/api/admin/upload'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ imageBase64: base64, filenamePrefix: 'pattern' })
+          });
+          const data = await res.json();
+          if (data.url) {
+            uploadedPatternFileUrl = data.url;
+            updatePatternPreview();
+          } else {
+            throw new Error('Pattern upload returned no URL');
+          }
+        } catch (err) {
+          console.error('Failed uploading pattern image file:', err);
+          const previewBox = document.getElementById('builder-pattern-preview-box');
+          if (previewBox) {
+            previewBox.innerHTML = '<span style="font-size:12px; color:#ef4444;">업로드 실패! 다시 시도해주세요.</span>';
+          }
+        }
+      });
+    }
+
+    // Attach builder listeners
+    ['builder-pattern-shape', 'builder-color-fg', 'builder-color-accent', 'builder-color-bg', 'builder-pattern-angle', 'builder-pattern-opacity', 'builder-slider-scale'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', updatePatternPreview);
+    });
+
+    // Segmented Creation Tabs Switcher
+    const btnCreatePattern = document.getElementById('tab-btn-create-pattern');
+    const btnCreateSticker = document.getElementById('tab-btn-create-sticker');
+    const btnCreateIllu = document.getElementById('tab-btn-create-illustration');
+
+    const formPattern = document.getElementById('form-pattern-builder');
+    const formSticker = document.getElementById('form-sticker-builder');
+    const formIllu = document.getElementById('form-illustration-builder');
+
+    const setActiveCreationTab = (activeBtn) => {
+      [btnCreatePattern, btnCreateSticker, btnCreateIllu].forEach(btn => {
+        if (!btn) return;
+        if (btn === activeBtn) {
+          btn.classList.add('active');
+          btn.style.background = '#ffffff';
+          btn.style.color = '#0f172a';
+          btn.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)';
+        } else {
+          btn.classList.remove('active');
+          btn.style.background = 'transparent';
+          btn.style.color = '#64748b';
+          btn.style.boxShadow = 'none';
+        }
+      });
+    };
+
+    if (btnCreatePattern) {
+      btnCreatePattern.addEventListener('click', () => {
+        setActiveCreationTab(btnCreatePattern);
+        if (formPattern) formPattern.style.display = 'flex';
+        if (formSticker) formSticker.style.display = 'none';
+        if (formIllu) formIllu.style.display = 'none';
+      });
+    }
+
+    if (btnCreateSticker) {
+      btnCreateSticker.addEventListener('click', () => {
+        setActiveCreationTab(btnCreateSticker);
+        if (formSticker) formSticker.style.display = 'flex';
+        if (formPattern) formPattern.style.display = 'none';
+        if (formIllu) formIllu.style.display = 'none';
+        updateStickerPreview();
+      });
+    }
+
+    if (btnCreateIllu) {
+      btnCreateIllu.addEventListener('click', () => {
+        setActiveCreationTab(btnCreateIllu);
+        if (formIllu) formIllu.style.display = 'flex';
+        if (formPattern) formPattern.style.display = 'none';
+        if (formSticker) formSticker.style.display = 'none';
+      });
+    }
+
+    // Sticker Creation Type Switcher
+    const stickerTypeSelect = document.getElementById('builder-sticker-type');
+    const secStickerTemplate = document.getElementById('section-sticker-template');
+    const secStickerFile = document.getElementById('section-sticker-file');
+
+    if (stickerTypeSelect) {
+      stickerTypeSelect.addEventListener('change', () => {
+        const val = stickerTypeSelect.value;
+        if (val === 'y2k_bubble') {
+          if (secStickerTemplate) secStickerTemplate.style.display = 'flex';
+          if (secStickerFile) secStickerFile.style.display = 'none';
+        } else {
+          if (secStickerTemplate) secStickerTemplate.style.display = 'none';
+          if (secStickerFile) secStickerFile.style.display = 'flex';
+        }
+        updateStickerPreview();
+      });
+    }
+
+    const fileToBase64 = (file) => new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (err) => reject(err);
+    });
+
+    async function removeBackgroundFromImageFile(file, tolerance = 45) {
+      if (!file) return null;
+      const base64 = await fileToBase64(file);
+      if (file.type === 'image/svg+xml') {
+        return base64;
+      }
+
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          try {
+            const canvas = document.createElement('canvas');
+            const w = img.naturalWidth || img.width || 300;
+            const h = img.naturalHeight || img.height || 300;
+            canvas.width = w;
+            canvas.height = h;
+
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, w, h);
+
+            const imgData = ctx.getImageData(0, 0, w, h);
+            const data = imgData.data;
+
+            const cornerCoords = [[0, 0], [w - 1, 0], [0, h - 1], [w - 1, h - 1]];
+            const cornerColors = cornerCoords.map(([cx, cy]) => {
+              const idx = (cy * w + cx) * 4;
+              return { r: data[idx], g: data[idx + 1], b: data[idx + 2], a: data[idx + 3] };
+            }).filter(c => c.a > 10);
+
+            if (cornerColors.length === 0) {
+              resolve(base64);
+              return;
+            }
+
+            const getMinColorDist = (r, g, b) => {
+              let minDist = Infinity;
+              for (let i = 0; i < cornerColors.length; i++) {
+                const c = cornerColors[i];
+                const d = Math.sqrt((r - c.r) ** 2 + (g - c.g) ** 2 + (b - c.b) ** 2);
+                if (d < minDist) minDist = d;
+              }
+              return minDist;
+            };
+
+            const visited = new Uint8Array(w * h);
+            const queue = [];
+
+            for (let x = 0; x < w; x++) {
+              queue.push(x, 0);
+              queue.push(x, h - 1);
+            }
+            for (let y = 1; y < h - 1; y++) {
+              queue.push(0, y);
+              queue.push(w - 1, y);
+            }
+
+            let qIdx = 0;
+            while (qIdx < queue.length) {
+              const x = queue[qIdx++];
+              const y = queue[qIdx++];
+              const pixIdx = y * w + x;
+
+              if (visited[pixIdx]) continue;
+              visited[pixIdx] = 1;
+
+              const dataIdx = pixIdx * 4;
+              const r = data[dataIdx];
+              const g = data[dataIdx + 1];
+              const b = data[dataIdx + 2];
+              const a = data[dataIdx + 3];
+
+              if (a === 0) continue;
+
+              const dist = getMinColorDist(r, g, b);
+              if (dist <= tolerance) {
+                data[dataIdx + 3] = 0;
+
+                if (x > 0 && !visited[pixIdx - 1]) queue.push(x - 1, y);
+                if (x < w - 1 && !visited[pixIdx + 1]) queue.push(x + 1, y);
+                if (y > 0 && !visited[pixIdx - w]) queue.push(x, y - 1);
+                if (y < h - 1 && !visited[pixIdx + w]) queue.push(x, y + 1);
+              }
+            }
+
+            ctx.putImageData(imgData, 0, 0);
+            resolve(canvas.toDataURL('image/png'));
+          } catch (err) {
+            console.error('Error removing background from image file:', err);
+            resolve(base64);
+          }
+        };
+        img.onerror = () => resolve(base64);
+        img.src = base64;
+      });
+    }
+
+    let uploadedStickerFileUrl = null;
+
+    const fileInput = document.getElementById('builder-sticker-file-input');
+    const chkStickerBg = document.getElementById('chk-sticker-remove-bg');
+
+    async function processStickerFileUpload() {
+      const file = fileInput?.files?.[0];
+      if (!file) return;
+
+      const previewBox = document.getElementById('builder-sticker-preview-box');
+      const shouldRemoveBg = Boolean(chkStickerBg && chkStickerBg.checked);
+
+      try {
+        if (previewBox) {
+          previewBox.innerHTML = `<span style="font-size:12px; color:#334155; font-weight:700;">${shouldRemoveBg ? '✨ 배경 제거 (누끼) 및 이미지 변환 중...' : '이미지 변환 및 업로드 중...'}</span>`;
+        }
+
+        let processedBase64;
+        if (shouldRemoveBg) {
+          processedBase64 = await removeBackgroundFromImageFile(file, 45);
+        } else {
+          processedBase64 = await fileToBase64(file);
+        }
+
+        const res = await fetch(getApiUrl('/api/admin/upload'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ imageBase64: processedBase64, filenamePrefix: 'sticker' })
+        });
+        const data = await res.json();
+        if (data.url) {
+          uploadedStickerFileUrl = data.url;
+          updateStickerPreview();
+        } else {
+          throw new Error('Upload returned no URL');
+        }
+      } catch (err) {
+        console.error('Failed uploading sticker file:', err);
+        const previewBox = document.getElementById('builder-sticker-preview-box');
+        if (previewBox) {
+          previewBox.innerHTML = `<span style="font-size:12px; color:#ef4444;">업로드 실패! 다시 시도해주세요.</span>`;
+        }
+      }
+    }
+
+    if (fileInput) {
+      fileInput.addEventListener('change', processStickerFileUpload);
+    }
+    if (chkStickerBg) {
+      chkStickerBg.addEventListener('change', () => {
+        if (fileInput?.files?.[0]) processStickerFileUpload();
+      });
+    }
+
+    function generateStickerBubbleSvg(text, bgColor, fgColor) {
+      const cleanText = text || '여름... ★';
+      const cleanBg = bgColor || '#86efac';
+      const cleanFg = fgColor || '#000000';
+      return `<svg xmlns="http://www.w3.org/2000/svg" width="320" height="220" viewBox="0 0 320 220"><circle cx="50" cy="180" r="8" fill="${cleanBg}"/><circle cx="70" cy="155" r="16" fill="${cleanBg}"/><ellipse cx="180" cy="100" rx="130" ry="75" fill="${cleanBg}"/><text x="180" y="112" font-family="monospace, sans-serif" font-size="28" font-weight="900" fill="${cleanFg}" text-anchor="middle" letter-spacing="2">${cleanText}</text></svg>`;
+    }
+
+    function updateStickerPreview() {
+      const previewBox = document.getElementById('builder-sticker-preview-box');
+      if (!previewBox) return;
+
+      const type = document.getElementById('builder-sticker-type')?.value || 'y2k_bubble';
+      if (type === 'y2k_bubble') {
+        const text = document.getElementById('builder-sticker-text')?.value || '여름... ★';
+        const bg = document.getElementById('builder-sticker-bg')?.value || '#86efac';
+        const fg = document.getElementById('builder-sticker-fg')?.value || '#000000';
+        previewBox.innerHTML = generateStickerBubbleSvg(text, bg, fg);
+      } else {
+        if (uploadedStickerFileUrl) {
+          previewBox.innerHTML = `<img src="${uploadedStickerFileUrl}" style="max-width:100%; max-height:140px; object-fit:contain;">`;
+        } else {
+          previewBox.innerHTML = `<div style="display:flex; flex-direction:column; align-items:center; gap:6px; color:#94a3b8;"><span style="font-size:24px;">🖼️</span><span style="font-size:12px; font-weight:700;">PNG / SVG 스티커 파일(이미지)을 선택하세요.</span></div>`;
+        }
+      }
+    }
+
+    ['builder-sticker-text', 'builder-sticker-bg', 'builder-sticker-fg'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', updateStickerPreview);
+    });
+
+    // Sticker Form Submit
+    const formStickerEl = document.getElementById('form-sticker-builder');
+    if (formStickerEl) {
+      formStickerEl.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title = document.getElementById('builder-sticker-title')?.value || '신규 스티커';
+        const type = document.getElementById('builder-sticker-type')?.value || 'y2k_bubble';
+        const groupVal = document.getElementById('builder-sticker-group')?.value || '기본';
+
+        let payload = {
+          title,
+          category: 'sticker',
+          group: groupVal,
+          isVector: true
+        };
+
+        if (type === 'y2k_bubble') {
+          const text = document.getElementById('builder-sticker-text')?.value || '여름... ★';
+          const bg = document.getElementById('builder-sticker-bg')?.value || '#86efac';
+          const fg = document.getElementById('builder-sticker-fg')?.value || '#000000';
+          payload.svgContent = generateStickerBubbleSvg(text, bg, fg);
+        } else {
+          if (!uploadedStickerFileUrl && fileInput?.files?.[0]) {
+            await processStickerFileUpload();
+          }
+
+          if (!uploadedStickerFileUrl) {
+            alert('업로드할 스티커 이미지 파일을 먼저 선택해주세요.');
+            return;
+          }
+          payload.url = uploadedStickerFileUrl;
+          payload.isVector = uploadedStickerFileUrl.endsWith('.svg');
+        }
+
+        try {
+          const res = await fetch(getApiUrl('/api/admin/artworks'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const result = await res.json();
+          if (result.success) {
+            alert('✅ 스티커가 성공적으로 라이브러리에 저장되었습니다!');
+            closeStickerModal();
+            const titleEl = document.getElementById('builder-sticker-title');
+            if (titleEl) titleEl.value = '신규 스티커';
+            uploadedStickerFileUrl = null;
+            if (fileInput) fileInput.value = '';
+            if (chkStickerBg) chkStickerBg.checked = false;
+            const filterEl = document.getElementById('sticker-group-filter');
+            if (filterEl) filterEl.value = 'all';
+            updateStickerPreview();
+            loadArtworksLibrary();
+          } else {
+            alert('저장에 실패했습니다.');
+          }
+        } catch (err) {
+          console.error('Error saving artwork:', err);
+          alert('저장 중 오류가 발생했습니다.');
+        }
+      });
+    }
+
+    // Illustration Upload & Form Submit
+    let uploadedIlluFileUrl = null;
+    const illuFileInput = document.getElementById('builder-illu-file-input');
+    const illuPreviewBox = document.getElementById('builder-illu-preview-box');
+    const chkIlluBg = document.getElementById('chk-illu-remove-bg');
+
+    async function processIlluFileUpload() {
+      const file = illuFileInput?.files?.[0];
+      if (!file) return;
+
+      const shouldRemoveBg = Boolean(chkIlluBg && chkIlluBg.checked);
+
+      try {
+        if (illuPreviewBox) {
+          illuPreviewBox.innerHTML = `<span style="font-size:12px; color:#0284c7; font-weight:700;">${shouldRemoveBg ? '✨ 배경 제거 (누끼) 및 이미지 변환 중...' : '이미지 변환 및 업로드 중...'}</span>`;
+        }
+
+        let processedBase64;
+        if (shouldRemoveBg) {
+          processedBase64 = await removeBackgroundFromImageFile(file, 45);
+        } else {
+          processedBase64 = await fileToBase64(file);
+        }
+
+        const res = await fetch(getApiUrl('/api/admin/upload'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ imageBase64: processedBase64, filenamePrefix: 'illustration' })
+        });
+        const data = await res.json();
+        if (data.url) {
+          uploadedIlluFileUrl = data.url;
+          if (illuPreviewBox) {
+            illuPreviewBox.innerHTML = `<img src="${uploadedIlluFileUrl}" style="max-width:100%; max-height:140px; object-fit:contain; border-radius:6px;">`;
+          }
+        } else {
+          throw new Error('Upload returned no URL');
+        }
+      } catch (err) {
+        console.error('Failed uploading illustration image:', err);
+        if (illuPreviewBox) {
+          illuPreviewBox.innerHTML = `<span style="font-size:12px; color:#ef4444;">업로드 실패! 다시 시도해주세요.</span>`;
+        }
+      }
+    }
+
+    if (illuFileInput) {
+      illuFileInput.addEventListener('change', processIlluFileUpload);
+    }
+    if (chkIlluBg) {
+      chkIlluBg.addEventListener('change', () => {
+        if (illuFileInput?.files?.[0]) processIlluFileUpload();
+      });
+    }
+
+    const formIlluEl = document.getElementById('form-illustration-builder');
+    if (formIlluEl) {
+      formIlluEl.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title = document.getElementById('builder-illu-title')?.value || '신규 일러스트';
+        const groupVal = document.getElementById('builder-illu-group')?.value || '기본';
+
+        if (!uploadedIlluFileUrl && illuFileInput?.files?.[0]) {
+          await processIlluFileUpload();
+        }
+
+        if (!uploadedIlluFileUrl) {
+          alert('등록할 일러스트 이미지 파일을 선택해주세요.');
+          return;
+        }
+
+        const payload = {
+          title,
+          category: 'illustration',
+          group: groupVal,
+          url: uploadedIlluFileUrl,
+          isVector: uploadedIlluFileUrl.endsWith('.svg')
+        };
+
+        try {
+          const res = await fetch(getApiUrl('/api/admin/artworks'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          const result = await res.json();
+          if (result.success) {
+            alert('✅ 일러스트가 성공적으로 등록되었습니다!');
+            closeIlluModal();
+            document.getElementById('builder-illu-title').value = '';
+            uploadedIlluFileUrl = null;
+            if (illuFileInput) illuFileInput.value = '';
+            if (chkIlluBg) chkIlluBg.checked = false;
+            if (illuPreviewBox) illuPreviewBox.innerHTML = '<span style="font-size:12px; color:#94a3b8;">이미지 파일을 선택하시면 미리보기가 표시됩니다.</span>';
+            const filterEl = document.getElementById('illustration-group-filter');
+            if (filterEl) filterEl.value = 'all';
+            loadArtworksLibrary();
+          } else {
+            alert('일러스트 등록에 실패했습니다.');
+          }
+        } catch (err) {
+          console.error('Error registering illustration:', err);
+          alert('등록 중 오류가 발생했습니다.');
+        }
+      });
     }
 
     // Pattern Form Submit
@@ -1438,31 +2517,65 @@
     if (patternForm) {
       patternForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const shape = document.getElementById('builder-pattern-shape').value;
         const title = document.getElementById('builder-pattern-title').value;
-        const fg = document.getElementById('builder-color-fg').value;
-        const accent = document.getElementById('builder-color-accent').value;
-        const bg = document.getElementById('builder-color-bg').value;
-        const scale = parseFloat(document.getElementById('builder-slider-scale').value);
-        const angle = parseInt(document.getElementById('builder-pattern-angle').value, 10);
-        const opacity = parseFloat(document.getElementById('builder-pattern-opacity').value);
+        const groupVal = document.getElementById('builder-pattern-group')?.value || '기본';
+        const type = document.getElementById('builder-pattern-type')?.value || 'template';
 
-        const svgCode = generatePatternSvgCode(shape, fg, accent, bg, scale, angle, opacity);
+        let payload = {
+          title,
+          category: 'pattern',
+          group: groupVal
+        };
+
+        if (type === 'file_upload') {
+          if (!uploadedPatternFileUrl && patternFileInput?.files?.[0]) {
+            try {
+              const base64 = await fileToBase64(patternFileInput.files[0]);
+              const res = await fetch(getApiUrl('/api/admin/upload'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ imageBase64: base64, filenamePrefix: 'pattern' })
+              });
+              const data = await res.json();
+              if (data.url) uploadedPatternFileUrl = data.url;
+            } catch (err) {
+              console.error('Error auto uploading pattern file:', err);
+            }
+          }
+
+          if (!uploadedPatternFileUrl) {
+            alert('업로드할 패턴 이미지 파일을 먼저 선택해주세요.');
+            return;
+          }
+          payload.url = uploadedPatternFileUrl;
+          payload.isVector = uploadedPatternFileUrl.endsWith('.svg');
+        } else {
+          const shape = document.getElementById('builder-pattern-shape').value;
+          const fg = document.getElementById('builder-color-fg').value;
+          const accent = document.getElementById('builder-color-accent').value;
+          const bg = document.getElementById('builder-color-bg').value;
+          const scale = parseFloat(document.getElementById('builder-slider-scale').value);
+          const angle = parseInt(document.getElementById('builder-pattern-angle').value, 10);
+          const opacity = parseFloat(document.getElementById('builder-pattern-opacity').value);
+
+          payload.isVector = true;
+          payload.svgContent = generatePatternSvgCode(shape, fg, accent, bg, scale, angle, opacity);
+        }
 
         try {
-          const res = await fetch('/api/admin/artworks', {
+          const res = await fetch(getApiUrl('/api/admin/artworks'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              title,
-              category: 'pattern',
-              isVector: true,
-              svgContent: svgCode
-            })
+            body: JSON.stringify(payload)
           });
           const result = await res.json();
           if (result.success) {
-            alert('✅ 성공적으로 스티커/패턴이 라이브러리에 저장되었습니다!');
+            alert('✅ 성공적으로 패턴이 라이브러리에 저장되었습니다!');
+            closePatternModal();
+            uploadedPatternFileUrl = null;
+            if (patternFileInput) patternFileInput.value = '';
+            const filterEl = document.getElementById('pattern-group-filter');
+            if (filterEl) filterEl.value = 'all';
             loadArtworksLibrary();
           } else {
             alert('패턴 저장에 실패했습니다.');
@@ -1474,76 +2587,699 @@
       });
     }
 
-    // Attach builder listeners
-    ['builder-pattern-shape', 'builder-color-fg', 'builder-color-accent', 'builder-color-bg', 'builder-pattern-angle', 'builder-pattern-opacity', 'builder-slider-scale'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.addEventListener('input', updatePatternPreview);
-      if (el) el.addEventListener('change', updatePatternPreview);
+    // Modal Control Functions & Listeners for Artwork Registration
+    const modalAddSticker = document.getElementById('modal-add-sticker');
+    const btnOpenAddStickerModal = document.getElementById('btn-open-add-sticker-modal');
+    const btnCloseAddStickerModal = document.getElementById('btn-close-add-sticker-modal');
+    const btnCancelAddStickerModal = document.getElementById('btn-cancel-add-sticker-modal');
+
+    const openStickerModal = () => { 
+      if (modalAddSticker) {
+        modalAddSticker.style.display = 'flex'; 
+        uploadedStickerFileUrl = null;
+        const fileIn = document.getElementById('builder-sticker-file-input');
+        if (fileIn) fileIn.value = '';
+        const chkRemoveBg = document.getElementById('chk-sticker-remove-bg');
+        if (chkRemoveBg) chkRemoveBg.checked = false;
+        const titleIn = document.getElementById('builder-sticker-title');
+        if (titleIn) titleIn.value = '';
+        const typeSelect = document.getElementById('builder-sticker-type');
+        if (typeSelect) typeSelect.value = 'file_upload';
+        const secTemplate = document.getElementById('section-sticker-template');
+        const secFile = document.getElementById('section-sticker-file');
+        if (secTemplate) secTemplate.style.display = 'none';
+        if (secFile) secFile.style.display = 'flex';
+        updateStickerPreview();
+      }
+    };
+    const closeStickerModal = () => { if (modalAddSticker) modalAddSticker.style.display = 'none'; };
+
+    if (btnOpenAddStickerModal) btnOpenAddStickerModal.addEventListener('click', openStickerModal);
+    if (btnCloseAddStickerModal) btnCloseAddStickerModal.addEventListener('click', closeStickerModal);
+    if (btnCancelAddStickerModal) btnCancelAddStickerModal.addEventListener('click', closeStickerModal);
+
+    const modalAddPattern = document.getElementById('modal-add-pattern');
+    const btnOpenAddPatternModal = document.getElementById('btn-open-add-pattern-modal');
+    const btnCloseAddPatternModal = document.getElementById('btn-close-add-pattern-modal');
+    const btnCancelAddPatternModal = document.getElementById('btn-cancel-add-pattern-modal');
+
+    const openPatternModal = () => { 
+      if (modalAddPattern) {
+        modalAddPattern.style.display = 'flex'; 
+        uploadedPatternFileUrl = null;
+        const fileIn = document.getElementById('builder-pattern-file-input');
+        if (fileIn) fileIn.value = '';
+        const titleIn = document.getElementById('builder-pattern-title');
+        if (titleIn) titleIn.value = '';
+        const typeSelect = document.getElementById('builder-pattern-type');
+        if (typeSelect) typeSelect.value = 'file_upload';
+        const secTemplate = document.getElementById('section-pattern-template');
+        const secFile = document.getElementById('section-pattern-file');
+        if (secTemplate) secTemplate.style.display = 'none';
+        if (secFile) secFile.style.display = 'flex';
+        updatePatternPreview();
+      }
+    };
+    const closePatternModal = () => { if (modalAddPattern) modalAddPattern.style.display = 'none'; };
+
+    if (btnOpenAddPatternModal) btnOpenAddPatternModal.addEventListener('click', openPatternModal);
+    if (btnCloseAddPatternModal) btnCloseAddPatternModal.addEventListener('click', closePatternModal);
+    if (btnCancelAddPatternModal) btnCancelAddPatternModal.addEventListener('click', closePatternModal);
+
+    const modalAddIllustration = document.getElementById('modal-add-illustration');
+    const btnOpenAddIllustrationModal = document.getElementById('btn-open-add-illustration-modal');
+    const btnCloseAddIllustrationModal = document.getElementById('btn-close-add-illustration-modal');
+    const btnCancelAddIllustrationModal = document.getElementById('btn-cancel-add-illustration-modal');
+
+    const openIlluModal = () => { 
+      if (modalAddIllustration) {
+        modalAddIllustration.style.display = 'flex'; 
+        uploadedIlluFileUrl = null;
+        const illuIn = document.getElementById('builder-illu-file-input');
+        if (illuIn) illuIn.value = '';
+        const titleIn = document.getElementById('builder-illu-title');
+        if (titleIn) titleIn.value = '';
+        const chkRemoveBg = document.getElementById('chk-illu-remove-bg');
+        if (chkRemoveBg) chkRemoveBg.checked = false;
+        const illuPreviewBox = document.getElementById('builder-illu-preview-box');
+        if (illuPreviewBox) illuPreviewBox.innerHTML = '<span style="font-size:12px; color:#94a3b8;">이미지 파일을 선택하시면 미리보기가 표시됩니다.</span>';
+      }
+    };
+    const closeIlluModal = () => { if (modalAddIllustration) modalAddIllustration.style.display = 'none'; };
+
+    if (btnOpenAddIllustrationModal) btnOpenAddIllustrationModal.addEventListener('click', openIlluModal);
+    if (btnCloseAddIllustrationModal) btnCloseAddIllustrationModal.addEventListener('click', closeIlluModal);
+    if (btnCancelAddIllustrationModal) btnCancelAddIllustrationModal.addEventListener('click', closeIlluModal);
+
+
+
+    // Library Group Filter Listener
+    document.querySelectorAll('.lib-group-filter-select').forEach(select => {
+      select.addEventListener('change', () => {
+        loadArtworksLibrary();
+      });
     });
+
+    function renderLibraryGrid(gridId, badgeId, items, filterGroupVal, categoryList = ['기본']) {
+      const grid = document.getElementById(gridId);
+      const badge = document.getElementById(badgeId);
+      if (!grid) return;
+
+      let filtered = items;
+      if (filterGroupVal && filterGroupVal !== 'all') {
+        filtered = items.filter(a => (a.group || '기본') === filterGroupVal);
+      }
+
+      // Show newest items first at the top
+      const displayItems = [...filtered].reverse();
+
+      grid.innerHTML = '';
+      if (badge) badge.textContent = `총 ${filtered.length}개 표시 (전체 ${items.length}개)`;
+
+      if (displayItems.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--slate-500); font-size:13px; display:flex; flex-direction:column; align-items:center; gap:12px;">
+            <span>📂 선택하신 <b>'${filterGroupVal}'</b> 그룹 필터에 등록된 소재가 없습니다.</span>
+            <button type="button" class="btn-reset-library-filter" style="padding:6px 14px; background:var(--primary); color:#fff; border:none; border-radius:8px; font-weight:700; font-size:12px; cursor:pointer;">
+              📂 전체 카테고리 소재 보기 (전체 ${items.length}개)
+            </button>
+          </div>
+        `;
+        const resetBtn = grid.querySelector('.btn-reset-library-filter');
+        if (resetBtn) {
+          resetBtn.addEventListener('click', () => {
+            const container = grid.parentElement;
+            const filterSelect = container ? container.querySelector('.lib-group-filter-select') : null;
+            if (filterSelect) filterSelect.value = 'all';
+            loadArtworksLibrary();
+          });
+        }
+        return;
+      }
+
+      displayItems.forEach(art => {
+        const card = document.createElement('div');
+        card.style.cssText = 'background:#ffffff; border:1px solid var(--slate-200); border-radius:12px; padding:10px; display:flex; flex-direction:column; gap:8px; position:relative; box-shadow:0 2px 4px rgba(0,0,0,0.02); transition:all 0.2s ease;';
+
+        let previewContent = '';
+        if (art.svgContent) {
+          previewContent = `<div style="width:100%; height:120px; border-radius:8px; border:1px solid #e2e8f0; overflow:hidden; display:flex; align-items:center; justify-content:center; background:#fafafa; padding:6px;">${art.svgContent}</div>`;
+        } else if (art.url) {
+          previewContent = `<img src="${art.url}" onerror="this.onerror=null; this.parentElement.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;height:120px;background:#f8fafc;color:#94a3b8;font-size:12px;font-weight:700;border-radius:8px;border:1px solid #e2e8f0;\\'>🖼️ 이미지 불러오기 실패</div>';" style="width:100%; height:120px; object-fit:contain; border-radius:8px; border:1px solid #e2e8f0; background:#fafafa; padding:6px;" alt="${art.title}">`;
+        } else {
+          previewContent = `<div style="display:flex;align-items:center;justify-content:center;height:120px;background:#f8fafc;color:#94a3b8;font-size:12px;font-weight:700;border-radius:8px;border:1px solid #e2e8f0;">🖼️ 이미지 없음</div>`;
+        }
+
+        const combinedCats = [...new Set([...(categoryList || ['기본']), art.group || '기본'])];
+        const categoryOptionsHtml = combinedCats.map(cat => {
+          const isSelected = (art.group || '기본') === cat ? 'selected' : '';
+          return `<option value="${cat}" ${isSelected}>${cat}</option>`;
+        }).join('');
+
+        const groupSelectHtml = `
+          <select class="select-art-group" data-id="${art.id}" title="카테고리 변경" style="font-size:10px; font-weight:800; color:#1e293b; background:rgba(255,255,255,0.95); backdrop-filter:blur(4px); padding:2px 6px; border-radius:6px; border:1px solid rgba(203,213,225,0.9); box-shadow:0 1px 3px rgba(0,0,0,0.08); cursor:pointer; outline:none; max-width:115px;">
+            ${categoryOptionsHtml}
+          </select>
+        `;
+
+        const smallDeleteBtnHtml = `
+          <button type="button" class="btn-delete-art" data-id="${art.id}" title="소재 삭제" style="width:24px; height:24px; background:rgba(255,255,255,0.95); backdrop-filter:blur(4px); color:#475569; border:1px solid #cbd5e1; border-radius:6px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,0.08); transition:all 0.15s ease;" onmouseover="this.style.background='#fef2f2'; this.style.color='#ef4444'; this.style.borderColor='#fecaca';" onmouseout="this.style.background='rgba(255,255,255,0.95)'; this.style.color='#475569'; this.style.borderColor='#cbd5e1';">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </button>
+        `;
+
+        card.innerHTML = `
+          <div style="position:relative; width:100%;">
+            <div style="position:absolute; top:6px; left:6px; right:6px; z-index:5; display:flex; justify-content:space-between; align-items:center; gap:4px; pointer-events:auto;">
+              ${groupSelectHtml}
+              ${smallDeleteBtnHtml}
+            </div>
+            ${previewContent}
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:4px; margin-top:2px; padding:0 2px;">
+            <span style="font-size:12.5px; font-weight:800; color:var(--slate-800); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${art.title}">${art.title}</span>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    // Helper to synchronize type-specific categories into creation forms and library filters
+    function syncCategoryDropdowns(categoriesObj) {
+      if (!categoriesObj) return;
+
+      // 1. Sticker Category Dropdowns
+      const stickerCats = categoriesObj.sticker || ['기본'];
+      populateSelectOptions('#builder-sticker-group', stickerCats);
+      populateFilterOptions('#sticker-group-filter', stickerCats);
+
+      // 2. Pattern Category Dropdowns
+      const patternCats = categoriesObj.pattern || ['기본'];
+      populateSelectOptions('#builder-pattern-group', patternCats);
+      populateFilterOptions('#pattern-group-filter', patternCats);
+
+      // 3. Illustration Category Dropdowns
+      const illuCats = categoriesObj.illustration || ['기본'];
+      populateSelectOptions('#builder-illu-group', illuCats);
+      populateFilterOptions('#illustration-group-filter', illuCats);
+    }
+
+    function populateSelectOptions(selectSelector, catArray) {
+      const select = document.querySelector(selectSelector);
+      if (!select) return;
+      const currentVal = select.value;
+      select.innerHTML = '';
+      catArray.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat;
+        opt.textContent = cat;
+        select.appendChild(opt);
+      });
+      if (catArray.includes(currentVal)) {
+        select.value = currentVal;
+      }
+    }
+
+    function populateFilterOptions(filterSelector, catArray) {
+      const select = document.querySelector(filterSelector);
+      if (!select) return;
+      const currentVal = select.value || 'all';
+      select.innerHTML = '<option value="all">전체 카테고리</option>';
+      catArray.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat;
+        opt.textContent = cat;
+        select.appendChild(opt);
+      });
+      if (currentVal === 'all' || catArray.includes(currentVal)) {
+        select.value = currentVal;
+      } else {
+        select.value = 'all';
+      }
+    }
 
     async function loadArtworksLibrary() {
       try {
-        const res = await fetch('/api/admin/artworks');
+        const res = await fetch(getApiUrl('/api/admin/groups'));
+        const contentType = res.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) return;
         const data = await res.json();
+        const allArtworks = data.artworks || [];
+        const categories = data.categories || {};
 
+        // Sync dropdown choices dynamically
+        syncCategoryDropdowns(categories);
+
+        // Update Stat Count
         const statEl = document.getElementById('stat-count-patterns');
-        if (statEl) statEl.textContent = `${(data.artworks || []).length}개`;
+        if (statEl) statEl.textContent = `${allArtworks.length}개`;
 
-        const grid = document.getElementById('pattern-library-grid');
-        const badge = document.getElementById('pattern-count-badge');
-        if (!grid) return;
+        const getCat = (a) => String(a.category || '').toLowerCase().trim();
+        const isPattern = (a) => getCat(a) === 'pattern' || getCat(a) === '패턴' || (a.svgContent && (a.svgContent.includes('<pattern') || a.svgContent.includes('patternUnits')));
+        const isIllustration = (a) => !isPattern(a) && (getCat(a) === 'illustration' || getCat(a) === '일러스트');
 
-        grid.innerHTML = '';
-        if (badge) badge.textContent = `총 ${(data.artworks || []).length}개 등록됨`;
+        const stickerCats = categories.sticker || ['기본'];
+        const patternCats = categories.pattern || ['기본'];
+        const illuCats = categories.illustration || ['기본'];
 
-        if (!data.artworks || data.artworks.length === 0) {
-          grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--slate-400); font-size:13px;">등록된 패턴/스티커가 없습니다.</div>';
-          return;
-        }
+        // 1. Stickers list
+        const stickerItems = allArtworks.filter(a => !isPattern(a) && !isIllustration(a));
+        const stickerFilterVal = document.getElementById('sticker-group-filter')?.value || 'all';
+        renderLibraryGrid('sticker-library-grid', 'sticker-count-badge', stickerItems, stickerFilterVal, stickerCats);
 
-        data.artworks.forEach(art => {
-          const card = document.createElement('div');
-          card.style.cssText = 'background:#ffffff; border:1px solid var(--slate-200); border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:10px; position:relative; box-shadow:0 2px 4px rgba(0,0,0,0.02); transition:all 0.2s ease;';
+        // 2. Patterns list
+        const patternItems = allArtworks.filter(a => isPattern(a));
+        const patternFilterVal = document.getElementById('pattern-group-filter')?.value || 'all';
+        renderLibraryGrid('pattern-library-grid', 'pattern-count-badge', patternItems, patternFilterVal, patternCats);
 
-          let previewContent = '';
-          if (art.svgContent) {
-            previewContent = `<div style="width:100%; height:120px; border-radius:8px; border:1px solid #e2e8f0; overflow:hidden; display:flex; align-items:center; justify-content:center; background:#fafafa;">${art.svgContent}</div>`;
-          } else {
-            previewContent = `<img src="${art.url}" style="width:100%; height:120px; object-fit:contain; border-radius:8px; border:1px solid #e2e8f0;" alt="${art.title}">`;
-          }
-
-          card.innerHTML = `
-            ${previewContent}
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <span style="font-size:12px; font-weight:800; color:var(--slate-800); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:120px;">${art.title}</span>
-              <button type="button" class="btn-delete-art" data-id="${art.id}" style="background:#fef2f2; color:#ef4444; border:1px solid #fecaca; border-radius:6px; padding:3px 8px; font-size:11px; font-weight:700; cursor:pointer;">🗑️ 삭제</button>
-            </div>
-          `;
-
-          grid.appendChild(card);
-        });
+        // 3. Illustrations list
+        const illustrationItems = allArtworks.filter(a => isIllustration(a));
+        const illuFilterVal = document.getElementById('illustration-group-filter')?.value || 'all';
+        renderLibraryGrid('illustration-library-grid', 'illustration-count-badge', illustrationItems, illuFilterVal, illuCats);
 
         // Delete button listener
         document.querySelectorAll('.btn-delete-art').forEach(btn => {
           btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
             const id = e.currentTarget.dataset.id;
-            if (confirm('해당 패턴/스티커를 라이브러리에서 삭제하시겠습니까?')) {
-              await fetch(`/api/admin/artworks/${encodeURIComponent(id)}`, { method: 'DELETE' });
+            if (confirm('해당 소재를 라이브러리에서 삭제하시겠습니까?')) {
+              await fetch(getApiUrl(`/api/admin/artworks/${encodeURIComponent(id)}`), { method: 'DELETE' });
               loadArtworksLibrary();
             }
           });
         });
+
+    // Global Toast Notification Helper
+    function showAdminToast(message, isError = false) {
+      let toast = document.getElementById('admin-toast-notification');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'admin-toast-notification';
+        toast.style.cssText = 'position:fixed; bottom:28px; right:28px; z-index:9999; padding:12px 20px; border-radius:10px; font-size:13.5px; font-weight:800; color:#ffffff; box-shadow:0 10px 25px rgba(0,0,0,0.18); transition:all 0.3s cubic-bezier(0.16, 1, 0.3, 1); opacity:0; transform:translateY(12px); pointer-events:none; display:flex; align-items:center; gap:8px;';
+        document.body.appendChild(toast);
+      }
+      toast.style.background = isError ? '#ef4444' : '#0f172a';
+      toast.textContent = message;
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateY(0)';
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(12px)';
+      }, 2500);
+    }
+
+    // Category change listener
+    document.querySelectorAll('.select-art-group').forEach(select => {
+      select.addEventListener('change', async (e) => {
+        const id = e.target.dataset.id;
+        const newGroup = e.target.value;
+        try {
+          let res = await fetch(getApiUrl(`/api/admin/artworks/${encodeURIComponent(id)}`), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ group: newGroup })
+          });
+
+          if (!res.ok) {
+            res = await fetch(getApiUrl(`/api/admin/artworks/${encodeURIComponent(id)}`), {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ group: newGroup })
+            });
+          }
+
+          const contentType = res.headers.get('content-type') || '';
+          let result;
+          if (contentType.includes('application/json')) {
+            result = await res.json();
+          } else {
+            if (res.status === 404) {
+              throw new Error('백엔드 서버(Node.js)가 구버전 코드로 실행 중입니다.\n터미널에서 백엔드 서버를 재시작(Ctrl+C 후 npm run start) 해주세요.');
+            }
+            const text = await res.text();
+            throw new Error(`서버 응답 오류 (Status ${res.status}): ${text.slice(0, 100)}`);
+          }
+
+          if (res.ok && result.success) {
+            showAdminToast(`✅ 카테고리가 '${newGroup}'(으)로 변경 및 저장되었습니다!`);
+
+            // Always reset filter select to 'all' or match newGroup so item stays clearly visible
+            const parentPanel = e.target.closest('.tab-content-panel');
+            if (parentPanel) {
+              const filterSelect = parentPanel.querySelector('.lib-group-filter-select');
+              if (filterSelect) {
+                filterSelect.value = 'all';
+              }
+            }
+
+            loadArtworksLibrary();
+          } else {
+            alert('카테고리 변경 실패: ' + (result.error || result.message || `HTTP ${res.status}`));
+          }
+        } catch (err) {
+          console.error('Error updating artwork category:', err);
+          alert('카테고리 변경 중 오류 발생: ' + err.message);
+        }
+      });
+    });
 
       } catch (err) {
         console.error('Error loading artworks library:', err);
       }
     }
 
-    loadProducts();
-    loadFonts();
-    loadAdminOrders();
-    updatePatternPreview();
-    loadArtworksLibrary();
+    // ==========================================
+    // Category & Group Management Logic
+    // ==========================================
+    let currentGroupTypeFilter = 'sticker';
+
+    // Sub-tab Click Handler for Category Manager
+    function switchCategoryTab(type) {
+      currentGroupTypeFilter = type;
+
+      // Update sub-tab button styling (Segmented Control Pill Style)
+      document.querySelectorAll('.group-tab-btn').forEach(b => {
+        if ((b.dataset.type || 'sticker') === type) {
+          b.classList.add('active');
+          b.style.background = '#ffffff';
+          b.style.color = '#0f172a';
+          b.style.fontWeight = '800';
+          b.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)';
+        } else {
+          b.classList.remove('active');
+          b.style.background = 'transparent';
+          b.style.color = '#64748b';
+          b.style.fontWeight = '700';
+          b.style.boxShadow = 'none';
+        }
+      });
+
+      // Labels update
+      let typeLabel = '스티커';
+      let emoji = '🎨';
+      if (type === 'pattern') { typeLabel = '패턴'; emoji = '🏁'; }
+      else if (type === 'illustration') { typeLabel = '일러스트'; emoji = '🖼️'; }
+
+      const addBtnLabel = document.getElementById('label-btn-add-category');
+      const tabTitleLabel = document.getElementById('label-active-tab-title');
+      const modalTitleLabel = document.getElementById('modal-add-group-title');
+
+      if (addBtnLabel) addBtnLabel.textContent = `${typeLabel} 카테고리 추가`;
+      if (tabTitleLabel) tabTitleLabel.textContent = `등록된 ${typeLabel} 카테고리 목록`;
+      if (modalTitleLabel) modalTitleLabel.textContent = `신규 ${typeLabel} 카테고리 추가`;
+
+      loadArtGroupsManager();
+    }
+
+    document.querySelectorAll('.group-tab-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const type = e.currentTarget.dataset.type || 'sticker';
+        switchCategoryTab(type);
+      });
+    });
+
+    // Modal Controls for Add Category Modal
+    const modalAddGroup = document.getElementById('modal-add-group');
+    const btnOpenAddGroupModal = document.getElementById('btn-open-add-group-modal');
+    const btnCloseAddGroupModal = document.getElementById('btn-close-add-group-modal');
+    const btnCancelAddGroupModal = document.getElementById('btn-cancel-add-group-modal');
+
+    const openAddGroupModal = () => {
+      if (modalAddGroup) modalAddGroup.style.display = 'flex';
+      const input = document.getElementById('input-new-art-group-name');
+      if (input) { input.value = ''; input.focus(); }
+      const statusEl = document.getElementById('group-form-status');
+      if (statusEl) statusEl.style.display = 'none';
+    };
+
+    const closeAddGroupModal = () => {
+      if (modalAddGroup) modalAddGroup.style.display = 'none';
+    };
+
+    if (btnOpenAddGroupModal) btnOpenAddGroupModal.addEventListener('click', openAddGroupModal);
+    if (btnCloseAddGroupModal) btnCloseAddGroupModal.addEventListener('click', closeAddGroupModal);
+    if (btnCancelAddGroupModal) btnCancelAddGroupModal.addEventListener('click', closeAddGroupModal);
+
+    // Form Submit Handler
+    const formCreateGroup = document.getElementById('form-create-art-group');
+    if (formCreateGroup) {
+      formCreateGroup.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const input = document.getElementById('input-new-art-group-name');
+        const statusEl = document.getElementById('group-form-status');
+
+        const showStatus = (msg, isError = false) => {
+          if (!statusEl) return;
+          statusEl.style.display = 'block';
+          statusEl.style.background = isError ? '#fef2f2' : '#ecfdf5';
+          statusEl.style.color = isError ? '#991b1b' : '#065f46';
+          statusEl.style.border = isError ? '1px solid #fecaca' : '1px solid #a7f3d0';
+          statusEl.textContent = msg;
+        };
+
+        if (!input || !input.value.trim()) {
+          showStatus('⚠️ 카테고리 명칭을 입력해주세요.', true);
+          return;
+        }
+
+        const newGroup = input.value.trim();
+        const categoryType = currentGroupTypeFilter;
+
+        try {
+          const res = await fetch(getApiUrl('/api/admin/groups'), {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ groupName: newGroup, categoryType })
+          });
+
+          if (!res.ok) {
+            const errText = await res.text();
+            throw new Error(`HTTP ${res.status}: ${errText}`);
+          }
+
+          const data = await res.json();
+          if (data.success) {
+            showStatus(`✅ '${newGroup}' 카테고리가 등록되었습니다!`);
+            alert(`✅ '${newGroup}' 카테고리가 성공적으로 생성되었습니다.\n등록 폼 및 고객 에디터 화면에 즉시 동기화됩니다.`);
+            input.value = '';
+            closeAddGroupModal();
+
+            syncCategoryDropdowns(data.categories);
+            loadArtGroupsManager();
+            loadArtworksLibrary();
+          } else {
+            showStatus(`❌ 카테고리 추가 실패: ${data.error || '오류 발생'}`, true);
+          }
+        } catch (err) {
+          console.error('Category creation error:', err);
+          showStatus(`❌ 서버 통신 오류 (${err.message || '네트워크 연결 상태 확인 필요'})`, true);
+        }
+      });
+    }
+
+    async function loadArtGroupsManager() {
+      try {
+        const res = await fetch(getApiUrl('/api/admin/groups'));
+        const contentType = res.headers.get('content-type') || '';
+        if (!contentType.includes('application/json')) return;
+        const data = await res.json();
+        let groups = data.groups || [];
+        const categories = data.categories || {};
+
+        syncCategoryDropdowns(categories);
+
+        // Filter groups by active sub-tab
+        groups = groups.filter(g => g.type === currentGroupTypeFilter);
+
+        // Update count badge
+        const countBadge = document.getElementById('badge-active-tab-count');
+        if (countBadge) countBadge.textContent = `총 ${groups.length}개`;
+
+        const grid = document.getElementById('art-groups-list-grid');
+        if (!grid) return;
+
+        grid.innerHTML = '';
+        if (groups.length === 0) {
+          let typeText = '스티커';
+          if (currentGroupTypeFilter === 'pattern') typeText = '패턴';
+          else if (currentGroupTypeFilter === 'illustration') typeText = '일러스트';
+          grid.innerHTML = `<tr><td colspan="3" style="text-align:center; padding:40px 20px; color:var(--slate-400); font-size:13.5px; font-weight:700;">등록된 ${typeText} 카테고리가 없습니다. 상단 '➕ ${typeText} 카테고리 추가' 버튼을 눌러 추가해보세요.</td></tr>`;
+          return;
+        }
+
+        groups.forEach(g => {
+          const tr = document.createElement('tr');
+
+          tr.innerHTML = `
+            <td>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <b style="font-size:14.5px; color:var(--slate-900);">${g.name}</b>
+                ${g.name === '기본' ? `<span style="font-size:10.5px; font-weight:800; color:#0f766e; background:#f0fdf4; border:1px solid #99f6e4; padding:2px 7px; border-radius:10px; display:inline-block;">기본 카테고리</span>` : ''}
+              </div>
+            </td>
+            <td>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <span style="font-size:13px; font-weight:700; color:var(--slate-700);">등록된 소재: <b style="color:var(--primary); font-weight:800;">${g.total}개</b></span>
+                <button type="button" class="btn-jump-to-art-library" data-target-tab="${g.type === 'pattern' ? 'tab-patterns' : (g.type === 'illustration' ? 'tab-illustrations' : 'tab-stickers')}" data-group="${g.name}" style="background:var(--slate-100); color:var(--slate-700); border:1px solid var(--slate-300); border-radius:6px; padding:3px 9px; font-size:11px; font-weight:700; cursor:pointer;">📂 소재 보기 →</button>
+              </div>
+            </td>
+            <td style="text-align:right;">
+              <div style="display:inline-flex; align-items:center; gap:6px;">
+                <button type="button" class="btn-rename-group" data-group="${g.name}" data-type="${g.type}" title="카테고리명 수정" style="width:30px; height:30px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#475569; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.15s ease;" onmouseover="this.style.background='#f1f5f9'; this.style.color='#0f172a';" onmouseout="this.style.background='#ffffff'; this.style.color='#475569';">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 20h9"></path>
+                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                  </svg>
+                </button>
+                ${g.name !== '기본' ? `
+                  <button type="button" class="btn-delete-group" data-group="${g.name}" data-type="${g.type}" title="카테고리 삭제" style="width:30px; height:30px; border-radius:8px; border:1px solid #cbd5e1; background:#ffffff; color:#475569; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.15s ease;" onmouseover="this.style.background='#fef2f2'; this.style.color='#ef4444'; this.style.borderColor='#fecaca';" onmouseout="this.style.background='#ffffff'; this.style.color='#475569'; this.style.borderColor='#cbd5e1';">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                  </button>
+                ` : ''}
+              </div>
+            </td>
+          `;
+          grid.appendChild(tr);
+        });
+
+        // Jump to Art Library Button Listener
+        document.querySelectorAll('.btn-jump-to-art-library').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const targetTab = e.currentTarget.dataset.targetTab;
+            const groupName = e.currentTarget.dataset.group;
+            const navBtn = document.querySelector(`.nav-item[data-tab="${targetTab}"]`);
+            if (navBtn) {
+              navBtn.click();
+              setTimeout(() => {
+                let filterId = 'sticker-group-filter';
+                if (targetTab === 'tab-patterns') filterId = 'pattern-group-filter';
+                else if (targetTab === 'tab-illustrations') filterId = 'illustration-group-filter';
+                const filterEl = document.getElementById(filterId);
+                if (filterEl) {
+                  filterEl.value = groupName;
+                  loadArtworksLibrary();
+                }
+              }, 50);
+            }
+          });
+        });
+
+        // Rename Modal Elements & Listeners
+        let targetRenameOldGroup = '';
+        let targetRenameType = '';
+        const modalRename = document.getElementById('modal-rename-category');
+        const inputOldName = document.getElementById('input-rename-old-name');
+        const inputNewName = document.getElementById('input-rename-new-name');
+        const btnCloseRename = document.getElementById('btn-close-rename-category-modal');
+        const btnCancelRename = document.getElementById('btn-cancel-rename-category-modal');
+        const btnExecRename = document.getElementById('btn-execute-rename-category');
+
+        const closeRenameModal = () => { if (modalRename) modalRename.style.display = 'none'; };
+        if (btnCloseRename) btnCloseRename.onclick = closeRenameModal;
+        if (btnCancelRename) btnCancelRename.onclick = closeRenameModal;
+
+        document.querySelectorAll('.btn-rename-group').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            targetRenameOldGroup = e.currentTarget.dataset.group;
+            targetRenameType = e.currentTarget.dataset.type;
+            if (inputOldName) inputOldName.value = targetRenameOldGroup;
+            if (inputNewName) { inputNewName.value = targetRenameOldGroup; setTimeout(() => inputNewName.focus(), 100); }
+            if (modalRename) modalRename.style.display = 'flex';
+          });
+        });
+
+        if (btnExecRename) {
+          btnExecRename.onclick = async () => {
+            const newGroup = inputNewName ? inputNewName.value.trim() : '';
+            if (!newGroup || newGroup === targetRenameOldGroup) {
+              alert('새로운 카테고리명을 입력해주세요.');
+              return;
+            }
+            try {
+              const res = await fetch(getApiUrl('/api/admin/groups/rename'), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ oldGroup: targetRenameOldGroup, newGroup, categoryType: targetRenameType })
+              });
+              const data = await res.json();
+              if (data.success) {
+                closeRenameModal();
+                if (typeof showAdminToast === 'function') showAdminToast(`✅ 카테고리명이 '${newGroup}'(으)로 변경되었습니다.`);
+                syncCategoryDropdowns(data.categories);
+                loadArtGroupsManager();
+                loadArtworksLibrary();
+              } else {
+                alert('카테고리명 변경 실패: ' + (data.error || '오류 발생'));
+              }
+            } catch (err) {
+              alert('통신 오류 발생: ' + err.message);
+            }
+          };
+        }
+
+        // Delete Modal Elements & Listeners
+        let targetDeleteGroupName = '';
+        let targetDeleteType = '';
+        const modalDelete = document.getElementById('modal-delete-category');
+        const targetDeleteNameEl = document.getElementById('delete-category-target-name');
+        const btnCloseDelete = document.getElementById('btn-close-delete-category-modal');
+        const btnCancelDelete = document.getElementById('btn-cancel-delete-category-modal');
+        const btnExecDelete = document.getElementById('btn-execute-delete-category');
+
+        const closeDeleteModal = () => { if (modalDelete) modalDelete.style.display = 'none'; };
+        if (btnCloseDelete) btnCloseDelete.onclick = closeDeleteModal;
+        if (btnCancelDelete) btnCancelDelete.onclick = closeDeleteModal;
+
+        document.querySelectorAll('.btn-delete-group').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            targetDeleteGroupName = e.currentTarget.dataset.group;
+            targetDeleteType = e.currentTarget.dataset.type;
+            if (targetDeleteNameEl) targetDeleteNameEl.textContent = targetDeleteGroupName;
+            if (modalDelete) modalDelete.style.display = 'flex';
+          });
+        });
+
+        if (btnExecDelete) {
+          btnExecDelete.onclick = async () => {
+            try {
+              const res = await fetch(getApiUrl(`/api/admin/groups/${encodeURIComponent(targetDeleteGroupName)}?type=${targetDeleteType}`), { method: 'DELETE' });
+              const data = await res.json();
+              if (data.success) {
+                closeDeleteModal();
+                if (typeof showAdminToast === 'function') showAdminToast(`🗑️ '${targetDeleteGroupName}' 카테고리가 삭제되었습니다.`);
+                syncCategoryDropdowns(data.categories);
+                loadArtGroupsManager();
+                loadArtworksLibrary();
+              } else {
+                alert('삭제 실패: ' + (data.error || '오류 발생'));
+              }
+            } catch (err) {
+              alert('통신 오류 발생: ' + err.message);
+            }
+          };
+        }
+
+      } catch (err) {
+        console.error('Error loading art groups manager:', err);
+      }
+    }
+
+    try {
+      loadProducts();
+      loadFonts();
+      loadAdminOrders();
+      updatePatternPreview();
+      loadArtworksLibrary();
+    } catch (e) {
+      console.warn('Initial load error:', e);
+    }
   </script>
 </body>
 </html>

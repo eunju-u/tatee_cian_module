@@ -5,7 +5,7 @@ import { StorageService } from '../services/storageService.js';
 import { generateWorkOrderPdf } from '../services/pdfGenerator.js';
 import { TripoRunner } from '../ai/tripoRunner.js';
 import { Meshy3DService } from '../ai/meshy3dService.js';
-import { productsDb, artworksDb } from './admin.js';
+import { productsDb, artworksDb, loadArtworksFromDisk } from './admin.js';
 
 const router = express.Router();
 
@@ -14,7 +14,7 @@ const router = express.Router();
  * Returns graphic stickers & patterns library for customer customizer
  */
 router.get('/artworks', (req, res) => {
-  res.json({ success: true, artworks: artworksDb });
+  res.json({ success: true, artworks: loadArtworksFromDisk() });
 });
 
 /**

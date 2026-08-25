@@ -116,19 +116,21 @@ export class SurfaceManager {
   saveCurrentSurfaceState() {
     if (!this.surfaces[this.activeSurfaceId]) return;
     this.surfaces[this.activeSurfaceId].canvasData = this.canvasEditor.getCanvasJson();
-    const objects = this.canvasEditor.canvas ? this.canvasEditor.canvas.getObjects().filter(o => !o.isGuideline) : [];
-    if (objects.length > 0) {
-      this.surfaces[this.activeSurfaceId].artworkDataUrl = this.canvasEditor.toPrintAreaPNG(4);
-    } else {
-      this.surfaces[this.activeSurfaceId].artworkDataUrl = null;
-    }
   }
 
   switchSurface(surfaceId, onSurfaceChanged) {
     if (!this.surfaces[surfaceId] || this.activeSurfaceId === surfaceId) return;
 
-    // 1. Save current surface state & pure artwork data URL
-    this.saveCurrentSurfaceState();
+    // 1. Save current surface canvas JSON and artwork PNG thumbnail on surface switch
+    if (this.surfaces[this.activeSurfaceId]) {
+      this.surfaces[this.activeSurfaceId].canvasData = this.canvasEditor.getCanvasJson();
+      const objects = this.canvasEditor.canvas ? this.canvasEditor.canvas.getObjects().filter(o => !o.isGuideline) : [];
+      if (objects.length > 0) {
+        this.surfaces[this.activeSurfaceId].artworkDataUrl = this.canvasEditor.toPrintAreaPNG(2);
+      } else {
+        this.surfaces[this.activeSurfaceId].artworkDataUrl = null;
+      }
+    }
 
     // 2. Update active surface ID
     this.activeSurfaceId = surfaceId;
@@ -184,10 +186,10 @@ export class SurfaceManager {
           mockupDataUrl: surface.mockupDataUrl,
           json: surface.canvasData,
           elementsMeta: this.canvasEditor.getSurfacePhysicalMeta(id, surface.canvasData, surface),
-          printTopPct: pb ? (pb.top / ch) * 100 : (surface.printTopPct !== undefined ? surface.printTopPct : 20),
-          printLeftPct: pb ? (pb.left / cw) * 100 : (surface.printLeftPct !== undefined ? surface.printLeftPct : 20),
-          printWidthPct: pb ? (pb.width / cw) * 100 : (surface.printWidthPct !== undefined ? surface.printWidthPct : 60),
-          printHeightPct: pb ? (pb.height / ch) * 100 : (surface.printHeightPct !== undefined ? surface.printHeightPct : 50),
+          printTopPct: surface.printTopPct !== undefined ? surface.printTopPct : (pb ? ((pb.top + 55) / 590) * 100 : 23.5),
+          printLeftPct: surface.printLeftPct !== undefined ? surface.printLeftPct : (pb ? ((pb.left + 60) / 500) * 100 : 22),
+          printWidthPct: surface.printWidthPct !== undefined ? surface.printWidthPct : (pb ? (pb.width / 500) * 100 : 56),
+          printHeightPct: surface.printHeightPct !== undefined ? surface.printHeightPct : (pb ? (pb.height / 590) * 100 : 45),
           printWidthCm: pb && pb.printWidthCm ? pb.printWidthCm : (surface.printWidthCm || 30),
           printHeightCm: pb && pb.printHeightCm ? pb.printHeightCm : (surface.printHeightCm || 30)
         };

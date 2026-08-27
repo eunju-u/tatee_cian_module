@@ -1586,7 +1586,7 @@ export class TShirtCustomizerApp {
           }
 
           // Sync Alignments
-          const align = obj.textAlign || 'center';
+          const align = (obj._verticalMode && obj._verticalMode !== 'none') ? (obj._verticalAlign || 'left') : (obj.textAlign || 'center');
           const alignMap = { left: 'btn-align-left', center: 'btn-align-center', right: 'btn-align-right' };
           ['btn-align-left', 'btn-align-center', 'btn-align-right'].forEach(bId => {
             const btn = document.getElementById(bId);
@@ -2345,6 +2345,26 @@ export class TShirtCustomizerApp {
       fileInp.click();
     });
 
+    const getCharPadding = (ch) => {
+      if (!ch || ch === '\u2004' || ch === '\u2009' || ch === '\u200A' || ch === '\u200B' || ch === '\u2800' || ch === '\u00A0' || ch === ' ') return '';
+      const code = ch.charCodeAt(0);
+      if (code >= 0x1100 && code <= 0xD7AF) return ''; // Hangul CJK
+      if (code >= 0x4E00 && code <= 0x9FFF) return ''; // CJK Hanzi
+      if (code >= 0x3040 && code <= 0x30FF) return ''; // Kana
+
+      if ('MW@%'.includes(ch)) return '';
+
+      if ('Iijl1!|:;.,\'"()[]{}'.includes(ch)) {
+        return '\u2004'; // Three-per-em space (~0.33em / 9.3px) for very narrow characters
+      }
+
+      if (/[A-Za-z0-9]/.test(ch)) {
+        return '\u2009'; // Thin space (~0.20em / 5.6px) for medium characters
+      }
+
+      return '';
+    };
+
     const formatVerticalText = (textStr, mode, vAlign = 'top') => {
       if (!textStr) return '';
       if (!mode || mode === 'none') return textStr;
@@ -2354,9 +2374,10 @@ export class TShirtCustomizerApp {
         lines = [...lines].reverse();
       }
 
-      const maxLen = Math.max(...lines.map(l => l.length));
+      const maxLen = Math.max(...lines.map(l => Array.from(l).length));
       if (maxLen === 0) return '';
 
+      const fillChar = '\u2800';
       const paddedCols = lines.map(line => {
         const chars = Array.from(line);
         const diff = maxLen - chars.length;
@@ -2365,21 +2386,29 @@ export class TShirtCustomizerApp {
         if (vAlign === 'middle' || vAlign === 'center') {
           const topPad = Math.ceil(diff / 2);
           const bottomPad = diff - topPad;
-          return [...Array(topPad).fill(' '), ...chars, ...Array(bottomPad).fill(' ')];
+          return [...Array(topPad).fill(fillChar), ...chars, ...Array(bottomPad).fill(fillChar)];
         } else if (vAlign === 'bottom' || vAlign === 'right') {
-          return [...Array(diff).fill(' '), ...chars];
+          return [...Array(diff).fill(fillChar), ...chars];
         } else {
-          return [...chars, ...Array(diff).fill(' ')];
+          return [...chars, ...Array(diff).fill(fillChar)];
         }
       });
 
       const rows = [];
       for (let r = 0; r < maxLen; r++) {
-        const rowChars = paddedCols.map(col => col[r] || ' ');
+        const rowChars = paddedCols.map(col => {
+          const ch = col[r] || fillChar;
+          if (ch === fillChar) return fillChar;
+          return getCharPadding(ch) + ch;
+        });
         rows.push(rowChars.join('\t'));
       }
       return rows.join('\n');
     };
+
+    window.formatVerticalText = formatVerticalText;
+    const getVerticalTabWidth = (fontSize) => Math.max(52, Math.round((fontSize || 28) * 1.85));
+    window.getVerticalTabWidth = getVerticalTabWidth;
 
     // Bind Text Inputs
     safeAddListener('input-text-content', 'input', (e) => {
@@ -2391,7 +2420,12 @@ export class TShirtCustomizerApp {
       const vAlignMap = { left: 'top', center: 'middle', right: 'bottom' };
       const vAlign = vAlignMap[active._verticalAlign || 'left'];
       const formatted = formatVerticalText(rawVal, vMode, vAlign);
-      editor.updateActiveObject({ text: formatted });
+      if (vMode && vMode !== 'none') {
+        const tabW = getVerticalTabWidth(active.fontSize || 28);
+        editor.updateActiveObject({ text: formatted, tabWidth: tabW, textAlign: 'left' });
+      } else {
+        editor.updateActiveObject({ text: formatted });
+      }
     });
     const applyFontWithLoading = async (fontFamily) => {
       if (!fontFamily) return;
@@ -2416,14 +2450,27 @@ export class TShirtCustomizerApp {
     };
 
     safeAddListener('select-font-family', 'change', (e) => applyFontWithLoading(e.target.value));
-    safeAddListener('input-font-size', 'input', (e) => editor.updateActiveObject({ fontSize: parseFloat(e.target.value) || 28 }));
+    safeAddListener('input-font-size', 'input', (e) => {
+      const val = parseFloat(e.target.value) || 28;
+      const active = editor ? editor.canvas.getActiveObject() : null;
+      if (active && active._verticalMode && active._verticalMode !== 'none') {
+        editor.updateActiveObject({ fontSize: val, tabWidth: getVerticalTabWidth(val) });
+      } else {
+        editor.updateActiveObject({ fontSize: val });
+      }
+    });
 
     safeAddListener('btn-size-up', 'click', () => {
       const inp = document.getElementById('input-font-size');
       if (inp) {
         const val = (parseFloat(inp.value) || 28) + 2;
         inp.value = val;
-        editor.updateActiveObject({ fontSize: val });
+        const active = editor ? editor.canvas.getActiveObject() : null;
+        if (active && active._verticalMode && active._verticalMode !== 'none') {
+          editor.updateActiveObject({ fontSize: val, tabWidth: getVerticalTabWidth(val) });
+        } else {
+          editor.updateActiveObject({ fontSize: val });
+        }
       }
     });
 
@@ -2432,7 +2479,12 @@ export class TShirtCustomizerApp {
       if (inp) {
         const val = Math.max(6, (parseFloat(inp.value) || 28) - 2);
         inp.value = val;
-        editor.updateActiveObject({ fontSize: val });
+        const active = editor ? editor.canvas.getActiveObject() : null;
+        if (active && active._verticalMode && active._verticalMode !== 'none') {
+          editor.updateActiveObject({ fontSize: val, tabWidth: getVerticalTabWidth(val) });
+        } else {
+          editor.updateActiveObject({ fontSize: val });
+        }
       }
     });
 
@@ -3852,7 +3904,7 @@ export class TShirtCustomizerApp {
             const vAlignMap = { left: 'top', center: 'middle', right: 'bottom' };
             const vAlign = vAlignMap[alignVal] || 'top';
             const formatted = formatVerticalText(active._rawHorizontalText || '', active._verticalMode, vAlign);
-            const tabW = Math.max(20, Math.round((active.fontSize || 28) * 1.25));
+            const tabW = getVerticalTabWidth(active.fontSize || 28);
             editor.updateActiveObject({ text: formatted, tabWidth: tabW, textAlign: 'left' });
           } else {
             editor.updateActiveObject({ textAlign: alignVal });
@@ -3906,7 +3958,7 @@ export class TShirtCustomizerApp {
     const applyVerticalMode = (active, newMode) => {
       if (!active) return;
 
-      if (active._rawHorizontalText === undefined) {
+      if (!active._verticalMode || active._verticalMode === 'none' || active._rawHorizontalText === undefined) {
         active._rawHorizontalText = active.text || '';
       }
 
@@ -3924,13 +3976,14 @@ export class TShirtCustomizerApp {
         }
         active._verticalMode = newMode;
         const formatted = formatVerticalText(active._rawHorizontalText, newMode, vAlignMap[currentVAlign]);
-        const tabW = Math.max(20, Math.round((active.fontSize || 28) * 1.25));
+        const tabW = getVerticalTabWidth(active.fontSize || 28);
         active.set({
           text: formatted,
           lineHeight: 0.95,
           scaleX: 1.0,
           tabWidth: tabW,
-          textAlign: 'left'
+          textAlign: 'left',
+          editable: true
         });
       } else {
         active._verticalMode = 'none';
@@ -3940,12 +3993,26 @@ export class TShirtCustomizerApp {
           lineHeight: hProps.lineHeight,
           charSpacing: hProps.charSpacing,
           scaleX: hProps.scaleX,
-          textAlign: hProps.textAlign || 'center'
+          textAlign: hProps.textAlign || 'center',
+          editable: true
         });
       }
 
+      if (active.isEditing) {
+        active.exitEditing();
+      }
+
+      active.selectionStart = 0;
+      active.selectionEnd = 0;
+      if (typeof active.initDimensions === 'function') active.initDimensions();
+      if (typeof active._clearCache === 'function') active._clearCache();
+      active.dirty = true;
       active.setCoords();
-      editor.canvas.renderAll();
+
+      if (editor && editor.canvas) {
+        editor.canvas.setActiveObject(active);
+        editor.canvas.requestRenderAll();
+      }
 
       document.getElementById('btn-vertical-ltr')?.classList.toggle('active', newMode === 'ltr');
       document.getElementById('btn-vertical-rtl')?.classList.toggle('active', newMode === 'rtl');
@@ -3971,7 +4038,8 @@ export class TShirtCustomizerApp {
       }
     };
 
-    safeAddListener('btn-vertical-ltr', 'click', () => {
+    safeAddListener('btn-vertical-ltr', 'click', (e) => {
+      if (e) e.preventDefault();
       const active = editor.canvas ? editor.canvas.getActiveObject() : null;
       if (!active) return;
       const curMode = active._verticalMode || 'none';
@@ -3979,7 +4047,8 @@ export class TShirtCustomizerApp {
       applyVerticalMode(active, newMode);
     });
 
-    safeAddListener('btn-vertical-rtl', 'click', () => {
+    safeAddListener('btn-vertical-rtl', 'click', (e) => {
+      if (e) e.preventDefault();
       const active = editor.canvas ? editor.canvas.getActiveObject() : null;
       if (!active) return;
       const curMode = active._verticalMode || 'none';
@@ -4336,6 +4405,9 @@ export class TShirtCustomizerApp {
 
       if (type === 'size') {
         active.set('fontSize', val);
+        if (active._verticalMode && active._verticalMode !== 'none') {
+          active.set('tabWidth', getVerticalTabWidth(val));
+        }
         if (sliderVal) sliderVal.textContent = Math.round(val) + 'px';
       } else if (type === 'spacing') {
         active.set('charSpacing', val);
@@ -4594,7 +4666,7 @@ export class TShirtCustomizerApp {
             const vAlignMap = { left: 'top', center: 'middle', right: 'bottom' };
             const vAlign = vAlignMap[alignVal] || 'top';
             const formatted = formatVerticalText(active._rawHorizontalText || '', active._verticalMode, vAlign);
-            const tabW = Math.max(20, Math.round((active.fontSize || 28) * 1.25));
+            const tabW = getVerticalTabWidth(active.fontSize || 28);
             editor.updateActiveObject({ text: formatted, tabWidth: tabW, textAlign: 'left' });
           } else {
             editor.updateActiveObject({ textAlign: alignVal });
@@ -4662,7 +4734,8 @@ export class TShirtCustomizerApp {
       if (btn) btn.classList.toggle('active', !isStrike);
     });
 
-    safeAddListener('mq-btn-vertical-rtl', 'click', () => {
+    safeAddListener('mq-btn-vertical-rtl', 'click', (e) => {
+      if (e) e.preventDefault();
       if (!editor || !editor.canvas) return;
       const active = editor.canvas.getActiveObject();
       if (!active) return;
@@ -4671,7 +4744,8 @@ export class TShirtCustomizerApp {
       applyVerticalMode(active, newMode);
     });
 
-    safeAddListener('mq-btn-vertical-ltr', 'click', () => {
+    safeAddListener('mq-btn-vertical-ltr', 'click', (e) => {
+      if (e) e.preventDefault();
       if (!editor || !editor.canvas) return;
       const active = editor.canvas.getActiveObject();
       if (!active) return;

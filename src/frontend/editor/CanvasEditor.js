@@ -297,6 +297,22 @@ export class CanvasEditor {
         this._wasCanvasBackgroundClicked = true;
       } else {
         this._wasCanvasBackgroundClicked = false;
+        if (e.target.type && String(e.target.type).toLowerCase().includes('text')) {
+          const txtInp = document.getElementById('input-text-content');
+          if (txtInp) {
+            txtInp.value = e.target._rawHorizontalText !== undefined ? e.target._rawHorizontalText : (e.target.text || '');
+          }
+        }
+      }
+    });
+
+    this.canvas.on('mouse:dblclick', (e) => {
+      const target = e.target;
+      if (target && !target.isGuideline && target.type && String(target.type).toLowerCase().includes('text')) {
+        const txtInp = document.getElementById('input-text-content');
+        if (txtInp) {
+          txtInp.value = target._rawHorizontalText !== undefined ? target._rawHorizontalText : (target.text || '');
+        }
       }
     });
 
@@ -484,6 +500,16 @@ export class CanvasEditor {
       return;
     }
 
+    const activeObj = this.canvas.getActiveObject();
+    if (activeObj) {
+      this._lastSelectedObject = activeObj;
+      if (this.onSelectionChanged) {
+        const meta = this.dimensionMapper.getObjectPhysicalMeta(activeObj);
+        this.onSelectionChanged(meta, activeObj);
+      }
+      return;
+    }
+
     const target = this._lastPointerDownTarget;
     const isInsideUI = target && (
       target.closest('.right-edit-panel') ||
@@ -500,7 +526,8 @@ export class CanvasEditor {
       target.closest('#mobile-quick-action-ribbon') ||
       target.closest('.mobile-floating-mini-modal') ||
       target.closest('#mobile-compact-slider-bar') ||
-      target.closest('#text-color-popover-modal')
+      target.closest('#text-color-popover-modal') ||
+      target.closest('#input-text-content')
     );
 
     // Only preserve active selection if user explicitly clicked inside UI control panels outside canvas/stage

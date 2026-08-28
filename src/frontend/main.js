@@ -583,6 +583,7 @@ function getAppSkeletonHtml(productConfig) {
 
                 <div id="view-shape-color-presets" style="display:block; width:100%;">
                   <div id="shape-popover-swatch-grid" style="display:grid; grid-template-columns: repeat(8, 1fr); gap:8px; width:100%;">
+                    <button type="button" class="shape-popover-swatch-btn" data-color="transparent" style="background: linear-gradient(to top right, transparent calc(50% - 1.5px), #ef4444 calc(50% - 1.5px), #ef4444 calc(50% + 1.5px), transparent calc(50% + 1.5px)) #ffffff; border: 1px solid #cbd5e1;" title="투명 (없음)"></button>
                     ${TEXT_COLOR_GRID.map(c => `
                       <button type="button" class="shape-popover-swatch-btn ${c === '#17171a' ? 'active' : ''}" data-color="${c}" style="background:${c};" title="${c}"></button>
                     `).join('')}
@@ -631,6 +632,7 @@ function getAppSkeletonHtml(productConfig) {
 
                 <div id="view-shape-stroke-color-presets" style="display:block; width:100%;">
                   <div id="shape-stroke-popover-swatch-grid" style="display:grid; grid-template-columns: repeat(8, 1fr); gap:8px; width:100%;">
+                    <button type="button" class="shape-stroke-popover-swatch-btn" data-color="transparent" style="background: linear-gradient(to top right, transparent calc(50% - 1.5px), #ef4444 calc(50% - 1.5px), #ef4444 calc(50% + 1.5px), transparent calc(50% + 1.5px)) #ffffff; border: 1px solid #cbd5e1;" title="투명 (없음)"></button>
                     ${TEXT_COLOR_GRID.map(c => `
                       <button type="button" class="shape-stroke-popover-swatch-btn ${c === '#000000' ? 'active' : ''}" data-color="${c}" style="background:${c};" title="${c}"></button>
                     `).join('')}
@@ -683,13 +685,13 @@ function getAppSkeletonHtml(productConfig) {
               <!-- 2. SHAPE COLOR ROW -->
               <div style="display:flex; align-items:center; justify-content:space-between; margin-top:4px;">
                 <span style="font-size:13px; font-weight:600; color:#1e293b;">도형 색상</span>
-                <button type="button" id="btn-open-shape-color-popover" style="width:32px; height:32px; border-radius:8px; border:1px solid #d1d5db; background:#17171a; cursor:pointer; padding:0; outline:none;" title="도형 색상 선택"></button>
+                <button type="button" id="btn-open-shape-color-popover" data-color="#17171a" style="width:32px; height:32px; border-radius:8px; border:1px solid #d1d5db; background:#17171a; cursor:pointer; padding:0; outline:none;" title="도형 색상 선택"></button>
               </div>
 
               <!-- 3. SHAPE STROKE COLOR ROW -->
               <div style="display:flex; align-items:center; justify-content:space-between; margin-top:2px;">
                 <span style="font-size:13px; font-weight:600; color:#1e293b;">테두리 색상</span>
-                <button type="button" id="btn-open-shape-stroke-color-popover" style="width:32px; height:32px; border-radius:8px; border:1px solid #d1d5db; background:#000000; cursor:pointer; padding:0; outline:none;" title="테두리 색상 선택"></button>
+                <button type="button" id="btn-open-shape-stroke-color-popover" data-color="#000000" style="width:32px; height:32px; border-radius:8px; border:1px solid #d1d5db; background:#000000; cursor:pointer; padding:0; outline:none;" title="테두리 색상 선택"></button>
               </div>
 
               <div style="height:1px; background:#f0f0f3;"></div>
@@ -1322,6 +1324,80 @@ export class TShirtCustomizerApp {
     let layerManager = null;
     let surfaceManager = null;
 
+    function resetShapeControlsToDefault() {
+      // 1. Reset Fill Color to default black (#17171a)
+      const openShapeBtn = document.getElementById('btn-open-shape-color-popover');
+      const shapePopPrev = document.getElementById('shape-popover-color-preview');
+      const shapePopHex = document.getElementById('shape-popover-hex-value');
+      const shapeCustomInp = document.getElementById('input-shape-custom-color');
+
+      if (openShapeBtn) {
+        openShapeBtn.style.background = '#17171a';
+        openShapeBtn.dataset.color = '#17171a';
+      }
+      if (shapePopPrev) shapePopPrev.style.background = '#17171a';
+      if (shapePopHex) shapePopHex.textContent = '#17171a';
+      if (shapeCustomInp) shapeCustomInp.value = '#17171a';
+
+      document.querySelectorAll('#shape-popover-swatch-grid .shape-popover-swatch-btn').forEach(btn => {
+        const c = (btn.dataset.color || '').toLowerCase();
+        btn.classList.toggle('active', c === '#17171a' || c === 'rgb(23, 23, 26)');
+      });
+
+      // 2. Reset Stroke Color to transparent / none
+      const openStrokeBtn = document.getElementById('btn-open-shape-stroke-color-popover');
+      const strokePopPrev = document.getElementById('shape-stroke-popover-color-preview');
+      const strokePopHex = document.getElementById('shape-stroke-popover-hex-value');
+      const strokeCustomInp = document.getElementById('input-shape-stroke-custom-color');
+      const transBg = 'linear-gradient(to top right, transparent calc(50% - 1.5px), #ef4444 calc(50% - 1.5px), #ef4444 calc(50% + 1.5px), transparent calc(50% + 1.5px)) #ffffff';
+
+      if (openStrokeBtn) {
+        openStrokeBtn.style.background = transBg;
+        openStrokeBtn.dataset.color = 'transparent';
+      }
+      if (strokePopPrev) strokePopPrev.style.background = transBg;
+      if (strokePopHex) strokePopHex.textContent = '투명';
+      if (strokeCustomInp) strokeCustomInp.value = '#000000';
+
+      document.querySelectorAll('#shape-stroke-popover-swatch-grid .shape-stroke-popover-swatch-btn').forEach(btn => {
+        const c = (btn.dataset.color || '').toLowerCase();
+        btn.classList.toggle('active', c === 'transparent');
+      });
+
+      // 3. Reset Stroke Width Slider to 0
+      const strokeWidthSld = document.getElementById('slider-shape-stroke-width');
+      const strokeWidthLbl = document.getElementById('label-val-shape-stroke-width');
+      if (strokeWidthSld) {
+        strokeWidthSld.value = 0;
+        if (strokeWidthLbl) strokeWidthLbl.textContent = '0px';
+        if (typeof updateSliderProgress === 'function') updateSliderProgress(strokeWidthSld);
+      }
+
+      // 4. Reset Rotation Slider to 0
+      const rotSld = document.getElementById('slider-shape-rotation');
+      const rotLbl = document.getElementById('label-val-shape-rotation');
+      if (rotSld) {
+        rotSld.value = 0;
+        if (rotLbl) rotLbl.textContent = '0°';
+        if (typeof updateSliderProgress === 'function') updateSliderProgress(rotSld);
+      }
+
+      // 5. Reset Corner Rounding Slider to disabled
+      const sliderRx = document.getElementById('slider-shape-rx');
+      const labelRx = document.getElementById('label-val-shape-rx');
+      const containerRx = document.getElementById('container-shape-rx');
+      if (sliderRx && labelRx) {
+        sliderRx.disabled = true;
+        if (containerRx) {
+          containerRx.style.opacity = '0.35';
+          containerRx.style.pointerEvents = 'none';
+        }
+        sliderRx.value = 0;
+        labelRx.textContent = '비활성화';
+        if (typeof updateSliderProgress === 'function') updateSliderProgress(sliderRx);
+      }
+    }
+
     // Initialize Canvas Editor
     const editor = new CanvasEditor('customizer-canvas', {
       printBoxRatio: { x: 0.22, y: 0.235, w: 0.56, h: 0.45 },
@@ -1652,16 +1728,24 @@ export class TShirtCustomizerApp {
 
           if (obj) {
             // Sync Shape Color
-            if (obj.fill) {
-              const hexColor = String(obj.fill).toLowerCase();
+            // Sync Fill Color
+            if (obj.fill !== undefined) {
+              const rawFill = String(obj.fill).toLowerCase();
+              const isTrans = !obj.fill || ['transparent', 'rgba(0,0,0,0)', 'none', ''].includes(rawFill) || rawFill.includes('linear-gradient');
+              const hexColor = isTrans ? 'transparent' : rawFill;
               const openShapeBtn = document.getElementById('btn-open-shape-color-popover');
-              if (openShapeBtn) openShapeBtn.style.background = obj.fill;
-
               const shapePopPrev = document.getElementById('shape-popover-color-preview');
-              if (shapePopPrev) shapePopPrev.style.background = obj.fill;
-
               const shapePopHex = document.getElementById('shape-popover-hex-value');
-              if (shapePopHex) shapePopHex.textContent = hexColor;
+              const bgStyle = isTrans 
+                ? 'linear-gradient(to top right, transparent calc(50% - 1.5px), #ef4444 calc(50% - 1.5px), #ef4444 calc(50% + 1.5px), transparent calc(50% + 1.5px)) #ffffff' 
+                : hexColor;
+
+              if (openShapeBtn) {
+                openShapeBtn.style.background = bgStyle;
+                openShapeBtn.dataset.color = hexColor;
+              }
+              if (shapePopPrev) shapePopPrev.style.background = bgStyle;
+              if (shapePopHex) shapePopHex.textContent = isTrans ? '투명' : hexColor;
 
               const shapeCustomInp = document.getElementById('input-shape-custom-color');
               if (shapeCustomInp && hexColor.startsWith('#') && hexColor.length === 7) {
@@ -1670,21 +1754,28 @@ export class TShirtCustomizerApp {
 
               document.querySelectorAll('#shape-popover-swatch-grid .shape-popover-swatch-btn').forEach(btn => {
                 const c = (btn.dataset.color || '').toLowerCase();
-                btn.classList.toggle('active', c === hexColor);
+                btn.classList.toggle('active', isTrans ? c === 'transparent' : c === hexColor);
               });
             }
 
             // Sync Stroke Color
-            if (obj.stroke) {
-              const strokeHex = String(obj.stroke).toLowerCase();
+            if (obj.stroke !== undefined) {
+              const rawStroke = String(obj.stroke).toLowerCase();
+              const isTrans = !obj.stroke || ['transparent', 'rgba(0,0,0,0)', 'none', ''].includes(rawStroke) || rawStroke.includes('linear-gradient');
+              const strokeHex = isTrans ? 'transparent' : rawStroke;
               const openStrokeBtn = document.getElementById('btn-open-shape-stroke-color-popover');
-              if (openStrokeBtn) openStrokeBtn.style.background = obj.stroke;
-
               const strokePopPrev = document.getElementById('shape-stroke-popover-color-preview');
-              if (strokePopPrev) strokePopPrev.style.background = obj.stroke;
-
               const strokePopHex = document.getElementById('shape-stroke-popover-hex-value');
-              if (strokePopHex) strokePopHex.textContent = strokeHex;
+              const bgStyle = isTrans 
+                ? 'linear-gradient(to top right, transparent calc(50% - 1.5px), #ef4444 calc(50% - 1.5px), #ef4444 calc(50% + 1.5px), transparent calc(50% + 1.5px)) #ffffff' 
+                : strokeHex;
+
+              if (openStrokeBtn) {
+                openStrokeBtn.style.background = bgStyle;
+                openStrokeBtn.dataset.color = strokeHex;
+              }
+              if (strokePopPrev) strokePopPrev.style.background = bgStyle;
+              if (strokePopHex) strokePopHex.textContent = isTrans ? '투명' : strokeHex;
 
               const strokeCustomInp = document.getElementById('input-shape-stroke-custom-color');
               if (strokeCustomInp && strokeHex.startsWith('#') && strokeHex.length === 7) {
@@ -1693,7 +1784,7 @@ export class TShirtCustomizerApp {
 
               document.querySelectorAll('#shape-stroke-popover-swatch-grid .shape-stroke-popover-swatch-btn').forEach(btn => {
                 const c = (btn.dataset.color || '').toLowerCase();
-                btn.classList.toggle('active', c === strokeHex);
+                btn.classList.toggle('active', isTrans ? c === 'transparent' : c === strokeHex);
               });
             }
 
@@ -1926,6 +2017,7 @@ export class TShirtCustomizerApp {
               if (cellPoint) cellPoint.style.display = 'none';
             }
           } else {
+          resetShapeControlsToDefault();
           if (window.innerWidth <= 768) {
             hideMobileQuickRibbon();
             hideMobileSheet();
@@ -2976,6 +3068,19 @@ export class TShirtCustomizerApp {
       if (secImage) secImage.style.display = 'none';
       if (secProd) secProd.style.display = 'none';
 
+      const activeObj = editor && editor.canvas ? editor.canvas.getActiveObject() : null;
+      const isBasicShape = Boolean(activeObj && !activeObj.isGuideline && (
+        activeObj.isShape ||
+        activeObj.shapeType !== undefined ||
+        activeObj.isCustomMasked ||
+        activeObj.isMaskedLayer ||
+        ['rect', 'circle', 'triangle', 'polygon', 'path'].includes(activeObj.type?.toLowerCase())
+      ) && !activeObj.isPattern);
+
+      if (!isBasicShape) {
+        resetShapeControlsToDefault();
+      }
+
       document.querySelectorAll('.tool-rail-btn').forEach(btn => btn.classList.remove('active'));
       const shapeRailBtn = document.getElementById('rail-btn-shape');
       if (shapeRailBtn) shapeRailBtn.classList.add('active');
@@ -3434,12 +3539,8 @@ export class TShirtCustomizerApp {
       btn.addEventListener('click', (e) => {
         if (e) e.stopPropagation();
         const shapeType = btn.dataset.shape || 'rectangle';
-        const openShapeBtn = document.getElementById('btn-open-shape-color-popover');
-        const fill = (openShapeBtn ? openShapeBtn.style.background : '#17171a') || '#17171a';
-        editor.addShape(shapeType, { fill: fill });
-        if (window.innerWidth <= 768) {
-          hideMobileSheet();
-        }
+        // Newly added shapes always start with the default black color (#17171a)
+        editor.addShape(shapeType, { fill: '#17171a' });
       });
     });
 
@@ -3767,17 +3868,26 @@ export class TShirtCustomizerApp {
     // Function to apply chosen shape color
     const applyShapeColor = (color) => {
       if (!color) return;
+      const isTrans = ['transparent', 'rgba(0,0,0,0)', 'none', ''].includes(color.toLowerCase());
+      const bgStyle = isTrans 
+        ? 'linear-gradient(to top right, transparent calc(50% - 1.5px), #ef4444 calc(50% - 1.5px), #ef4444 calc(50% + 1.5px), transparent calc(50% + 1.5px)) #ffffff' 
+        : color;
+
       const openShapeBtn = document.getElementById('btn-open-shape-color-popover');
-      if (openShapeBtn) openShapeBtn.style.background = color;
+      if (openShapeBtn) {
+        openShapeBtn.style.background = bgStyle;
+        openShapeBtn.dataset.color = color;
+      }
 
       const shapePopPrev = document.getElementById('shape-popover-color-preview');
-      if (shapePopPrev) shapePopPrev.style.background = color;
+      if (shapePopPrev) shapePopPrev.style.background = bgStyle;
 
       const shapePopHex = document.getElementById('shape-popover-hex-value');
-      if (shapePopHex) shapePopHex.textContent = color.toLowerCase();
+      if (shapePopHex) shapePopHex.textContent = isTrans ? '투명' : color.toLowerCase();
 
       document.querySelectorAll('#shape-popover-swatch-grid .shape-popover-swatch-btn, #shape-popover-saved-grid .shape-popover-swatch-btn').forEach(btn => {
-        btn.classList.toggle('active', (btn.dataset.color || '').toLowerCase() === color.toLowerCase());
+        const c = (btn.dataset.color || '').toLowerCase();
+        btn.classList.toggle('active', isTrans ? c === 'transparent' : c === color.toLowerCase());
       });
 
       editor.updateActiveObject({ fill: color });
@@ -3787,22 +3897,31 @@ export class TShirtCustomizerApp {
     // Function to apply chosen shape stroke color
     const applyShapeStrokeColor = (color) => {
       if (!color) return;
+      const isTrans = ['transparent', 'rgba(0,0,0,0)', 'none', ''].includes(color.toLowerCase());
+      const bgStyle = isTrans 
+        ? 'linear-gradient(to top right, transparent calc(50% - 1.5px), #ef4444 calc(50% - 1.5px), #ef4444 calc(50% + 1.5px), transparent calc(50% + 1.5px)) #ffffff' 
+        : color;
+
       const openStrokeBtn = document.getElementById('btn-open-shape-stroke-color-popover');
-      if (openStrokeBtn) openStrokeBtn.style.background = color;
+      if (openStrokeBtn) {
+        openStrokeBtn.style.background = bgStyle;
+        openStrokeBtn.dataset.color = color;
+      }
 
       const strokePopPrev = document.getElementById('shape-stroke-popover-color-preview');
-      if (strokePopPrev) strokePopPrev.style.background = color;
+      if (strokePopPrev) strokePopPrev.style.background = bgStyle;
 
       const strokePopHex = document.getElementById('shape-stroke-popover-hex-value');
-      if (strokePopHex) strokePopHex.textContent = color.toLowerCase();
+      if (strokePopHex) strokePopHex.textContent = isTrans ? '투명' : color.toLowerCase();
 
       document.querySelectorAll('#shape-stroke-popover-swatch-grid .shape-stroke-popover-swatch-btn, #shape-stroke-popover-saved-grid .shape-stroke-popover-swatch-btn').forEach(btn => {
-        btn.classList.toggle('active', (btn.dataset.color || '').toLowerCase() === color.toLowerCase());
+        const c = (btn.dataset.color || '').toLowerCase();
+        btn.classList.toggle('active', isTrans ? c === 'transparent' : c === color.toLowerCase());
       });
 
       const activeObj = editor.canvas ? editor.canvas.getActiveObject() : null;
       let newProps = { stroke: color };
-      if (activeObj && (!activeObj.strokeWidth || activeObj.strokeWidth === 0)) {
+      if (!isTrans && activeObj && (!activeObj.strokeWidth || activeObj.strokeWidth === 0)) {
         newProps.strokeWidth = 1;
         const strokeWidthSld = document.getElementById('slider-shape-stroke-width');
         const strokeWidthLbl = document.getElementById('label-val-shape-stroke-width');
@@ -3835,7 +3954,7 @@ export class TShirtCustomizerApp {
         if (color) {
           applyShapeColor(color);
           const customInp = document.getElementById('input-shape-custom-color');
-          if (customInp) customInp.value = color;
+          if (customInp && color.startsWith('#') && color.length === 7) customInp.value = color;
         }
       });
     });
@@ -3848,7 +3967,7 @@ export class TShirtCustomizerApp {
         if (color) {
           applyShapeStrokeColor(color);
           const customInp = document.getElementById('input-shape-stroke-custom-color');
-          if (customInp) customInp.value = color;
+          if (customInp && color.startsWith('#') && color.length === 7) customInp.value = color;
         }
       });
     });
@@ -3862,6 +3981,11 @@ export class TShirtCustomizerApp {
     safeAddListener('input-shape-custom-color', 'input', (e) => {
       const color = e.target.value;
       applyShapeColor(color);
+    });
+
+    safeAddListener('input-shape-stroke-custom-color', 'input', (e) => {
+      const color = e.target.value;
+      applyShapeStrokeColor(color);
     });
 
     // Fetch initial saved colors
@@ -3882,6 +4006,14 @@ export class TShirtCustomizerApp {
         const isInsideOpenShapeBtn = e.target.closest('#btn-open-shape-color-popover');
         if (!isInsideShapePopover && !isInsideOpenShapeBtn) {
           shapePopoverModal.style.display = 'none';
+        }
+      }
+
+      if (shapeStrokePopoverModal && shapeStrokePopoverModal.style.display === 'flex') {
+        const isInsideShapeStrokePopover = e.target.closest('#shape-stroke-color-popover-modal');
+        const isInsideOpenShapeStrokeBtn = e.target.closest('#btn-open-shape-stroke-color-popover');
+        if (!isInsideShapeStrokePopover && !isInsideOpenShapeStrokeBtn) {
+          shapeStrokePopoverModal.style.display = 'none';
         }
       }
     });

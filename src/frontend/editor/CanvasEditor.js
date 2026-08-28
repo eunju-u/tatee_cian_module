@@ -808,10 +808,24 @@ export class CanvasEditor {
   }
 
   addShape(type = 'rectangle', options = {}) {
-    const centerX = this.printBox.left + (this.printBox.width / 2);
-    const centerY = this.printBox.top + (this.printBox.height / 2);
+    let centerX = this.printBox.left + (this.printBox.width / 2);
+    let centerY = this.printBox.top + (this.printBox.height / 2);
+
+    // Add slight offset if an object already exists at the center to prevent perfect overlapping (which hides previous shapes)
+    const objects = this.canvas.getObjects().filter(o => !o.isGuideline);
+    let overlapCount = 0;
+    for (const obj of objects) {
+      if (Math.abs(obj.left - centerX) < 5 && Math.abs(obj.top - centerY) < 5) {
+        overlapCount++;
+      }
+    }
+    if (overlapCount > 0) {
+      centerX += overlapCount * 15;
+      centerY += overlapCount * 15;
+    }
+
     const fillColor = options.fill || '#17171a';
-    const strokeColor = options.stroke || '#000000';
+    const strokeColor = options.stroke || 'transparent';
     const strokeWidth = options.strokeWidth !== undefined ? options.strokeWidth : 0;
 
     let shapeObj = null;
